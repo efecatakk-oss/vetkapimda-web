@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VetKapım - Evde Veteriner Hizmeti</title>
+    <meta
+      name="description"
+      content="VetKapım ile evde aşı ve bakım, canlı video danışmanlık ve VetKapım Shop hizmetleri."
+    />
+    <link rel="icon" href="assets/favicon.png" type="image/png" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero-blob blob-left"></div>
+      <div class="hero-blob blob-right"></div>
+      <nav class="nav nav-center">
+        <div class="brand">
+          <span class="brand-mark">VetKapım</span>
+        </div>
+        <div class="nav-actions">
+          <a class="nav-link" href="#hizmetler">Hizmetler</a>
+          <a class="nav-link" href="#randevu">Randevu</a>
+        </div>
+      </nav>
+
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Evde veteriner deneyimi</p>
+          <h1>VetKapım ile dostunuza evde kaliteli bakım.</h1>
+          <p class="lede">
+            Evde aşı ve bakım, canlı video danışmanlık ve VetKapım Shop
+            seçenekleriyle randevunuzu hızlıca oluşturun.
+          </p>
+          <div class="hero-stats">
+            <div>
+              <strong>1200+</strong>
+              <span>Ev ziyareti</span>
+            </div>
+            <div>
+              <strong>98%</strong>
+              <span>Memnuniyet</span>
+            </div>
+            <div>
+              <strong>30 dk</strong>
+              <span>Hızlı dönüş</span>
+            </div>
+          </div>
+          <div class="cta-row">
+            <a class="btn primary" href="#randevu">Randevu Al</a>
+            <a class="btn ghost" href="#hizmetler">Hizmetleri Gör</a>
+          </div>
+          <div class="pill-row">
+            <span class="pill">24 Saat Hizmet</span>
+            <span class="pill">Güvenli ve Lisanslı</span>
+            <span class="pill">Evde Konfor</span>
+          </div>
+        </div>
+        <div class="hero-media">
+          <div class="slider">
+            <div class="slider-track">
+              <img
+                class="slide active"
+                src="assets/slide_1.png"
+                alt="VetKapım tanıtım görseli"
+              />
+              <img
+                class="slide"
+                src="assets/slide_2.png"
+                alt="VetKapım hizmetleri"
+              />
+            </div>
+          </div>
+          <div class="slider-dots">
+            <span class="dot active" data-index="0"></span>
+            <span class="dot" data-index="1"></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="quick-links">
+      <a href="#hizmetler">Hizmetler</a>
+      <a href="#canli-video">Canli Video</a>
+      <a href="#shop">Shop</a>
+      <a href="#randevu">Randevu</a>
+    </div>
+
+    <main>
+      <section id="hizmetler" class="section">
+        <div class="section-title">
+          <h2>Hizmetler</h2>
+          <p>İhtiyacınıza uygun hizmeti seçin.</p>
+        </div>
+        <div class="cards">
+          <a class="card card-link" href="#randevu" data-category="evde">
+            <img src="assets/home_service_3.jpg" alt="Evde aşı ve bakım" />
+            <div class="card-body">
+              <div class="badge">En Çok Tercih</div>
+              <h3>Evde Aşı ve Bakım</h3>
+              <p>Dostunuzun aşı, muayene ve bakımlarını evinizde yapıyoruz.</p>
+            </div>
+          </a>
+          <a class="card card-link" href="#canli-video" data-category="video">
+            <img src="assets/home_service_2.jpg" alt="Canlı video danışmanlık" />
+            <div class="card-body">
+              <div class="badge ghost">Aynı Gün</div>
+              <h3>Canlı Video Danışmanlık</h3>
+              <p>Veterinerlerimizle canlı görüşerek hızlı destek alın.</p>
+            </div>
+          </a>
+          <a class="card card-link" href="#shop" data-category="shop">
+            <img src="assets/home_service_1.jpg" alt="VetKapım Shop" />
+            <div class="card-body">
+              <div class="badge soft">Yeni</div>
+              <h3>VetKapım Shop</h3>
+              <p>Beslenme ve bakım ürünlerini güvenle sipariş edin.</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section id="canli-video" class="section feature">
+        <div class="section-title">
+          <h2>Canlı Video Danışmanlık</h2>
+          <p>Hızlı görüşme ile ilk yönlendirmeyi alın.</p>
+        </div>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>Nasıl çalışır?</h3>
+            <ul>
+              <li>Randevu talebini oluştur.</li>
+              <li>Veterinerimiz gün içinde dönüş yapar.</li>
+              <li>Video görüşme ile hızlı yönlendirme al.</li>
+            </ul>
+          </div>
+          <div class="feature-card">
+            <h3>Kimler için?</h3>
+            <p>
+              Acil olmayan sorular, beslenme önerileri, ilk kontrol ve takip
+              randevuları için uygundur.
+            </p>
+            <div class="chip-row">
+              <span class="chip">Hızlı danışma</span>
+              <span class="chip">Uygun fiyat</span>
+              <span class="chip">Evden görüşme</span>
+            </div>
+          </div>
+        </div>
+        <a class="btn primary" href="#randevu">Video Randevu Al</a>
+      </section>
+
+      <section id="shop" class="section shop-showcase">
+        <div class="shop-topbar">
+          <span>300 TL uzeri ucretsiz teslimat</span>
+          <div class="shop-links">
+            <a href="#randevu">Siparis Takip</a>
+            <a href="#randevu">Destek</a>
+          </div>
+        </div>
+        <div class="shop-header">
+          <div>
+            <h2>VetKapım Shop</h2>
+            <p>Evcil dostlar icin secilmis urunler.</p>
+          </div>
+          <div class="shop-search">
+            <input type="text" placeholder="Urun ara..." />
+            <button type="button">Ara</button>
+          </div>
+        </div>
+        <div class="shop-tabs">
+          <button class="tab active">Kedi</button>
+          <button class="tab">Kopek</button>
+          <button class="tab">Kus</button>
+          <button class="tab">Cok Satanlar</button>
+          <button class="tab">Firsatlar</button>
+        </div>
+        <div class="shop-hero">
+          <div>
+            <h3>Beslenmeden bakima</h3>
+            <p>
+              Dostun icin dogru urunu bul. Kampanyali fiyatlar ve guvenli
+              teslimat.
+            </p>
+            <a class="btn primary" href="#randevu">Siparise Basla</a>
+          </div>
+          <div class="shop-hero-card">
+            <p>%30'a varan indirim</p>
+            <strong>Sezon Firsatlari</strong>
+          </div>
+        </div>
+        <div class="shop-grid-large">
+          <article class="product-card">
+            <span class="tag">Yeni</span>
+            <h4>Premium Kedi Mamasi 2 kg</h4>
+            <p>Tavsiye edilen, hassas mide.</p>
+            <div class="price-row">
+              <strong>540 TL</strong>
+              <button type="button">Sepete Ekle</button>
+            </div>
+          </article>
+          <article class="product-card">
+            <span class="tag">Cok Satan</span>
+            <h4>Kopek Vitamin Seti</h4>
+            <p>Bagisiklik ve eklem destegi.</p>
+            <div class="price-row">
+              <strong>320 TL</strong>
+              <button type="button">Sepete Ekle</button>
+            </div>
+          </article>
+          <article class="product-card">
+            <span class="tag">Firsat</span>
+            <h4>Hijyen Bakim Paketi</h4>
+            <p>Sampuan + tarak + kulak solusyonu.</p>
+            <div class="price-row">
+              <strong>410 TL</strong>
+              <button type="button">Sepete Ekle</button>
+            </div>
+          </article>
+          <article class="product-card">
+            <span class="tag">Populer</span>
+            <h4>Kus Yem Karisimi</h4>
+            <p>Gunde 1 olcek, saglikli icerik.</p>
+            <div class="price-row">
+              <strong>190 TL</strong>
+              <button type="button">Sepete Ekle</button>
+            </div>
+          </article>
+        </div>
+        <p class="fineprint">
+          Su an siparisleri randevu notuna ekliyoruz. Online shop yakinda aktif
+          olacak.
+        </p>
+      </section>
+
+      <section id="randevu" class="section booking">
+        <div class="section-title">
+          <h2>Randevu Oluştur</h2>
+          <p>Hizmetleri seçin, sepete ekleyin ve talebinizi gönderin.</p>
+        </div>
+
+        <div class="info-strip">
+          <div>
+            <strong>Hizmet Bölgesi</strong>
+            <p>Denizli merkez ve çevresi</p>
+          </div>
+          <div>
+            <strong>Çalışma Saatleri</strong>
+            <p>24 Saat Hizmet</p>
+          </div>
+          <div>
+            <strong>Randevu</strong>
+            <p>Telefon veya e-posta ile onaylanır</p>
+          </div>
+        </div>
+
+        <div class="trust-grid">
+          <div class="trust-card">
+            <span>✔️</span>
+            <p>Lisanslı veterinerler</p>
+          </div>
+          <div class="trust-card">
+            <span>🏡</span>
+            <p>Evde konforlu hizmet</p>
+          </div>
+          <div class="trust-card">
+            <span>⏱️</span>
+            <p>Hızlı randevu planlama</p>
+          </div>
+        </div>
+
+        <div class="booking-grid">
+          <div class="catalog">
+            <div class="catalog-header">
+              <h3>Hizmet Seçimi</h3>
+              <p>Evde işlemler ve aşılar arasından seçim yapın.</p>
+            </div>
+            <div id="serviceCatalog" class="catalog-body"></div>
+          </div>
+
+          <aside class="cart">
+            <h3>Sepet</h3>
+            <div id="cartSummary" class="cart-list"></div>
+            <div class="cart-total">
+              <span>Toplam</span>
+              <strong id="cartTotal">0 ₺</strong>
+            </div>
+          </aside>
+        </div>
+
+        <form
+          id="bookingForm"
+          class="booking-form"
+          name="vetkapim-randevu"
+          method="POST"
+          data-netlify="true"
+        >
+          <input type="hidden" name="form-name" value="vetkapim-randevu" />
+          <input type="hidden" id="selectedServices" name="selectedServices" />
+          <input type="hidden" id="totalPrice" name="totalPrice" />
+          <input type="hidden" id="serviceNote" name="serviceNote" />
+          <input type="hidden" id="userEmail" name="userEmail" />
+          <div class="field">
+            <label for="name">Ad Soyad</label>
+            <input id="name" name="name" type="text" required />
+          </div>
+          <div class="field">
+            <label for="phone">Telefon</label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              inputmode="tel"
+              placeholder="+90 5xx xxx xx xx"
+              required
+            />
+          </div>
+          <div class="field">
+            <label for="address">Adres</label>
+            <input id="address" name="address" type="text" required />
+          </div>
+          <div class="field">
+            <label for="datetime">Tarih / Saat</label>
+            <input id="datetime" name="datetime" type="datetime-local" />
+          </div>
+          <div class="field full">
+            <label for="notes">Not</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Ek bilgi"></textarea>
+          </div>
+          <div class="field full checkbox">
+            <label>
+              <input id="robotCheck" type="checkbox" required />
+              Robot değilim
+            </label>
+          </div>
+          <button class="btn primary full" type="submit">Randevu Talebi Gönder</button>
+          <p class="fineprint">
+            Gönder butonuna basınca e-posta uygulamanız açılır ve randevu talebi
+            hazırlanır.
+          </p>
+          <p class="fineprint">
+            Devam ederek <a href="#kvkk">KVKK</a> ve <a href="#terms">Hizmet Şartları</a> metnini kabul etmiş olursunuz.
+          </p>
+          <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
+          <div id="formSuccess" class="form-success" aria-hidden="true">
+            <p>Randevu talebiniz alındı. En kısa sürede dönüş yapacağız.</p>
+            <a class="btn ghost" href="#randevu">Yeni Randevu Oluştur</a>
+          </div>
+        </form>
+
+        <div class="login-gate" id="loginGate" aria-hidden="true">
+          <div class="login-card">
+            <h3>Uye Girisi Gerekli</h3>
+            <p>
+              Sepete ekleme ve randevu islemleri icin giris yapmaniz gerekir.
+            </p>
+            <div class="login-fields">
+              <input
+                id="loginEmail"
+                type="email"
+                placeholder="E-posta adresiniz"
+                required
+              />
+              <input
+                id="loginPassword"
+                type="password"
+                placeholder="Sifre"
+                required
+              />
+            </div>
+            <div class="login-actions">
+              <button class="btn primary" id="loginBtn" type="button">
+                Giris Yap
+              </button>
+              <button class="btn ghost" id="signupBtn" type="button">
+                Uye Ol
+              </button>
+            </div>
+            <button class="btn ghost" id="verifyBtn" type="button">
+              Onay Mailini Tekrar Gonder
+            </button>
+            <p id="loginStatus" class="form-status" role="status"></p>
+            <button class="close-gate" type="button">Kapat</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="kvkk" class="section legal">
+        <div class="section-title">
+          <h2>KVKK Bilgilendirmesi</h2>
+          <p>
+            Randevu taleplerinde paylaştığınız bilgiler sadece randevu planlama
+            amacıyla kullanılır. Verileriniz üçüncü kişilerle paylaşılmaz ve talebiniz
+            tamamlandıktan sonra güvenli şekilde saklanır.
+          </p>
+        </div>
+      </section>
+
+      <section id="terms" class="section legal">
+        <div class="section-title">
+          <h2>Hizmet Şartları</h2>
+          <p>
+            VetKapım ekibi randevu talebinizi en kısa sürede telefon veya e-posta ile
+            teyit eder. Randevu saatlerinde adresinizde bulunmanız ve gerekli bilgiler
+            için hazırlıklı olmanız beklenir.
+          </p>
+        </div>
+      </section>
+
+      <section class="section testimonials">
+        <div class="section-title">
+          <h2>Mutlu Dostlar</h2>
+          <p>Hizmet alan kullanıcılarımızdan kısa yorumlar.</p>
+        </div>
+        <div class="testimonial-grid">
+          <article class="testimonial">
+            <p>
+              "Randevu çok hızlı planlandı, veterinerimiz zamanında geldi.
+              Kedimiz için harika bir deneyim oldu."
+            </p>
+            <span>- Denizli / Kedi sahibi</span>
+          </article>
+          <article class="testimonial">
+            <p>
+              "Canlı danışmanlık ile sorularımıza hemen yanıt aldık. Çok pratik."
+            </p>
+            <span>- Merkez / Köpek sahibi</span>
+          </article>
+          <article class="testimonial">
+            <p>
+              "Evde hizmet almak büyük kolaylık, tekrar tercih edeceğiz."
+            </p>
+            <span>- Pamukkale / Köpek sahibi</span>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <strong>VetKapım</strong>
+        <p>Evde veteriner hizmeti</p>
+      </div>
+      <div class="footer-meta">
+        <span>24 Saat Hizmet</span>
+        <span>Randevu: vetkapim@gmail.com</span>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
