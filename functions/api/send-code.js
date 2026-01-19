@@ -1,43 +1,61 @@
-const crypto = require("crypto");
-
 function jsonResponse(statusCode, payload) {
-  return {
-    statusCode,
+  return new Response(JSON.stringify(payload), {
+    status: statusCode,
     headers: {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
     },
-    body: JSON.stringify(payload),
-  };
+  });
 }
 
-function base64Url(input) {
-  return Buffer.from(input)
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+function base64UrlFromBytes(bytes) {
+  let binary = "";
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
-exports.handler = async (event) => {
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 204,
+function base64UrlFromString(value) {
+  const encoder = new TextEncoder();
+  return base64UrlFromBytes(encoder.encode(value));
+}
+
+async function hmacHex(secret, message) {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(message));
+  return Array.from(new Uint8Array(signature))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+export async function onRequest(context) {
+  const { request, env } = context;
+
+  if (request.method === "OPTIONS") {
+    return new Response("", {
+      status: 204,
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "Content-Type",
       },
-      body: "",
-    };
+    });
   }
 
-  if (event.httpMethod !== "POST") {
+  if (request.method !== "POST") {
     return jsonResponse(405, { ok: false, error: "Method not allowed" });
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const secret = process.env.OTP_SECRET;
-  const fromEmail = process.env.FROM_EMAIL || "destek@vetkapimda.com";
+  const apiKey = env.RESEND_API_KEY;
+  const secret = env.OTP_SECRET;
+  const fromEmail = env.FROM_EMAIL || "destek@vetkapimda.com";
 
   if (!apiKey || !secret) {
     return jsonResponse(500, { ok: false, error: "Missing server config" });
@@ -45,7 +63,7 @@ exports.handler = async (event) => {
 
   let payload = {};
   try {
-    payload = JSON.parse(event.body || "{}");
+    payload = await request.json();
   } catch (_) {
     return jsonResponse(400, { ok: false, error: "Invalid JSON" });
   }
@@ -58,11 +76,8 @@ exports.handler = async (event) => {
   const code = Math.floor(100000 + Math.random() * 900000).toString();
   const exp = Date.now() + 10 * 60 * 1000;
   const data = `${email}|${exp}`;
-  const signature = crypto
-    .createHmac("sha256", secret)
-    .update(`${data}|${code}`)
-    .digest("hex");
-  const token = `${base64Url(data)}.${signature}`;
+  const signature = await hmacHex(secret, `${data}|${code}`);
+  const token = `${base64UrlFromString(data)}.${signature}`;
 
   const emailBody = `
     <div style="font-family: Arial, sans-serif; color: #1c1a2a;">
@@ -93,4 +108,4 @@ exports.handler = async (event) => {
   }
 
   return jsonResponse(200, { ok: true, token, exp });
-};
+}

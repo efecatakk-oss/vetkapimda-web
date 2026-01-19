@@ -120,20 +120,24 @@ form.addEventListener("submit", (event) => {
   const formData = new FormData(form);
   const payload = new URLSearchParams(formData).toString();
 
-  fetch("/", {
+  fetch("/api/booking", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: payload,
   })
-    .then(() => {
+    .then((res) => res.json())
+    .then((data) => {
+      if (!data.ok) {
+        throw new Error(data.error || "Talep gonderilemedi.");
+      }
       form.reset();
       selectedItems.clear();
       renderCatalog();
       renderCart();
       showStatus("Talebiniz alindi. Size en kisa surede donus yapacagiz.");
     })
-    .catch(() => {
-      showStatus("Bir hata olustu. Lutfen tekrar deneyin.", true);
+    .catch((error) => {
+      showStatus(error.message || "Bir hata olustu. Lutfen tekrar deneyin.", true);
     });
 });
 
@@ -199,7 +203,7 @@ function handleSendCode() {
     setLoginStatus("Kod zaten gonderildi. Lutfen biraz bekleyin.", true);
     return;
   }
-  fetch("/.netlify/functions/send-code", {
+  fetch("/api/send-code", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
@@ -235,7 +239,7 @@ function handleConfirmCode() {
     setLoginStatus("Sifre girin.", true);
     return;
   }
-  fetch("/.netlify/functions/verify-code", {
+  fetch("/api/verify-code", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, code, token: pendingToken }),
