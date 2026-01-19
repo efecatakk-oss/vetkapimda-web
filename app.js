@@ -21,14 +21,20 @@ const dots = document.querySelectorAll(".slider-dots .dot");
 const loginGate = document.getElementById("loginGate");
 const loginEmail = document.getElementById("loginEmail");
 const loginPassword = document.getElementById("loginPassword");
+const loginCode = document.getElementById("loginCode");
 const loginBtn = document.getElementById("loginBtn");
 const signupBtn = document.getElementById("signupBtn");
-const verifyBtn = document.getElementById("verifyBtn");
+const sendCodeBtn = document.getElementById("sendCodeBtn");
+const confirmCodeBtn = document.getElementById("confirmCodeBtn");
 const loginStatus = document.getElementById("loginStatus");
 const userEmailHidden = document.getElementById("userEmail");
 
 let isLoggedIn = false;
 let isVerified = false;
+let pendingToken = null;
+let pendingAction = null;
+let lastCodeSentAt = Number(localStorage.getItem("otpLastSentAt") || "0");
+const CODE_SEND_COOLDOWN_MS = 60000;
 
 const services = [
   {
@@ -139,19 +145,16 @@ function bindLoginGate() {
   }
   loginBtn.addEventListener("click", handleLogin);
   signupBtn.addEventListener("click", handleSignup);
-  verifyBtn.addEventListener("click", handleResendVerification);
+  sendCodeBtn.addEventListener("click", handleSendCode);
+  confirmCodeBtn.addEventListener("click", handleConfirmCode);
 }
 
 function watchAuth() {
   auth.onAuthStateChanged((user) => {
     isLoggedIn = Boolean(user);
-    isVerified = Boolean(user && user.emailVerified);
+    isVerified = Boolean(user && isEmailVerified(user.email));
     if (userEmailHidden) {
       userEmailHidden.value = user?.email || "";
-    }
-    if (user && !user.emailVerified) {
-      showLoginGate();
-      setLoginStatus("E-posta onayi gerekli. Mailinizi kontrol edin.", true);
     }
   });
 }
@@ -163,19 +166,9 @@ function handleLogin() {
     setLoginStatus("E-posta ve sifre girin.", true);
     return;
   }
-  auth
-    .signInWithEmailAndPassword(email, password)
-    .then((result) => {
-      if (!result.user.emailVerified) {
-        setLoginStatus("Mail onayi gerekli. Onaylayin ve tekrar deneyin.", true);
-        return;
-      }
-      setLoginStatus("Giris basarili.", false);
-      hideLoginGate();
-    })
-    .catch((error) => {
-      setLoginStatus(error.message || "Giris basarisiz.", true);
-    });
+  pendingAction = "login";
+  setLoginStatus("Onay kodu gonderiyoruz...", false);
+  handleSendCode();
 }
 
 function handleSignup() {
@@ -185,38 +178,87 @@ function handleSignup() {
     setLoginStatus("E-posta ve sifre girin.", true);
     return;
   }
-  auth
-    .createUserWithEmailAndPassword(email, password)
-    .then((result) => {
-      return result.user.sendEmailVerification();
-    })
-    .then(() => {
-      setLoginStatus("Onay maili gonderildi. Mailinizi kontrol edin.", false);
-    })
-    .catch((error) => {
-      setLoginStatus(error.message || "Kayit basarisiz.", true);
-    });
-}
-
-function handleResendVerification() {
-  const user = auth.currentUser;
-  if (!user) {
-    setLoginStatus("Once giris yapin.", true);
-    return;
-  }
-  user
-    .sendEmailVerification()
-    .then(() => {
-      setLoginStatus("Onay maili tekrar gonderildi.", false);
-    })
-    .catch((error) => {
-      setLoginStatus(error.message || "Islem basarisiz.", true);
-    });
+  pendingAction = "signup";
+  setLoginStatus("Onay kodu gonderiyoruz...", false);
+  handleSendCode();
 }
 
 function setLoginStatus(message, isError) {
   loginStatus.textContent = message;
   loginStatus.classList.toggle("error", isError);
+}
+
+function handleSendCode() {
+  const email = loginEmail.value.trim();
+  if (!email) {
+    setLoginStatus("E-posta adresinizi girin.", true);
+    return;
+  }
+  const now = Date.now();
+  if (now - lastCodeSentAt < CODE_SEND_COOLDOWN_MS) {
+    setLoginStatus("Kod zaten gonderildi. Lutfen biraz bekleyin.", true);
+    return;
+  }
+  fetch("/.netlify/functions/send-code", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (!data.ok) {
+        throw new Error(data.error || "Kod gonderilemedi.");
+      }
+      pendingToken = data.token;
+      lastCodeSentAt = now;
+      localStorage.setItem("otpLastSentAt", String(now));
+      setLoginStatus("Onay kodu gonderildi. Kodunuzu girin.", false);
+      loginCode.focus();
+    })
+    .catch((error) => {
+      setLoginStatus(error.message, true);
+    });
+}
+
+function handleConfirmCode() {
+  const email = loginEmail.value.trim();
+  const password = loginPassword.value.trim();
+  const code = loginCode.value.trim();
+  if (!email || !code || !pendingToken) {
+    setLoginStatus("E-posta, kod ve gecerli token gerekli.", true);
+    return;
+  }
+  if (!password) {
+    setLoginStatus("Sifre girin.", true);
+    return;
+  }
+  fetch("/.netlify/functions/verify-code", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, code, token: pendingToken }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (!data.ok) {
+        throw new Error(data.error || "Kod dogrulanamadi.");
+      }
+      markEmailVerified(email);
+      if (pendingAction === "signup") {
+        return auth.createUserWithEmailAndPassword(email, password);
+      }
+      return auth.signInWithEmailAndPassword(email, password);
+    })
+    .then(() => {
+      setLoginStatus("Dogrulama tamamlandi.", false);
+      hideLoginGate();
+    })
+    .catch((error) => {
+      if (error.code === "auth/too-many-requests") {
+        setLoginStatus("Cok fazla deneme. 30 dk sonra tekrar deneyin.", true);
+        return;
+      }
+      setLoginStatus(error.message, true);
+    });
 }
 
 function showLoginGate() {
@@ -227,6 +269,27 @@ function showLoginGate() {
 function hideLoginGate() {
   loginGate.classList.remove("show");
   loginGate.setAttribute("aria-hidden", "true");
+}
+
+function getVerifiedEmails() {
+  try {
+    return JSON.parse(localStorage.getItem("verifiedEmails") || "{}");
+  } catch (_) {
+    return {};
+  }
+}
+
+function markEmailVerified(email) {
+  const verified = getVerifiedEmails();
+  verified[email] = true;
+  localStorage.setItem("verifiedEmails", JSON.stringify(verified));
+  isVerified = true;
+}
+
+function isEmailVerified(email) {
+  if (!email) return false;
+  const verified = getVerifiedEmails();
+  return Boolean(verified[email]);
 }
 
 function normalizePhone(value) {

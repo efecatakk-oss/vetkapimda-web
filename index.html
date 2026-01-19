@@ -370,6 +370,12 @@
                 placeholder="Sifre"
                 required
               />
+              <input
+                id="loginCode"
+                type="text"
+                placeholder="Onay kodu"
+                inputmode="numeric"
+              />
             </div>
             <div class="login-actions">
               <button class="btn primary" id="loginBtn" type="button">
@@ -379,9 +385,14 @@
                 Uye Ol
               </button>
             </div>
-            <button class="btn ghost" id="verifyBtn" type="button">
-              Onay Mailini Tekrar Gonder
-            </button>
+            <div class="login-actions">
+              <button class="btn ghost" id="sendCodeBtn" type="button">
+                Kod Gonder
+              </button>
+              <button class="btn ghost" id="confirmCodeBtn" type="button">
+                Kodu Onayla
+              </button>
+            </div>
             <p id="loginStatus" class="form-status" role="status"></p>
             <button class="close-gate" type="button">Kapat</button>
           </div>
