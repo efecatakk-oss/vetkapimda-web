@@ -212,7 +212,10 @@ function handleSendCode() {
       pendingToken = data.token;
       lastCodeSentAt = now;
       localStorage.setItem("otpLastSentAt", String(now));
-      setLoginStatus("Onay kodu gonderildi. Kodunuzu girin.", false);
+      setLoginStatus(
+        "Onay kodu gonderildi. Spam klasorunu kontrol edin.",
+        false
+      );
       loginCode.focus();
     })
     .catch((error) => {
