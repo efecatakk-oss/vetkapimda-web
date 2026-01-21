@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap");
 
 :root {
   color-scheme: light;
@@ -20,7 +20,7 @@
 
 body {
   margin: 0;
-  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-family: "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif;
   color: var(--ink);
   background: radial-gradient(circle at top left, #ffffff 0%, #f7fbff 45%, #eef6f4 100%);
 }
@@ -141,8 +141,20 @@ a {
 }
 
 h1 {
+  font-family: "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif;
   font-size: clamp(32px, 4vw, 44px);
   margin: 0 0 12px;
+}
+
+h2,
+h3,
+h4 {
+  font-family: "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif;
+  letter-spacing: -0.2px;
+}
+
+.section-title h2 {
+  font-weight: 800;
 }
 
 .brand-inline {
@@ -537,6 +549,10 @@ h1 {
   margin-bottom: 14px;
 }
 
+.shop-header h2 {
+  font-weight: 800;
+}
+
 .shop-search {
   display: flex;
   gap: 8px;
@@ -576,12 +592,18 @@ h1 {
   cursor: pointer;
   font-weight: 600;
   color: var(--muted);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .shop-tabs .tab.active {
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
+}
+
+.shop-tabs .tab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(23, 20, 42, 0.12);
 }
 
 .shop-hero {
@@ -616,6 +638,13 @@ h1 {
   box-shadow: var(--shadow);
   display: grid;
   gap: 8px;
+  border: 1px solid rgba(27, 111, 106, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 36px rgba(23, 20, 42, 0.16);
 }
 
 .product-card .tag {
@@ -638,6 +667,11 @@ h1 {
   align-items: center;
 }
 
+.price-row strong {
+  font-size: 16px;
+  color: var(--primary-deep);
+}
+
 .price-row button {
   border: none;
   background: var(--accent);
@@ -645,6 +679,12 @@ h1 {
   padding: 8px 12px;
   border-radius: 10px;
   cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.price-row button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
 }
 
 .login-gate {
@@ -663,7 +703,7 @@ h1 {
 }
 
 .login-card {
-  background: #fff;
+  background: linear-gradient(180deg, #ffffff 0%, #f6fbff 100%);
   border-radius: 18px;
   padding: 24px;
   max-width: 420px;
@@ -671,6 +711,7 @@ h1 {
   box-shadow: var(--shadow);
   display: grid;
   gap: 12px;
+  border: 1px solid rgba(27, 111, 106, 0.08);
 }
 
 .login-fields {
@@ -683,12 +724,24 @@ h1 {
   border-radius: 12px;
   padding: 10px 12px;
   font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-fields input:focus {
+  outline: none;
+  border-color: rgba(27, 111, 106, 0.6);
+  box-shadow: 0 0 0 3px rgba(27, 111, 106, 0.12);
 }
 
 .login-actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.login-actions .btn.primary {
+  background: linear-gradient(120deg, var(--primary) 0%, var(--primary-deep) 100%);
+  box-shadow: 0 12px 24px rgba(15, 79, 75, 0.25);
 }
 
 .login-meta {
@@ -719,6 +772,12 @@ h1 {
   color: var(--muted);
   cursor: pointer;
   justify-self: flex-start;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.close-gate:hover {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .booking {
