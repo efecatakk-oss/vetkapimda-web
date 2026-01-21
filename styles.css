@@ -1366,6 +1366,11 @@ textarea {
   font-weight: 600;
 }
 
+.footer-meta a {
+  color: inherit;
+  text-decoration: none;
+}
+
 @media (max-width: 720px) {
   .nav-actions {
     display: none;
