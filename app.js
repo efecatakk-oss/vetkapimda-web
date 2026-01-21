@@ -26,6 +26,9 @@ const loginBtn = document.getElementById("loginBtn");
 const signupBtn = document.getElementById("signupBtn");
 const sendCodeBtn = document.getElementById("sendCodeBtn");
 const confirmCodeBtn = document.getElementById("confirmCodeBtn");
+const forgotPasswordBtn = document.getElementById("forgotPasswordBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const loginInfo = document.getElementById("loginInfo");
 const loginStatus = document.getElementById("loginStatus");
 const userEmailHidden = document.getElementById("userEmail");
 
@@ -151,6 +154,8 @@ function bindLoginGate() {
   signupBtn.addEventListener("click", handleSignup);
   sendCodeBtn.addEventListener("click", handleSendCode);
   confirmCodeBtn.addEventListener("click", handleConfirmCode);
+  forgotPasswordBtn.addEventListener("click", handleForgotPassword);
+  logoutBtn.addEventListener("click", handleLogout);
 }
 
 function watchAuth() {
@@ -160,6 +165,7 @@ function watchAuth() {
     if (userEmailHidden) {
       userEmailHidden.value = user?.email || "";
     }
+    updateLoginUI(user);
   });
 }
 
@@ -190,6 +196,46 @@ function handleSignup() {
 function setLoginStatus(message, isError) {
   loginStatus.textContent = message;
   loginStatus.classList.toggle("error", isError);
+}
+
+function updateLoginUI(user) {
+  const loggedIn = Boolean(user);
+  loginInfo.textContent = loggedIn ? `Giris yapildi: ${user.email}` : "";
+  loginBtn.disabled = loggedIn;
+  signupBtn.disabled = loggedIn;
+  sendCodeBtn.disabled = loggedIn;
+  confirmCodeBtn.disabled = loggedIn;
+  loginEmail.disabled = loggedIn;
+  loginPassword.disabled = loggedIn;
+  loginCode.disabled = loggedIn;
+  forgotPasswordBtn.style.display = loggedIn ? "none" : "inline-flex";
+  logoutBtn.style.display = loggedIn ? "inline-flex" : "none";
+}
+
+function handleForgotPassword() {
+  const email = loginEmail.value.trim();
+  if (!email) {
+    setLoginStatus("E-posta adresinizi girin.", true);
+    return;
+  }
+  auth
+    .sendPasswordResetEmail(email)
+    .then(() => {
+      setLoginStatus("Sifre yenileme e-postasi gonderildi.", false);
+    })
+    .catch((error) => {
+      setLoginStatus(error.message || "Islem basarisiz.", true);
+    });
+}
+
+function handleLogout() {
+  auth.signOut().finally(() => {
+    isLoggedIn = false;
+    isVerified = false;
+    pendingAction = null;
+    pendingToken = null;
+    setLoginStatus("Cikis yapildi.", false);
+  });
 }
 
 function handleSendCode() {

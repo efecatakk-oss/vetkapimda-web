@@ -582,6 +582,28 @@ h1 {
   flex-wrap: wrap;
 }
 
+.login-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.link-button {
+  border: none;
+  background: transparent;
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+}
+
+.login-info {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
 .close-gate {
   border: none;
   background: transparent;
