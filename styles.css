@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap");
+
 :root {
   color-scheme: light;
   --ink: #1f1b2d;
@@ -77,11 +79,16 @@ a {
 }
 
 .brand-mark {
-  font-size: 30px;
+  font-family: "Baloo 2", "Trebuchet MS", "Segoe UI", sans-serif;
+  font-size: 34px;
   font-weight: 800;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: var(--primary-deep);
+  color: transparent;
+  background: linear-gradient(120deg, #ff8a00 0%, #ffb14a 40%, #1b6f6a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 6px 16px rgba(255, 138, 0, 0.18);
 }
 
 .nav-actions {
