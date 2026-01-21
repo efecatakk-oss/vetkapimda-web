@@ -70,7 +70,7 @@ export async function onRequest(context) {
     </div>
   `;
 
-  const resp = await fetch("https://api.resend.com/emails", {
+  const adminResp = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -84,9 +84,44 @@ export async function onRequest(context) {
     }),
   });
 
-  if (!resp.ok) {
-    const message = await resp.text();
+  if (!adminResp.ok) {
+    const message = await adminResp.text();
     return jsonResponse(500, { ok: false, error: message });
+  }
+
+  if (userEmail) {
+    const userBody = `
+      <div style="font-family: Arial, sans-serif; color: #1c1a2a;">
+        <h2>Randevunuz Olusturuldu</h2>
+        <p>Talebiniz alindi. Bilgileriniz:</p>
+        <p><strong>Ad Soyad:</strong> ${escapeHtml(name)}</p>
+        <p><strong>Telefon:</strong> ${escapeHtml(phone)}</p>
+        <p><strong>Adres:</strong> ${escapeHtml(address)}</p>
+        <p><strong>Tarih/Saat:</strong> ${escapeHtml(datetime)}</p>
+        <p><strong>Hizmetler:</strong> ${escapeHtml(services)}</p>
+        <p><strong>Toplam:</strong> ${escapeHtml(total)}</p>
+        <p><strong>Not:</strong> ${escapeHtml(notes)}</p>
+      </div>
+    `;
+
+    const userResp = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: `VetKapim <${fromEmail}>`,
+        to: [userEmail],
+        subject: "VetKapim Randevu Onayi",
+        html: userBody,
+      }),
+    });
+
+    if (!userResp.ok) {
+      const message = await userResp.text();
+      return jsonResponse(500, { ok: false, error: message });
+    }
   }
 
   return jsonResponse(200, { ok: true });
