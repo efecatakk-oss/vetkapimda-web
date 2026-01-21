@@ -38,6 +38,7 @@ let pendingToken = null;
 let pendingAction = null;
 let lastCodeSentAt = Number(localStorage.getItem("otpLastSentAt") || "0");
 const CODE_SEND_COOLDOWN_MS = 60000;
+const defaultSendCodeLabel = sendCodeBtn ? sendCodeBtn.textContent : "Kod Gonder";
 
 const services = [
   {
@@ -74,6 +75,7 @@ bindServiceCards();
 initSlider();
 bindLoginGate();
 watchAuth();
+startCooldownTicker();
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -198,6 +200,31 @@ function setLoginStatus(message, isError) {
   loginStatus.classList.toggle("error", isError);
 }
 
+function startCooldownTicker() {
+  updateCooldownUI();
+  setInterval(updateCooldownUI, 1000);
+}
+
+function updateCooldownUI() {
+  if (!sendCodeBtn) return;
+  if (isLoggedIn) {
+    sendCodeBtn.disabled = true;
+    return;
+  }
+  const remaining = Math.max(
+    0,
+    CODE_SEND_COOLDOWN_MS - (Date.now() - lastCodeSentAt)
+  );
+  if (remaining === 0) {
+    sendCodeBtn.disabled = false;
+    sendCodeBtn.textContent = defaultSendCodeLabel;
+    return;
+  }
+  const seconds = Math.ceil(remaining / 1000);
+  sendCodeBtn.disabled = true;
+  sendCodeBtn.textContent = `Tekrar gonder (${seconds}s)`;
+}
+
 function updateLoginUI(user) {
   const loggedIn = Boolean(user);
   loginInfo.textContent = loggedIn ? `Giris yapildi: ${user.email}` : "";
@@ -247,6 +274,7 @@ function handleSendCode() {
   const now = Date.now();
   if (now - lastCodeSentAt < CODE_SEND_COOLDOWN_MS) {
     setLoginStatus("Kod zaten gonderildi. Lutfen biraz bekleyin.", true);
+    updateCooldownUI();
     return;
   }
   fetch("/api/send-code", {
@@ -262,6 +290,7 @@ function handleSendCode() {
       pendingToken = data.token;
       lastCodeSentAt = now;
       localStorage.setItem("otpLastSentAt", String(now));
+      updateCooldownUI();
       setLoginStatus(
         "Onay kodu gonderildi. Spam klasorunu kontrol edin.",
         false
