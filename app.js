@@ -248,10 +248,28 @@ function handleForgotPassword() {
   auth
     .sendPasswordResetEmail(email)
     .then(() => {
-      setLoginStatus("Sifre yenileme e-postasi gonderildi.", false);
+      setLoginStatus(
+        "Sifre yenileme e-postasi gonderildi. Spam/Promosyon klasorunu kontrol edin.",
+        false
+      );
     })
     .catch((error) => {
-      setLoginStatus(error.message || "Islem basarisiz.", true);
+      if (error.code === "auth/user-not-found") {
+        setLoginStatus(
+          "Bu e-posta ile kayitli hesap bulunamadi. Uye ol ile kaydolabilirsiniz.",
+          true
+        );
+        return;
+      }
+      if (error.code === "auth/invalid-email") {
+        setLoginStatus("Gecersiz e-posta adresi.", true);
+        return;
+      }
+      if (error.code === "auth/too-many-requests") {
+        setLoginStatus("Cok fazla deneme. Biraz sonra tekrar deneyin.", true);
+        return;
+      }
+      setLoginStatus("Sifre yenileme e-postasi gonderilemedi.", true);
     });
 }
 
