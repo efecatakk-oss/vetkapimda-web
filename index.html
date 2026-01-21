@@ -31,7 +31,11 @@
       <div class="hero-grid">
         <div class="hero-copy">
           <p class="eyebrow">Evde veteriner deneyimi</p>
-          <h1>VetKapım ile dostunuza evde kaliteli bakım.</h1>
+          <h1>
+            <span class="brand-inline">VetKapım</span> ile dostunuza evde kaliteli
+            bakım.
+          </h1>
+          <div class="hero-underline"></div>
           <p class="lede">
             Evde aşı ve bakım, canlı video danışmanlık ve VetKapım Shop
             seçenekleriyle randevunuzu hızlıca oluşturun.
@@ -89,10 +93,10 @@
     </header>
 
     <div class="quick-links">
-      <a href="#hizmetler">Hizmetler</a>
-      <a href="#canli-video">Canli Video</a>
-      <a href="#shop">Shop</a>
-      <a href="#randevu">Randevu</a>
+      <a href="#hizmetler"><span class="quick-icon">🩺</span>Hizmetler</a>
+      <a href="#canli-video"><span class="quick-icon">🎥</span>Canli Video</a>
+      <a href="#shop"><span class="quick-icon">🛍️</span>Shop</a>
+      <a href="#randevu"><span class="quick-icon">📅</span>Randevu</a>
     </div>
 
     <main>
@@ -328,30 +332,45 @@
           <input type="hidden" id="userEmail" name="userEmail" />
           <div class="field">
             <label for="name">Ad Soyad</label>
-            <input id="name" name="name" type="text" required />
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input id="name" name="name" type="text" required />
+            </div>
           </div>
           <div class="field">
             <label for="phone">Telefon</label>
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              inputmode="tel"
-              placeholder="+90 5xx xxx xx xx"
-              required
-            />
+            <div class="input-wrap">
+              <span class="input-icon">📞</span>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                inputmode="tel"
+                placeholder="+90 5xx xxx xx xx"
+                required
+              />
+            </div>
           </div>
           <div class="field">
             <label for="address">Adres</label>
-            <input id="address" name="address" type="text" required />
+            <div class="input-wrap">
+              <span class="input-icon">📍</span>
+              <input id="address" name="address" type="text" required />
+            </div>
           </div>
           <div class="field">
             <label for="datetime">Tarih / Saat</label>
-            <input id="datetime" name="datetime" type="datetime-local" />
+            <div class="input-wrap">
+              <span class="input-icon">🗓️</span>
+              <input id="datetime" name="datetime" type="datetime-local" />
+            </div>
           </div>
           <div class="field full">
             <label for="notes">Not</label>
-            <textarea id="notes" name="notes" rows="3" placeholder="Ek bilgi"></textarea>
+            <div class="input-wrap textarea">
+              <span class="input-icon">📝</span>
+              <textarea id="notes" name="notes" rows="3" placeholder="Ek bilgi"></textarea>
+            </div>
           </div>
           <div class="field full checkbox">
             <label>
@@ -460,6 +479,7 @@
         </div>
         <div class="testimonial-grid">
           <article class="testimonial">
+            <div class="rating">★★★★★</div>
             <p>
               "Randevu çok hızlı planlandı, veterinerimiz zamanında geldi.
               Kedimiz için harika bir deneyim oldu."
@@ -467,12 +487,14 @@
             <span>- Denizli / Kedi sahibi</span>
           </article>
           <article class="testimonial">
+            <div class="rating">★★★★★</div>
             <p>
               "Canlı danışmanlık ile sorularımıza hemen yanıt aldık. Çok pratik."
             </p>
             <span>- Merkez / Köpek sahibi</span>
           </article>
           <article class="testimonial">
+            <div class="rating">★★★★★</div>
             <p>
               "Evde hizmet almak büyük kolaylık, tekrar tercih edeceğiz."
             </p>

@@ -145,6 +145,37 @@ h1 {
   margin: 0 0 12px;
 }
 
+.brand-inline {
+  font-family: "Baloo 2", "Trebuchet MS", "Segoe UI", sans-serif;
+  color: var(--primary-deep);
+  position: relative;
+  display: inline-block;
+}
+
+.hero-underline {
+  width: 120px;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent) 0%, #ffd3a1 100%);
+  margin: 10px 0 16px;
+  animation: underlinePulse 2.6s ease-in-out infinite;
+}
+
+@keyframes underlinePulse {
+  0% {
+    transform: scaleX(0.9);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scaleX(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(0.9);
+    opacity: 0.7;
+  }
+}
+
 .lede {
   color: var(--muted);
   font-size: 16px;
@@ -739,6 +770,45 @@ textarea {
   font-size: 14px;
 }
 
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrap input,
+.input-wrap textarea {
+  width: 100%;
+  padding-left: 36px;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-wrap.textarea {
+  align-items: flex-start;
+}
+
+.input-wrap.textarea .input-icon {
+  top: 12px;
+  transform: none;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  font-size: 14px;
+  color: var(--primary-deep);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.input-wrap input:focus,
+.input-wrap textarea:focus {
+  outline: none;
+  border-color: rgba(27, 111, 106, 0.6);
+  box-shadow: 0 0 0 3px rgba(27, 111, 106, 0.12);
+}
+
 .fineprint {
   grid-column: 1 / -1;
   margin: 0;
@@ -860,6 +930,20 @@ textarea {
   font-size: 13px;
   color: var(--primary);
   box-shadow: var(--shadow);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(27, 111, 106, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.quick-links a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px rgba(23, 20, 42, 0.14);
+}
+
+.quick-icon {
+  font-size: 14px;
 }
 
 .testimonials {
@@ -880,6 +964,13 @@ textarea {
   color: var(--muted);
   line-height: 1.5;
   border: 1px solid rgba(255, 122, 26, 0.08);
+}
+
+.rating {
+  color: #f5a623;
+  letter-spacing: 1px;
+  font-size: 14px;
+  margin-bottom: 6px;
 }
 
 .testimonial span {
