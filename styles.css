@@ -1371,6 +1371,23 @@ textarea {
   text-decoration: none;
 }
 
+.whatsapp-float {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  background: #25d366;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  box-shadow: 0 16px 30px rgba(37, 211, 102, 0.35);
+  z-index: 50;
+}
+
+.whatsapp-float:hover {
+  filter: brightness(1.05);
+}
+
 @media (max-width: 720px) {
   .nav-actions {
     display: none;
