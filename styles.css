@@ -67,6 +67,9 @@ a {
   background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 10px 30px rgba(23, 20, 42, 0.08);
   backdrop-filter: blur(6px);
+  position: sticky;
+  top: 12px;
+  z-index: 20;
 }
 
 .nav-center {
@@ -620,10 +623,13 @@ h4 {
   font-weight: 600;
   color: var(--muted);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .shop-tabs .tab.active {
-  background: var(--accent);
+  background: linear-gradient(120deg, var(--accent) 0%, #ffb14a 100%);
   color: #fff;
   border-color: var(--accent);
 }
@@ -1161,10 +1167,16 @@ textarea {
   background: var(--primary);
   color: #fff;
   cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .service-card button.active {
   background: var(--accent);
+}
+
+.service-card button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
 }
 
 .cart {
