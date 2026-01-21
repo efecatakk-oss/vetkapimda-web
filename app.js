@@ -251,12 +251,28 @@ function handleConfirmCode() {
       }
       markEmailVerified(email);
       if (pendingAction === "signup") {
-        return auth.createUserWithEmailAndPassword(email, password);
+        return auth
+          .createUserWithEmailAndPassword(email, password)
+          .catch((error) => {
+            if (error.code === "auth/email-already-in-use") {
+              return auth.signInWithEmailAndPassword(email, password);
+            }
+            throw error;
+          });
       }
-      return auth.signInWithEmailAndPassword(email, password);
+      if (pendingAction === "login") {
+        return auth.signInWithEmailAndPassword(email, password);
+      }
+      return auth.signInWithEmailAndPassword(email, password).catch((error) => {
+        if (error.code === "auth/user-not-found") {
+          return auth.createUserWithEmailAndPassword(email, password);
+        }
+        throw error;
+      });
     })
     .then(() => {
       setLoginStatus("Dogrulama tamamlandi.", false);
+      pendingAction = null;
       hideLoginGate();
     })
     .catch((error) => {
