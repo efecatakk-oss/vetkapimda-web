@@ -276,6 +276,16 @@ function handleConfirmCode() {
       hideLoginGate();
     })
     .catch((error) => {
+      if (
+        error.code === "auth/invalid-credential" ||
+        error.code === "auth/wrong-password"
+      ) {
+        setLoginStatus(
+          "Sifre hatali veya hesap baska sifreyle kayitli. Dogru sifreyle tekrar deneyin.",
+          true
+        );
+        return;
+      }
       if (error.code === "auth/too-many-requests") {
         setLoginStatus("Cok fazla deneme. 30 dk sonra tekrar deneyin.", true);
         return;
