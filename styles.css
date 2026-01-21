@@ -1066,6 +1066,8 @@ textarea {
   gap: 10px;
   align-items: center;
   justify-content: space-between;
+  border: 1px solid rgba(27, 111, 106, 0.2);
+  box-shadow: 0 16px 30px rgba(23, 20, 42, 0.1);
 }
 
 .form-success.show {
