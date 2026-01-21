@@ -75,7 +75,9 @@ a {
 }
 
 .nav-center .nav-actions {
-  display: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .brand-mark {
@@ -107,6 +109,20 @@ a {
 .nav-link:hover {
   color: var(--primary-deep);
   background: rgba(255, 122, 26, 0.12);
+}
+
+.nav-cta {
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--glow);
+}
+
+.nav-cta:hover {
+  filter: brightness(1.05);
 }
 
 .hero-grid {
