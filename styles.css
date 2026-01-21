@@ -357,6 +357,10 @@ h1 {
   margin-bottom: 8px;
 }
 
+.badge-icon {
+  font-size: 13px;
+}
+
 .badge.soft {
   background: #dff6ff;
   color: #165062;
