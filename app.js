@@ -31,6 +31,8 @@ const logoutBtn = document.getElementById("logoutBtn");
 const loginInfo = document.getElementById("loginInfo");
 const loginStatus = document.getElementById("loginStatus");
 const userEmailHidden = document.getElementById("userEmail");
+const rememberMe = document.getElementById("rememberMe");
+const acceptTerms = document.getElementById("acceptTerms");
 
 let isLoggedIn = false;
 let isVerified = false;
@@ -332,6 +334,13 @@ function handleConfirmCode() {
     setLoginStatus("Sifre girin.", true);
     return;
   }
+  if (pendingAction === "signup" && acceptTerms && !acceptTerms.checked) {
+    setLoginStatus(
+      "Kayit icin KVKK ve Hizmet Sartlari'ni kabul etmeniz gerekir.",
+      true
+    );
+    return;
+  }
   fetch("/api/verify-code", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -343,24 +352,32 @@ function handleConfirmCode() {
         throw new Error(data.error || "Kod dogrulanamadi.");
       }
       markEmailVerified(email);
-      if (pendingAction === "signup") {
+      const persistence =
+        rememberMe && rememberMe.checked
+          ? firebase.auth.Auth.Persistence.LOCAL
+          : firebase.auth.Auth.Persistence.SESSION;
+      return auth.setPersistence(persistence).then(() => {
+        if (pendingAction === "signup") {
+          return auth
+            .createUserWithEmailAndPassword(email, password)
+            .catch((error) => {
+              if (error.code === "auth/email-already-in-use") {
+                return auth.signInWithEmailAndPassword(email, password);
+              }
+              throw error;
+            });
+        }
+        if (pendingAction === "login") {
+          return auth.signInWithEmailAndPassword(email, password);
+        }
         return auth
-          .createUserWithEmailAndPassword(email, password)
+          .signInWithEmailAndPassword(email, password)
           .catch((error) => {
-            if (error.code === "auth/email-already-in-use") {
-              return auth.signInWithEmailAndPassword(email, password);
+            if (error.code === "auth/user-not-found") {
+              return auth.createUserWithEmailAndPassword(email, password);
             }
             throw error;
           });
-      }
-      if (pendingAction === "login") {
-        return auth.signInWithEmailAndPassword(email, password);
-      }
-      return auth.signInWithEmailAndPassword(email, password).catch((error) => {
-        if (error.code === "auth/user-not-found") {
-          return auth.createUserWithEmailAndPassword(email, password);
-        }
-        throw error;
       });
     })
     .then(() => {
