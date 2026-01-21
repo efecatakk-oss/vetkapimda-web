@@ -1,12 +1,15 @@
 :root {
   color-scheme: light;
-  --ink: #1c1a2a;
-  --muted: #6c6a7a;
-  --lavender: #f3f1fb;
-  --primary: #3d2c8d;
-  --accent: #ff8a00;
+  --ink: #1f1b2d;
+  --muted: #5f5a72;
+  --lavender: #f3f6ff;
+  --primary: #1b6f6a;
+  --primary-deep: #0f4f4b;
+  --accent: #ff7a1a;
+  --accent-deep: #d96312;
   --card: #ffffff;
-  --shadow: 0 18px 40px rgba(17, 16, 37, 0.12);
+  --shadow: 0 22px 50px rgba(23, 20, 42, 0.12);
+  --glow: 0 14px 30px rgba(255, 122, 26, 0.25);
 }
 
 * {
@@ -17,7 +20,7 @@ body {
   margin: 0;
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
   color: var(--ink);
-  background: radial-gradient(circle at top, #ffffff 0%, #f6f7fc 45%, #eef0f7 100%);
+  background: radial-gradient(circle at top left, #ffffff 0%, #f7fbff 45%, #eef6f4 100%);
 }
 
 a {
@@ -43,13 +46,13 @@ a {
 .blob-left {
   top: 40px;
   left: 8%;
-  background: radial-gradient(circle, #ffb45b 0%, #ffdcb6 70%);
+  background: radial-gradient(circle, #ffd2a8 0%, #ffe7cf 70%);
 }
 
 .blob-right {
   top: 20px;
   right: 10%;
-  background: radial-gradient(circle, #7cc0ff 0%, #cfe7ff 70%);
+  background: radial-gradient(circle, #9fe4dc 0%, #d7f6f2 70%);
 }
 
 .nav {
@@ -95,7 +98,7 @@ a {
 }
 
 .eyebrow {
-  color: var(--primary);
+  color: var(--accent);
   font-weight: 600;
   margin-bottom: 12px;
 }
@@ -157,8 +160,9 @@ h1 {
 }
 
 .btn.primary {
-  background: var(--primary);
+  background: linear-gradient(120deg, var(--primary) 0%, var(--primary-deep) 100%);
   color: #fff;
+  box-shadow: var(--shadow);
 }
 
 .btn.ghost {
@@ -178,8 +182,8 @@ h1 {
 }
 
 .pill {
-  background: rgba(61, 44, 141, 0.08);
-  color: var(--primary);
+  background: rgba(27, 111, 106, 0.12);
+  color: var(--primary-deep);
   padding: 6px 12px;
   border-radius: 999px;
   font-size: 12px;
@@ -240,7 +244,7 @@ h1 {
 }
 
 .dot.active {
-  background: var(--primary);
+  background: var(--accent);
 }
 
 .section {
@@ -297,19 +301,19 @@ h1 {
   letter-spacing: 0.5px;
   padding: 6px 10px;
   border-radius: 999px;
-  background: #ffe6c7;
-  color: #7b3f00;
+  background: #ffe2c6;
+  color: #8a3f00;
   margin-bottom: 8px;
 }
 
 .badge.soft {
-  background: #e7f0ff;
-  color: #234090;
+  background: #dff6ff;
+  color: #165062;
 }
 
 .badge.ghost {
-  background: #e6f7f0;
-  color: #0f6d4b;
+  background: #e9fbf4;
+  color: #0f6f51;
 }
 
 .card-body p {
@@ -339,6 +343,7 @@ h1 {
   margin: 0 clamp(16px, 4vw, 60px) 32px;
   padding: 28px;
   box-shadow: var(--shadow);
+  border: 1px solid rgba(27, 111, 106, 0.08);
 }
 
 .feature-grid {
@@ -372,8 +377,8 @@ h1 {
 }
 
 .chip {
-  background: rgba(61, 44, 141, 0.1);
-  color: var(--primary);
+  background: rgba(255, 122, 26, 0.16);
+  color: var(--accent-deep);
   padding: 6px 10px;
   border-radius: 999px;
   font-size: 12px;
@@ -407,7 +412,7 @@ h1 {
   gap: 12px;
   padding: 10px 14px;
   border-radius: 12px;
-  background: #ffedd6;
+  background: linear-gradient(90deg, #ffe1c2 0%, #fff1e1 100%);
   color: #8a4b00;
   font-weight: 600;
   font-size: 13px;
@@ -445,7 +450,7 @@ h1 {
 
 .shop-search button {
   border: none;
-  background: var(--primary);
+  background: var(--accent);
   color: #fff;
   padding: 8px 16px;
   border-radius: 999px;
@@ -470,16 +475,16 @@ h1 {
 }
 
 .shop-tabs .tab.active {
-  background: var(--primary);
+  background: var(--accent);
   color: #fff;
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 .shop-hero {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
-  background: #f7f4ff;
+  background: linear-gradient(130deg, #f3fbff 0%, #f8f4ff 100%);
   border-radius: 18px;
   padding: 20px;
   margin-bottom: 20px;
@@ -510,8 +515,8 @@ h1 {
 }
 
 .product-card .tag {
-  background: #e7f0ff;
-  color: #234090;
+  background: #e8f7ff;
+  color: #0f5570;
   font-size: 11px;
   font-weight: 700;
   padding: 4px 10px;
@@ -531,7 +536,7 @@ h1 {
 
 .price-row button {
   border: none;
-  background: var(--primary);
+  background: var(--accent);
   color: #fff;
   padding: 8px 12px;
   border-radius: 10px;
@@ -613,7 +618,7 @@ h1 {
 }
 
 .booking {
-  background: var(--lavender);
+  background: linear-gradient(180deg, #f6fbff 0%, #f1f6ff 100%);
 }
 
 .booking-form {
@@ -681,7 +686,7 @@ textarea {
 
 .form-success {
   grid-column: 1 / -1;
-  background: #f1efff;
+  background: #f0fbf7;
   border-radius: 12px;
   padding: 14px;
   display: none;
@@ -722,6 +727,7 @@ textarea {
   gap: 10px;
   align-items: center;
   font-weight: 600;
+  border: 1px solid rgba(27, 111, 106, 0.08);
 }
 
 .quick-links {
@@ -758,12 +764,13 @@ textarea {
   box-shadow: var(--shadow);
   color: var(--muted);
   line-height: 1.5;
+  border: 1px solid rgba(255, 122, 26, 0.08);
 }
 
 .testimonial span {
   display: block;
   margin-top: 10px;
-  color: var(--primary);
+  color: var(--accent);
   font-weight: 600;
 }
 
@@ -854,7 +861,7 @@ textarea {
 }
 
 .service-card button.active {
-  background: #e36b00;
+  background: var(--accent);
 }
 
 .cart {
