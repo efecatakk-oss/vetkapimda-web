@@ -241,6 +241,24 @@ h1 {
   font-weight: 600;
 }
 
+.trust-inline {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.trust-badge {
+  background: #ffffff;
+  border: 1px solid rgba(27, 111, 106, 0.12);
+  color: var(--primary-deep);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 10px 20px rgba(23, 20, 42, 0.08);
+}
+
 .hero-media {
   display: grid;
   gap: 12px;
