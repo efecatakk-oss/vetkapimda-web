@@ -1,4 +1,4 @@
-function jsonResponse(statusCode, payload) {
+﻿function jsonResponse(statusCode, payload) {
   return new Response(JSON.stringify(payload), {
     status: statusCode,
     headers: {
@@ -55,7 +55,7 @@ export async function onRequest(context) {
 
   const apiKey = env.RESEND_API_KEY;
   const secret = env.OTP_SECRET;
-  const fromEmail = env.FROM_EMAIL || "destek@vetkapimda.com";
+  const fromEmail = env.FROM_EMAIL || "destek@VETKAPIMDAda.com";
 
   if (!apiKey || !secret) {
     return jsonResponse(500, { ok: false, error: "Missing server config" });
@@ -81,7 +81,7 @@ export async function onRequest(context) {
 
   const emailBody = `
     <div style="font-family: Arial, sans-serif; color: #1c1a2a;">
-      <h2>VetKapim Onay Kodu</h2>
+      <h2>VETKAPIMDA Onay Kodu</h2>
       <p>Kaydinizi tamamlamak icin asagidaki kodu girin:</p>
       <div style="font-size: 28px; font-weight: bold; margin: 16px 0;">${code}</div>
       <p>Kod 10 dakika boyunca gecerli.</p>
@@ -95,9 +95,9 @@ export async function onRequest(context) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: `VetKapim <${fromEmail}>`,
+      from: `VETKAPIMDA <${fromEmail}>`,
       to: [email],
-      subject: "VetKapim Onay Kodu",
+      subject: "VETKAPIMDA Onay Kodu",
       html: emailBody,
     }),
   });
@@ -109,3 +109,4 @@ export async function onRequest(context) {
 
   return jsonResponse(200, { ok: true, token, exp });
 }
+

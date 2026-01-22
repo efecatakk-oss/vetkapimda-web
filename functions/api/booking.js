@@ -1,4 +1,4 @@
-function jsonResponse(statusCode, payload) {
+﻿function jsonResponse(statusCode, payload) {
   return new Response(JSON.stringify(payload), {
     status: statusCode,
     headers: {
@@ -35,8 +35,8 @@ export async function onRequest(context) {
   }
 
   const apiKey = env.RESEND_API_KEY;
-  const toEmail = env.BOOKING_EMAIL || "vetkapim@gmail.com";
-  const fromEmail = env.FROM_EMAIL || "destek@vetkapimda.com";
+  const toEmail = env.BOOKING_EMAIL || "VETKAPIMDA@gmail.com";
+  const fromEmail = env.FROM_EMAIL || "destek@VETKAPIMDAda.com";
 
   if (!apiKey) {
     return jsonResponse(500, { ok: false, error: "Missing server config" });
@@ -57,7 +57,7 @@ export async function onRequest(context) {
 
   const emailBody = `
     <div style="font-family: Arial, sans-serif; color: #1c1a2a;">
-      <h2>VetKapim Randevu Talebi</h2>
+      <h2>VETKAPIMDA Randevu Talebi</h2>
       <p><strong>Ad Soyad:</strong> ${escapeHtml(name)}</p>
       <p><strong>Telefon:</strong> ${escapeHtml(phone)}</p>
       <p><strong>E-posta:</strong> ${escapeHtml(userEmail)}</p>
@@ -77,9 +77,9 @@ export async function onRequest(context) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: `VetKapim <${fromEmail}>`,
+      from: `VETKAPIMDA <${fromEmail}>`,
       to: [toEmail],
-      subject: "VetKapim Randevu Talebi",
+      subject: "VETKAPIMDA Randevu Talebi",
       html: emailBody,
     }),
   });
@@ -111,9 +111,9 @@ export async function onRequest(context) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: `VetKapim <${fromEmail}>`,
+        from: `VETKAPIMDA <${fromEmail}>`,
         to: [userEmail],
-        subject: "VetKapim Randevu Onayi",
+        subject: "VETKAPIMDA Randevu Onayi",
         html: userBody,
       }),
     });
@@ -126,3 +126,4 @@ export async function onRequest(context) {
 
   return jsonResponse(200, { ok: true });
 }
+
