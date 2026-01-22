@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VETKAPIMDA Admin</title>
+    <link rel="stylesheet" href="admin.css" />
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  </head>
+  <body>
+    <header class="admin-header">
+      <h1>VETKAPIMDA Yönetim</h1>
+      <div class="admin-actions">
+        <button id="logoutBtn" type="button">Çıkış</button>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <section class="panel" id="authPanel">
+        <h2>Giriş</h2>
+        <p>Sadece yetkili hesaplar giriş yapabilir.</p>
+        <div class="form-row">
+          <label for="adminEmail">E-posta</label>
+          <input id="adminEmail" type="email" placeholder="vetkapim@gmail.com" />
+        </div>
+        <div class="form-row">
+          <label for="adminPassword">Şifre</label>
+          <input id="adminPassword" type="password" placeholder="Şifre" />
+        </div>
+        <button id="loginBtn" type="button">Giriş Yap</button>
+        <p id="authStatus" class="status"></p>
+      </section>
+
+      <section class="panel" id="servicePanel" hidden>
+        <div class="panel-header">
+          <h2>Aşı / Hizmet Fiyatları</h2>
+          <button id="addServiceBtn" type="button">Yeni Hizmet Ekle</button>
+        </div>
+        <div id="serviceList" class="list"></div>
+      </section>
+
+      <section class="panel" id="shopPanel" hidden>
+        <div class="panel-header">
+          <h2>Shop Ürünleri</h2>
+          <button id="addProductBtn" type="button">Yeni Ürün Ekle</button>
+        </div>
+        <div id="productList" class="list"></div>
+      </section>
+    </main>
+
+    <dialog id="serviceDialog" class="modal">
+      <form method="dialog" class="modal-body" id="serviceForm">
+        <h3>Hizmet</h3>
+        <label>
+          Başlık
+          <input id="serviceTitle" type="text" required />
+        </label>
+        <label>
+          Kategori
+          <select id="serviceCategory" required>
+            <option value="procedures">Evde İşlemler</option>
+            <option value="vaccines">Evde Köpek Aşıları</option>
+          </select>
+        </label>
+        <label>
+          Fiyat (TL)
+          <input id="servicePrice" type="number" min="0" step="1" required />
+        </label>
+        <label>
+          Sıra
+          <input id="serviceOrder" type="number" min="0" step="1" value="0" />
+        </label>
+        <label class="checkbox">
+          <input id="serviceActive" type="checkbox" checked />
+          Aktif
+        </label>
+        <div class="modal-actions">
+          <button type="button" id="serviceCancel">İptal</button>
+          <button type="submit" id="serviceSave">Kaydet</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="productDialog" class="modal">
+      <form method="dialog" class="modal-body" id="productForm">
+        <h3>Ürün</h3>
+        <label>
+          Başlık
+          <input id="productTitle" type="text" required />
+        </label>
+        <label>
+          Etiket (örn: Yeni, Çok Satan)
+          <input id="productTag" type="text" />
+        </label>
+        <label>
+          Açıklama
+          <input id="productDescription" type="text" />
+        </label>
+        <label>
+          Fiyat (TL)
+          <input id="productPrice" type="number" min="0" step="1" required />
+        </label>
+        <label>
+          Sıra
+          <input id="productOrder" type="number" min="0" step="1" value="0" />
+        </label>
+        <label class="checkbox">
+          <input id="productActive" type="checkbox" checked />
+          Aktif
+        </label>
+        <div class="modal-actions">
+          <button type="button" id="productCancel">İptal</button>
+          <button type="submit" id="productSave">Kaydet</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="admin.js"></script>
+  </body>
+</html>

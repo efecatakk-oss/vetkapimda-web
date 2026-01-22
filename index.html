@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="styles.css" />
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   </head>
   <body>
     <header class="hero">
@@ -232,44 +233,7 @@
             <strong>Sezon Firsatlari</strong>
           </div>
         </div>
-        <div class="shop-grid-large">
-          <article class="product-card">
-            <span class="tag">Yeni</span>
-            <h4>Premium Kedi Mamasi 2 kg</h4>
-            <p>Tavsiye edilen, hassas mide.</p>
-            <div class="price-row">
-              <strong>540 TL</strong>
-              <button type="button">Sepete Ekle</button>
-            </div>
-          </article>
-          <article class="product-card">
-            <span class="tag">Cok Satan</span>
-            <h4>Kopek Vitamin Seti</h4>
-            <p>Bagisiklik ve eklem destegi.</p>
-            <div class="price-row">
-              <strong>320 TL</strong>
-              <button type="button">Sepete Ekle</button>
-            </div>
-          </article>
-          <article class="product-card">
-            <span class="tag">Firsat</span>
-            <h4>Hijyen Bakim Paketi</h4>
-            <p>Sampuan + tarak + kulak solusyonu.</p>
-            <div class="price-row">
-              <strong>410 TL</strong>
-              <button type="button">Sepete Ekle</button>
-            </div>
-          </article>
-          <article class="product-card">
-            <span class="tag">Populer</span>
-            <h4>Kus Yem Karisimi</h4>
-            <p>Gunde 1 olcek, saglikli icerik.</p>
-            <div class="price-row">
-              <strong>190 TL</strong>
-              <button type="button">Sepete Ekle</button>
-            </div>
-          </article>
-        </div>
+        <div id="shopGrid" class="shop-grid-large"></div>
         <p class="fineprint">
           Su an siparisleri randevu notuna ekliyoruz. Online shop yakinda aktif
           olacak.

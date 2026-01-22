@@ -10,6 +10,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db = firebase.firestore();
 
 const form = document.getElementById("bookingForm");
 const statusEl = document.getElementById("formStatus");
@@ -18,6 +19,7 @@ const cartEl = document.getElementById("cartSummary");
 const cartTotalEl = document.getElementById("cartTotal");
 const slides = document.querySelectorAll(".slider-track .slide");
 const dots = document.querySelectorAll(".slider-dots .dot");
+const shopGrid = document.getElementById("shopGrid");
 const loginGate = document.getElementById("loginGate");
 const loginEmail = document.getElementById("loginEmail");
 const loginPassword = document.getElementById("loginPassword");
@@ -42,7 +44,7 @@ let lastCodeSentAt = Number(localStorage.getItem("otpLastSentAt") || "0");
 const CODE_SEND_COOLDOWN_MS = 60000;
 const defaultSendCodeLabel = sendCodeBtn ? sendCodeBtn.textContent : "Kod Gonder";
 
-const services = [
+const fallbackServices = [
   {
     title: "Evde Islemler",
     slug: "procedures",
@@ -69,15 +71,46 @@ const services = [
   },
 ];
 
+const fallbackProducts = [
+  {
+    title: "Premium Kedi Mamasi 2 kg",
+    tag: "Yeni",
+    description: "Tavsiye edilen, hassas mide.",
+    price: 540,
+  },
+  {
+    title: "Kopek Vitamin Seti",
+    tag: "Cok Satan",
+    description: "Bagisiklik ve eklem destegi.",
+    price: 320,
+  },
+  {
+    title: "Hijyen Bakim Paketi",
+    tag: "Firsat",
+    description: "Sampuan + tarak + kulak solusyonu.",
+    price: 410,
+  },
+  {
+    title: "Kus Yem Karisimi",
+    tag: "Populer",
+    description: "Gunde 1 olcek, saglikli icerik.",
+    price: 190,
+  },
+];
+
+const services = [];
+const shopProducts = [];
+
 const selectedItems = new Map();
 
-renderCatalog();
+loadServiceItems();
 renderCart();
 bindServiceCards();
 initSlider();
 bindLoginGate();
 watchAuth();
 startCooldownTicker();
+loadShopProducts();
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -512,6 +545,79 @@ function renderCatalog() {
   });
 }
 
+function loadServiceItems() {
+  const categories = new Map();
+  db.collection("serviceItems")
+    .orderBy("order")
+    .get()
+    .then((snapshot) => {
+      if (snapshot.empty) {
+        services.splice(0, services.length, ...fallbackServices);
+        renderCatalog();
+        return;
+      }
+      snapshot.forEach((doc) => {
+        const item = doc.data();
+        if (item.active === false) return;
+        const slug = item.category || "procedures";
+        if (!categories.has(slug)) {
+          const title = slug === "vaccines" ? "Evde Kopek Asilari" : "Evde Islemler";
+          categories.set(slug, { title, slug, items: [] });
+        }
+        categories.get(slug).items.push({
+          id: doc.id,
+          title: item.title,
+          price: Number(item.price || 0),
+        });
+      });
+      services.splice(0, services.length, ...Array.from(categories.values()));
+      renderCatalog();
+    })
+    .catch(() => {
+      services.splice(0, services.length, ...fallbackServices);
+      renderCatalog();
+    });
+}
+
+function loadShopProducts() {
+  if (!shopGrid) return;
+  db.collection("shopProducts")
+    .orderBy("order")
+    .get()
+    .then((snapshot) => {
+      const items = [];
+      if (snapshot.empty) {
+        items.push(...fallbackProducts);
+      } else {
+        snapshot.forEach((doc) => {
+          const item = doc.data();
+          if (item.active === false) return;
+          items.push(item);
+        });
+      }
+      renderShopProducts(items);
+    })
+    .catch(() => renderShopProducts(fallbackProducts));
+}
+
+function renderShopProducts(items) {
+  shopGrid.innerHTML = "";
+  items.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "product-card";
+    const tag = item.tag ? `<span class="tag">${item.tag}</span>` : "";
+    card.innerHTML = `
+      ${tag}
+      <h4>${item.title}</h4>
+      <p>${item.description || ""}</p>
+      <div class="price-row">
+        <strong>${item.price} TL</strong>
+        <button type="button">Sepete Ekle</button>
+      </div>
+    `;
+    shopGrid.appendChild(card);
+  });
+}
 function renderCart() {
   cartEl.innerHTML = "";
   if (selectedItems.size === 0) {
