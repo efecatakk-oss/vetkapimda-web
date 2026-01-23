@@ -1390,6 +1390,234 @@ textarea {
   filter: brightness(1.05);
 }
 
+.admin-body {
+  background: radial-gradient(circle at top, #f7fffd 0%, #f7f3ff 45%, #fff7ed 100%);
+  min-height: 100vh;
+}
+
+.admin-hero {
+  position: relative;
+  padding: 40px clamp(16px, 4vw, 60px) 28px;
+  overflow: hidden;
+}
+
+.admin-hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(27, 111, 106, 0.12), rgba(255, 122, 26, 0.12));
+  border-bottom-left-radius: 32px;
+  border-bottom-right-radius: 32px;
+  z-index: 0;
+}
+
+.admin-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-eyebrow {
+  color: var(--accent);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.admin-lede {
+  color: var(--muted);
+  margin: 8px 0 0;
+}
+
+.admin-main {
+  padding: 24px clamp(16px, 4vw, 60px) 60px;
+  display: grid;
+  gap: 20px;
+}
+
+.admin-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(27, 111, 106, 0.08);
+}
+
+.admin-hidden {
+  display: none;
+}
+
+.admin-form {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-form textarea,
+.admin-form input {
+  border: 1px solid #e0e0eb;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.admin-login-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-form input:focus,
+.admin-form textarea:focus {
+  outline: none;
+  border-color: rgba(27, 111, 106, 0.6);
+  box-shadow: 0 0 0 3px rgba(27, 111, 106, 0.12);
+}
+
+.admin-status {
+  margin: 0;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.admin-status.error {
+  color: #b3261e;
+}
+
+.admin-muted {
+  color: var(--muted);
+  margin: 0;
+}
+
+.admin-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 18px;
+}
+
+.admin-form-card {
+  background: #f7fbff;
+  border-radius: 16px;
+  padding: 18px;
+  border: 1px solid rgba(27, 111, 106, 0.1);
+}
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.admin-checkbox {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.admin-table-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px;
+  border: 1px solid rgba(27, 111, 106, 0.1);
+  display: grid;
+  gap: 12px;
+}
+
+.admin-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-count {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.admin-table {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #f9f9ff;
+  border: 1px solid rgba(27, 111, 106, 0.08);
+  flex-wrap: wrap;
+}
+
+.admin-row-info {
+  display: grid;
+  gap: 4px;
+  min-width: 220px;
+}
+
+.admin-row-info span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.admin-row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-tag {
+  background: #e8f7ff;
+  color: #0f5570;
+  padding: 2px 8px;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.admin-pill {
+  background: #e9fbf4;
+  color: #0f6f51;
+  padding: 2px 8px;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.admin-pill.off {
+  background: #ffe6e6;
+  color: #a62828;
+}
+
+.admin-order {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.admin-back {
+  align-self: flex-start;
+}
+
 @media (max-width: 720px) {
   .nav-actions {
     display: none;
@@ -1411,5 +1639,8 @@ textarea {
   .footer-meta {
     flex-direction: column;
     gap: 6px;
+  }
+  .admin-grid {
+    grid-template-columns: 1fr;
   }
 }

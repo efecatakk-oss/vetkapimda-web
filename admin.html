@@ -3,119 +3,101 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>VETKAPIMDA Admin</title>
-    <link rel="stylesheet" href="admin.css" />
+    <title>VETKAPIMDA Admin Panel</title>
+    <meta name="description" content="VETKAPIMDA shop urun yonetimi admin paneli." />
+    <link rel="icon" href="assets/favicon.png" type="image/png" />
+    <link rel="stylesheet" href="styles.css" />
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   </head>
-  <body>
-    <header class="admin-header">
-      <h1>VETKAPIMDA Yönetim</h1>
-      <div class="admin-actions">
-        <button id="logoutBtn" type="button">Çıkış</button>
+  <body class="admin-body">
+    <header class="admin-hero">
+      <div class="admin-hero-bg"></div>
+      <div class="admin-hero-inner">
+        <div>
+          <p class="admin-eyebrow">VETKAPIMDA Admin</p>
+          <h1>Shop Urun Yonetimi</h1>
+          <p class="admin-lede">
+            Urun ekle, fiyat guncelle, aktif/pasif yap ve sirala.
+          </p>
+        </div>
+        <a class="btn ghost admin-back" href="index.html">Siteye Don</a>
       </div>
     </header>
 
     <main class="admin-main">
-      <section class="panel" id="authPanel">
-        <h2>Giriş</h2>
-        <p>Sadece yetkili hesaplar giriş yapabilir.</p>
-        <div class="form-row">
+      <section class="admin-card" id="loginPanel">
+        <h2>Admin Giris</h2>
+        <p class="admin-muted">
+          Yalnizca yetkili e-postalar ile giris yapabilirsiniz.
+        </p>
+        <form id="adminLoginForm" class="admin-form" autocomplete="on">
           <label for="adminEmail">E-posta</label>
-          <input id="adminEmail" type="email" placeholder="vetkapim@gmail.com" />
-        </div>
-        <div class="form-row">
-          <label for="adminPassword">Şifre</label>
-          <input id="adminPassword" type="password" placeholder="Şifre" />
-        </div>
-        <button id="loginBtn" type="button">Giriş Yap</button>
-        <p id="authStatus" class="status"></p>
+          <input id="adminEmail" type="email" required />
+          <label for="adminPassword">Sifre</label>
+          <input id="adminPassword" type="password" required />
+          <button class="btn primary" type="submit">Giris Yap</button>
+          <div class="admin-login-actions">
+            <button class="link-button" id="adminResetBtn" type="button">
+              Sifremi Unuttum
+            </button>
+            <button class="link-button" id="adminCreateBtn" type="button">
+              Admin Hesap Olustur
+            </button>
+          </div>
+          <p id="adminLoginStatus" class="admin-status" role="status"></p>
+        </form>
       </section>
 
-      <section class="panel" id="servicePanel" hidden>
-        <div class="panel-header">
-          <h2>Aşı / Hizmet Fiyatları</h2>
-          <button id="addServiceBtn" type="button">Yeni Hizmet Ekle</button>
+      <section class="admin-card admin-hidden" id="adminPanel">
+        <div class="admin-toolbar">
+          <div>
+            <h2>Urunler</h2>
+            <p class="admin-muted">Firestore: shopProducts</p>
+          </div>
+          <button class="btn ghost" id="adminLogoutBtn" type="button">Cikis Yap</button>
         </div>
-        <div id="serviceList" class="list"></div>
-      </section>
 
-      <section class="panel" id="shopPanel" hidden>
-        <div class="panel-header">
-          <h2>Shop Ürünleri</h2>
-          <button id="addProductBtn" type="button">Yeni Ürün Ekle</button>
+        <div class="admin-grid">
+          <div class="admin-form-card">
+            <h3 id="productFormTitle">Yeni Urun</h3>
+            <form id="productForm" class="admin-form">
+              <input id="productId" type="hidden" />
+              <label for="productTitle">Urun Adi</label>
+              <input id="productTitle" type="text" required />
+              <label for="productTag">Etiket (opsiyonel)</label>
+              <input id="productTag" type="text" placeholder="Yeni, Firsat..." />
+              <label for="productDescription">Aciklama</label>
+              <textarea id="productDescription" rows="3"></textarea>
+              <label for="productPrice">Fiyat (TL)</label>
+              <input id="productPrice" type="number" min="0" step="1" required />
+              <label for="productOrder">Siralama</label>
+              <input id="productOrder" type="number" min="0" step="1" value="0" />
+              <label class="admin-checkbox">
+                <input id="productActive" type="checkbox" checked />
+                Aktif olarak yayinla
+              </label>
+              <div class="admin-actions">
+                <button class="btn primary" type="submit">Kaydet</button>
+                <button class="btn ghost" id="productResetBtn" type="button">
+                  Temizle
+                </button>
+              </div>
+              <p id="productFormStatus" class="admin-status" role="status"></p>
+            </form>
+          </div>
+
+          <div class="admin-table-card">
+            <div class="admin-table-header">
+              <h3>Urun Listesi</h3>
+              <span id="productCount" class="admin-count"></span>
+            </div>
+            <div id="productList" class="admin-table"></div>
+          </div>
         </div>
-        <div id="productList" class="list"></div>
       </section>
     </main>
-
-    <dialog id="serviceDialog" class="modal">
-      <form method="dialog" class="modal-body" id="serviceForm">
-        <h3>Hizmet</h3>
-        <label>
-          Başlık
-          <input id="serviceTitle" type="text" required />
-        </label>
-        <label>
-          Kategori
-          <select id="serviceCategory" required>
-            <option value="procedures">Evde İşlemler</option>
-            <option value="vaccines">Evde Köpek Aşıları</option>
-          </select>
-        </label>
-        <label>
-          Fiyat (TL)
-          <input id="servicePrice" type="number" min="0" step="1" required />
-        </label>
-        <label>
-          Sıra
-          <input id="serviceOrder" type="number" min="0" step="1" value="0" />
-        </label>
-        <label class="checkbox">
-          <input id="serviceActive" type="checkbox" checked />
-          Aktif
-        </label>
-        <div class="modal-actions">
-          <button type="button" id="serviceCancel">İptal</button>
-          <button type="submit" id="serviceSave">Kaydet</button>
-        </div>
-      </form>
-    </dialog>
-
-    <dialog id="productDialog" class="modal">
-      <form method="dialog" class="modal-body" id="productForm">
-        <h3>Ürün</h3>
-        <label>
-          Başlık
-          <input id="productTitle" type="text" required />
-        </label>
-        <label>
-          Etiket (örn: Yeni, Çok Satan)
-          <input id="productTag" type="text" />
-        </label>
-        <label>
-          Açıklama
-          <input id="productDescription" type="text" />
-        </label>
-        <label>
-          Fiyat (TL)
-          <input id="productPrice" type="number" min="0" step="1" required />
-        </label>
-        <label>
-          Sıra
-          <input id="productOrder" type="number" min="0" step="1" value="0" />
-        </label>
-        <label class="checkbox">
-          <input id="productActive" type="checkbox" checked />
-          Aktif
-        </label>
-        <div class="modal-actions">
-          <button type="button" id="productCancel">İptal</button>
-          <button type="submit" id="productSave">Kaydet</button>
-        </div>
-      </form>
-    </dialog>
 
     <script src="admin.js"></script>
   </body>
