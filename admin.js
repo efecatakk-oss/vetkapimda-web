@@ -46,6 +46,9 @@ const bulkApplyBtn = document.getElementById("bulkApplyBtn");
 const bulkPriceMode = document.getElementById("bulkPriceMode");
 const bulkPriceValue = document.getElementById("bulkPriceValue");
 const bulkPriceApplyBtn = document.getElementById("bulkPriceApplyBtn");
+const productImportFile = document.getElementById("productImportFile");
+const productImportBtn = document.getElementById("productImportBtn");
+const productImportStatus = document.getElementById("productImportStatus");
 
 const servicePanel = document.getElementById("servicePanel");
 const serviceForm = document.getElementById("serviceForm");
@@ -63,16 +66,28 @@ const serviceCount = document.getElementById("serviceCount");
 const serviceSearch = document.getElementById("serviceSearch");
 const serviceCategoryFilter = document.getElementById("serviceCategoryFilter");
 const serviceStatusFilter = document.getElementById("serviceStatusFilter");
+const serviceImportFile = document.getElementById("serviceImportFile");
+const serviceImportBtn = document.getElementById("serviceImportBtn");
+const serviceImportStatus = document.getElementById("serviceImportStatus");
 
 const clean = (value) => (value || "").trim();
 const formatPrice = (value) =>
   Number.isFinite(value) ? `${value} TL` : "-";
+const serviceCategoryLabels = {
+  procedures: "Evde Islemler",
+  vaccines: "Evde Kopek Asilari",
+  cat_vaccines: "Evde Kedi Asilari",
+  exotics: "Egzotik Dostlar",
+  care: "Bakim Paketleri",
+};
 
 let productUnsub = null;
 let allProducts = [];
 const selectedIds = new Set();
 let serviceUnsub = null;
 let allServices = [];
+let productDragId = null;
+let serviceDragId = null;
 
 const placeholderImage =
   "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=60";
@@ -211,6 +226,13 @@ productSearch.addEventListener("input", () => renderProducts(allProducts));
 productStatusFilter.addEventListener("change", () => renderProducts(allProducts));
 bulkApplyBtn.addEventListener("click", () => handleBulkAction());
 bulkPriceApplyBtn.addEventListener("click", () => handleBulkPriceUpdate());
+
+productImportBtn?.addEventListener("click", () =>
+  handleCsvImport("shopProducts")
+);
+serviceImportBtn?.addEventListener("click", () =>
+  handleCsvImport("serviceItems")
+);
 
 if (productStatusFilter) {
   productStatusFilter.value = "all";
@@ -394,6 +416,7 @@ function renderProducts(items) {
   if (!productList) return;
   const query = clean(productSearch.value).toLowerCase();
   const filterValue = productStatusFilter.value;
+  const isSortable = !query && filterValue === "all";
   const filtered = items.filter((item) => {
     const matchesQuery =
       !query ||
@@ -418,6 +441,11 @@ function renderProducts(items) {
   filtered.forEach((item) => {
     const row = document.createElement("div");
     row.className = "admin-row";
+    row.dataset.id = item.id;
+    row.draggable = isSortable;
+    row.title = isSortable
+      ? "Surukleyip birakabilirsiniz."
+      : "Siralama icin arama ve filtreyi temizleyin.";
 
     const selectWrap = document.createElement("label");
     selectWrap.className = "admin-select";
@@ -512,6 +540,38 @@ function renderProducts(items) {
     row.appendChild(info);
     row.appendChild(actions);
     productList.appendChild(row);
+
+    if (isSortable) {
+      row.addEventListener("dragstart", () => {
+        productDragId = item.id;
+        row.classList.add("dragging");
+      });
+      row.addEventListener("dragend", () => {
+        productDragId = null;
+        row.classList.remove("dragging");
+      });
+      row.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        row.classList.add("drag-over");
+      });
+      row.addEventListener("dragleave", () => {
+        row.classList.remove("drag-over");
+      });
+      row.addEventListener("drop", (event) => {
+        event.preventDefault();
+        row.classList.remove("drag-over");
+        if (!productDragId || productDragId === item.id) return;
+        const dragged = productList.querySelector(
+          `[data-id="${productDragId}"]`
+        );
+        if (!dragged) return;
+        productList.insertBefore(dragged, row);
+        const orderedIds = Array.from(
+          productList.querySelectorAll(".admin-row")
+        ).map((node) => node.dataset.id);
+        persistProductOrder(orderedIds);
+      });
+    }
   });
 }
 
@@ -520,6 +580,8 @@ function renderServices(items) {
   const query = clean(serviceSearch.value).toLowerCase();
   const categoryValue = serviceCategoryFilter.value;
   const statusValue = serviceStatusFilter.value;
+  const isSortable =
+    !query && categoryValue === "all" && statusValue === "all";
 
   const filtered = items.filter((item) => {
     const matchesQuery =
@@ -547,6 +609,11 @@ function renderServices(items) {
   filtered.forEach((item) => {
     const row = document.createElement("div");
     row.className = "admin-row";
+    row.dataset.id = item.id;
+    row.draggable = isSortable;
+    row.title = isSortable
+      ? "Surukleyip birakabilirsiniz."
+      : "Siralama icin arama ve filtreyi temizleyin.";
 
     const info = document.createElement("div");
     info.className = "admin-row-info";
@@ -562,7 +629,9 @@ function renderServices(items) {
         />
         <button type="button" class="btn ghost">Fiyati Kaydet</button>
       </div>
-      <span class="admin-tag">${item.category || "procedures"}</span>
+      <span class="admin-tag">${
+        serviceCategoryLabels[item.category] || item.category || "procedures"
+      }</span>
       <span class="admin-pill ${
         item.active === false ? "off" : ""
       }">${item.active === false ? "Pasif" : "Aktif"}</span>
@@ -605,6 +674,38 @@ function renderServices(items) {
     row.appendChild(info);
     row.appendChild(actions);
     serviceList.appendChild(row);
+
+    if (isSortable) {
+      row.addEventListener("dragstart", () => {
+        serviceDragId = item.id;
+        row.classList.add("dragging");
+      });
+      row.addEventListener("dragend", () => {
+        serviceDragId = null;
+        row.classList.remove("dragging");
+      });
+      row.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        row.classList.add("drag-over");
+      });
+      row.addEventListener("dragleave", () => {
+        row.classList.remove("drag-over");
+      });
+      row.addEventListener("drop", (event) => {
+        event.preventDefault();
+        row.classList.remove("drag-over");
+        if (!serviceDragId || serviceDragId === item.id) return;
+        const dragged = serviceList.querySelector(
+          `[data-id="${serviceDragId}"]`
+        );
+        if (!dragged) return;
+        serviceList.insertBefore(dragged, row);
+        const orderedIds = Array.from(
+          serviceList.querySelectorAll(".admin-row")
+        ).map((node) => node.dataset.id);
+        persistServiceOrder(orderedIds);
+      });
+    }
   });
 }
 
@@ -686,6 +787,205 @@ function updateServicePrice(id, price) {
     .catch((error) => {
       setServiceStatus(error.message || "Fiyat guncellenemedi.", true);
     });
+}
+
+function persistProductOrder(ids) {
+  if (!ids.length) return;
+  const batch = db.batch();
+  ids.forEach((id, index) => {
+    const ref = db.collection("shopProducts").doc(id);
+    batch.set(
+      ref,
+      { order: index + 1, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+      { merge: true }
+    );
+  });
+  batch
+    .commit()
+    .then(() => {
+      setProductStatus("Siralama guncellendi.", false);
+    })
+    .catch((error) => {
+      setProductStatus(error.message || "Siralama guncellenemedi.", true);
+    });
+}
+
+function persistServiceOrder(ids) {
+  if (!ids.length) return;
+  const batch = db.batch();
+  ids.forEach((id, index) => {
+    const ref = db.collection("serviceItems").doc(id);
+    batch.set(
+      ref,
+      { order: index + 1, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+      { merge: true }
+    );
+  });
+  batch
+    .commit()
+    .then(() => {
+      setServiceStatus("Siralama guncellendi.", false);
+    })
+    .catch((error) => {
+      setServiceStatus(error.message || "Siralama guncellenemedi.", true);
+    });
+}
+
+function handleCsvImport(collection) {
+  const fileInput =
+    collection === "shopProducts" ? productImportFile : serviceImportFile;
+  const statusEl =
+    collection === "shopProducts" ? productImportStatus : serviceImportStatus;
+
+  if (!fileInput || !fileInput.files?.length) {
+    statusEl.textContent = "CSV dosyasi secin.";
+    statusEl.classList.add("error");
+    return;
+  }
+  if (!auth.currentUser || !isAdmin(auth.currentUser.email || "")) {
+    statusEl.textContent = "Yetkisiz islem.";
+    statusEl.classList.add("error");
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const text = String(reader.result || "");
+      const { headers, rows } = parseCsv(text);
+      const docs = rows
+        .map((row) => mapCsvRow(headers, row, collection))
+        .filter(Boolean);
+      if (!docs.length) {
+        statusEl.textContent = "Uygun veri bulunamadi.";
+        statusEl.classList.add("error");
+        return;
+      }
+      uploadCsvDocs(collection, docs, statusEl);
+    } catch (error) {
+      statusEl.textContent = error.message || "CSV okunamadi.";
+      statusEl.classList.add("error");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+    const next = text[i + 1];
+    if (char === '"' && next === '"') {
+      field += '"';
+      i += 1;
+      continue;
+    }
+    if (char === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+    if (!inQuotes && (char === "," || char === ";")) {
+      row.push(field.trim());
+      field = "";
+      continue;
+    }
+    if (!inQuotes && char === "\n") {
+      row.push(field.trim());
+      field = "";
+      if (row.some((cell) => cell !== "")) rows.push(row);
+      row = [];
+      continue;
+    }
+    if (!inQuotes && char === "\r") continue;
+    field += char;
+  }
+  if (field.length || row.length) {
+    row.push(field.trim());
+    if (row.some((cell) => cell !== "")) rows.push(row);
+  }
+  if (!rows.length) {
+    return { headers: [], rows: [] };
+  }
+  const headers = rows.shift().map((h) => h.toLowerCase());
+  return { headers, rows };
+}
+
+function mapCsvRow(headers, row, collection) {
+  const data = {};
+  headers.forEach((key, index) => {
+    data[key] = row[index] || "";
+  });
+
+  const title = clean(data.title);
+  const price = Number(data.price || 0);
+  const order = Number(data.order || 0);
+  const active = parseBoolean(data.active, true);
+
+  if (!title || !Number.isFinite(price) || price <= 0) return null;
+
+  if (collection === "shopProducts") {
+    return {
+      title,
+      price,
+      order,
+      active,
+      tag: clean(data.tag),
+      description: clean(data.description),
+      imageUrl: clean(data.imageurl || data.imageUrl),
+    };
+  }
+
+  return {
+    title,
+    price,
+    order,
+    active,
+    category: clean(data.category) || "procedures",
+  };
+}
+
+function parseBoolean(value, fallback) {
+  const normalized = String(value || "").toLowerCase().trim();
+  if (!normalized) return fallback;
+  if (["true", "1", "yes", "evet"].includes(normalized)) return true;
+  if (["false", "0", "no", "hayir", "hayır"].includes(normalized)) return false;
+  return fallback;
+}
+
+function uploadCsvDocs(collection, docs, statusEl) {
+  const chunks = [];
+  for (let i = 0; i < docs.length; i += 450) {
+    chunks.push(docs.slice(i, i + 450));
+  }
+
+  statusEl.textContent = `${docs.length} kayit yukleniyor...`;
+  statusEl.classList.remove("error");
+
+  const runChunk = (index) => {
+    if (index >= chunks.length) {
+      statusEl.textContent = "CSV yukleme tamamlandi.";
+      return Promise.resolve();
+    }
+    const batch = db.batch();
+    chunks[index].forEach((docData) => {
+      const ref = db.collection(collection).doc();
+      batch.set(ref, {
+        ...docData,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+    });
+    return batch.commit().then(() => runChunk(index + 1));
+  };
+
+  runChunk(0).catch((error) => {
+    statusEl.textContent = error.message || "CSV yukleme basarisiz.";
+    statusEl.classList.add("error");
+  });
 }
 
 function updateImagePreview(url) {

@@ -150,6 +150,19 @@
               </div>
             </div>
             <div id="productList" class="admin-table"></div>
+            <div class="admin-import">
+              <h4>CSV ile Urun Yukle</h4>
+              <p class="admin-muted">
+                Basliklar: title, price, order, active, tag, description, imageUrl
+              </p>
+              <div class="admin-import-controls">
+                <input id="productImportFile" type="file" accept=".csv" />
+                <button class="btn ghost" id="productImportBtn" type="button">
+                  CSV Yukle
+                </button>
+              </div>
+              <p id="productImportStatus" class="admin-status" role="status"></p>
+            </div>
           </div>
         </div>
       </section>
@@ -173,6 +186,9 @@
               <select id="serviceCategory">
                 <option value="procedures">Evde Islemler</option>
                 <option value="vaccines">Evde Kopek Asilari</option>
+                <option value="cat_vaccines">Evde Kedi Asilari</option>
+                <option value="exotics">Egzotik Dostlar</option>
+                <option value="care">Bakim Paketleri</option>
               </select>
               <label for="servicePrice">Fiyat (TL)</label>
               <input id="servicePrice" type="number" min="0" step="1" required />
@@ -206,6 +222,9 @@
                   <option value="all">Tum kategoriler</option>
                   <option value="procedures">Evde Islemler</option>
                   <option value="vaccines">Evde Kopek Asilari</option>
+                  <option value="cat_vaccines">Evde Kedi Asilari</option>
+                  <option value="exotics">Egzotik Dostlar</option>
+                  <option value="care">Bakim Paketleri</option>
                 </select>
                 <select id="serviceStatusFilter">
                   <option value="all">Tum durumlar</option>
@@ -215,6 +234,19 @@
               </div>
             </div>
             <div id="serviceList" class="admin-table"></div>
+            <div class="admin-import">
+              <h4>CSV ile Hizmet Yukle</h4>
+              <p class="admin-muted">
+                Basliklar: title, price, order, active, category
+              </p>
+              <div class="admin-import-controls">
+                <input id="serviceImportFile" type="file" accept=".csv" />
+                <button class="btn ghost" id="serviceImportBtn" type="button">
+                  CSV Yukle
+                </button>
+              </div>
+              <p id="serviceImportStatus" class="admin-status" role="status"></p>
+            </div>
           </div>
         </div>
       </section>
