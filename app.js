@@ -181,6 +181,25 @@ form.addEventListener("submit", (event) => {
       if (!data.ok) {
         throw new Error(data.error || "Talep gonderilemedi.");
       }
+      if (auth.currentUser) {
+        const bookingPayload = {
+          name,
+          phone,
+          address,
+          datetime,
+          notes,
+          email: auth.currentUser?.email || "",
+          services: items.map((item) => ({
+            id: item.id,
+            title: item.title,
+            price: item.price,
+          })),
+          total,
+          status: "new",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        };
+        db.collection("bookings").add(bookingPayload).catch(() => {});
+      }
       form.reset();
       selectedItems.clear();
       renderCatalog();
