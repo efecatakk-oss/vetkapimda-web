@@ -660,6 +660,36 @@ h4 {
   line-height: 1.5;
 }
 
+.service-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(27, 111, 106, 0.12);
+  color: var(--primary-deep);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.service-chip.alt {
+  background: rgba(15, 111, 105, 0.12);
+}
+
+.service-chip.warm {
+  background: rgba(255, 122, 26, 0.18);
+  color: #8a3f00;
+}
+
+.service-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(255, 122, 26, 0.15);
+}
+
 .card-link {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
