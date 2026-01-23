@@ -11,7 +11,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
-const storage = firebase.storage();
 
 const ADMIN_EMAIL = "vetkapim@gmail.com";
 
@@ -30,8 +29,6 @@ const productId = document.getElementById("productId");
 const productTitle = document.getElementById("productTitle");
 const productImage = document.getElementById("productImage");
 const productImagePreview = document.getElementById("productImagePreview");
-const productImageFile = document.getElementById("productImageFile");
-const productImageUploadBtn = document.getElementById("productImageUploadBtn");
 const productTag = document.getElementById("productTag");
 const productDescription = document.getElementById("productDescription");
 const productPrice = document.getElementById("productPrice");
@@ -79,10 +76,6 @@ loginForm.addEventListener("submit", (event) => {
 
 productImage.addEventListener("input", () => {
   updateImagePreview(productImage.value);
-});
-
-productImageUploadBtn.addEventListener("click", () => {
-  handleImageUpload();
 });
 
 resetBtn.addEventListener("click", () => {
@@ -427,33 +420,6 @@ function updateImagePreview(url) {
   }
   productImagePreview.src = value;
   productImagePreview.classList.remove("is-placeholder");
-}
-
-function handleImageUpload() {
-  if (!productImageFile || !productImageFile.files?.length) {
-    setProductStatus("Yuklemek icin bir resim secin.", true);
-    return;
-  }
-  if (!auth.currentUser || !isAdmin(auth.currentUser.email || "")) {
-    setProductStatus("Yetkisiz islem.", true);
-    return;
-  }
-  const file = productImageFile.files[0];
-  const fileName = `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
-  const ref = storage.ref(`shopProducts/${fileName}`);
-  setProductStatus("Resim yukleniyor...", false);
-  ref
-    .put(file)
-    .then((snapshot) => snapshot.ref.getDownloadURL())
-    .then((url) => {
-      productImage.value = url;
-      updateImagePreview(url);
-      productImageFile.value = "";
-      setProductStatus("Resim yuklendi.", false);
-    })
-    .catch((error) => {
-      setProductStatus(error.message || "Resim yuklenemedi.", true);
-    });
 }
 
 function handleBulkAction() {

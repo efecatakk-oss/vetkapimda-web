@@ -1502,20 +1502,6 @@ textarea {
   font-size: 13px;
 }
 
-.admin-upload {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-  align-items: center;
-}
-
-.admin-upload input[type="file"] {
-  border: 1px dashed #d7d9ea;
-  padding: 8px 10px;
-  border-radius: 12px;
-  background: #fff;
-}
-
 .admin-login-actions {
   display: flex;
   justify-content: space-between;
@@ -1544,6 +1530,10 @@ textarea {
 .admin-muted {
   color: var(--muted);
   margin: 0;
+}
+
+.admin-note {
+  font-size: 12px;
 }
 
 .admin-toolbar {
@@ -1786,8 +1776,5 @@ textarea {
   }
   .admin-list-tools {
     align-items: stretch;
-  }
-  .admin-upload {
-    grid-template-columns: 1fr;
   }
 }
