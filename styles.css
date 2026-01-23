@@ -123,15 +123,25 @@ a {
 
 .brand-mark {
   font-family: "Baloo 2", "Trebuchet MS", "Segoe UI", sans-serif;
-  font-size: 42px;
+  font-size: 48px;
   font-weight: 800;
-  letter-spacing: 1px;
+  letter-spacing: 1.6px;
   text-transform: uppercase;
-  color: transparent;
-  background: linear-gradient(120deg, #ff8a00 0%, #ffb14a 40%, #1b6f6a 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  text-shadow: 0 6px 16px rgba(255, 138, 0, 0.18);
+  color: #ff7a1a;
+  text-shadow: 0 3px 0 #fff, 0 10px 20px rgba(255, 122, 26, 0.3);
+  position: relative;
+}
+
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: -6px;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff7a1a 0%, #ffb35c 100%);
+  opacity: 0.7;
 }
 
 .nav-actions {
@@ -221,7 +231,7 @@ h4 {
 
 .brand-inline {
   font-family: "Baloo 2", "Trebuchet MS", "Segoe UI", sans-serif;
-  color: var(--primary-deep);
+  color: #ff7a1a;
   position: relative;
   display: inline-block;
 }
@@ -2098,4 +2108,7 @@ textarea {
   .admin-list-tools {
     align-items: stretch;
   }
+}
+:root {
+  scroll-behavior: smooth;
 }
