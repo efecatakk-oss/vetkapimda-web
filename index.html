@@ -546,11 +546,34 @@
                 required
               />
               <input
+                id="loginPasswordConfirm"
+                type="password"
+                placeholder="Sifre Tekrar"
+              />
+              <input
                 id="loginCode"
                 type="text"
                 placeholder="Onay kodu"
                 inputmode="numeric"
               />
+            </div>
+            <div class="signup-fields">
+              <input id="signupName" type="text" placeholder="Adi" />
+              <input id="signupSurname" type="text" placeholder="Soyadi" />
+              <input id="signupPhone" type="tel" placeholder="Cep Telefonu" />
+              <div class="signup-gender">
+                <span>Cinsiyet</span>
+                <label><input type="radio" name="gender" value="erkek" /> Erkek</label>
+                <label><input type="radio" name="gender" value="kadin" /> Kadin</label>
+                <label>
+                  <input type="radio" name="gender" value="belirtmek_istemiyorum" />
+                  Belirtmek istemiyorum
+                </label>
+              </div>
+              <div class="signup-birth">
+                <label for="signupBirthdate">Dogum Tarihi</label>
+                <input id="signupBirthdate" type="date" />
+              </div>
             </div>
             <label class="remember-row">
               <input id="rememberMe" type="checkbox" />

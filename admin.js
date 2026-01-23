@@ -823,10 +823,13 @@ function renderUsers(items) {
 
     const info = document.createElement("div");
     info.className = "admin-row-info";
+    const fullName = `${item.name || ""} ${item.surname || ""}`.trim();
     info.innerHTML = `
-      <strong>${item.name || "Isim yok"}</strong>
+      <strong>${fullName || "Isim yok"}</strong>
       <span>${item.email || "-"}</span>
       <span>${item.phone || "-"}</span>
+      <span>${item.gender || "-"}</span>
+      <span>${item.birthdate || "-"}</span>
     `;
 
     const actions = document.createElement("div");

@@ -1108,6 +1108,44 @@ h4 {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.signup-fields {
+  display: none;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.login-card.signup-active .signup-fields {
+  display: grid;
+}
+
+.signup-gender {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.signup-gender label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.signup-birth {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.signup-birth input {
+  border: 1px solid #e0e0eb;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
 .login-fields input:focus {
   outline: none;
   border-color: rgba(27, 111, 106, 0.6);

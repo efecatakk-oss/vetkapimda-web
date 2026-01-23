@@ -24,6 +24,7 @@ const shopGrid = document.getElementById("shopGrid");
 const loginGate = document.getElementById("loginGate");
 const loginEmail = document.getElementById("loginEmail");
 const loginPassword = document.getElementById("loginPassword");
+const loginPasswordConfirm = document.getElementById("loginPasswordConfirm");
 const loginCode = document.getElementById("loginCode");
 const loginBtn = document.getElementById("loginBtn");
 const signupBtn = document.getElementById("signupBtn");
@@ -38,11 +39,17 @@ const rememberMe = document.getElementById("rememberMe");
 const acceptTerms = document.getElementById("acceptTerms");
 const loginTriggers = document.querySelectorAll(".login-trigger");
 const loginTabs = document.querySelectorAll(".login-tabs .tab-btn");
+const loginCard = document.querySelector(".login-card");
+const signupName = document.getElementById("signupName");
+const signupSurname = document.getElementById("signupSurname");
+const signupPhone = document.getElementById("signupPhone");
+const signupBirthdate = document.getElementById("signupBirthdate");
 
 let isLoggedIn = false;
 let isVerified = false;
 let pendingToken = null;
 let pendingAction = null;
+let pendingProfile = null;
 let lastCodeSentAt = Number(localStorage.getItem("otpLastSentAt") || "0");
 const CODE_SEND_COOLDOWN_MS = 60000;
 const defaultSendCodeLabel = sendCodeBtn ? sendCodeBtn.textContent : "Kod Gonder";
@@ -262,11 +269,26 @@ function handleLogin() {
 function handleSignup() {
   const email = loginEmail.value.trim();
   const password = loginPassword.value.trim();
+  const passwordConfirm = loginPasswordConfirm.value.trim();
+  const name = signupName.value.trim();
+  const surname = signupSurname.value.trim();
+  const phone = signupPhone.value.trim();
+  const gender = document.querySelector('input[name="gender"]:checked')?.value || "";
+  const birthdate = signupBirthdate.value;
   if (!email || !password) {
     setLoginStatus("E-posta ve sifre girin.", true);
     return;
   }
+  if (passwordConfirm && password !== passwordConfirm) {
+    setLoginStatus("Sifreler eslesmiyor.", true);
+    return;
+  }
+  if (!name || !surname || !phone) {
+    setLoginStatus("Ad, soyad ve telefon zorunlu.", true);
+    return;
+  }
   pendingAction = "signup";
+  pendingProfile = { name, surname, phone, gender, birthdate };
   setLoginStatus("Onay kodu gonderiyoruz...", false);
   handleSendCode();
 }
@@ -455,8 +477,20 @@ function handleConfirmCode() {
       });
     })
     .then(() => {
+      if (pendingAction === "signup" && pendingProfile && auth.currentUser) {
+        upsertUserProfile({
+          uid: auth.currentUser.uid,
+          email: auth.currentUser.email,
+          name: pendingProfile.name,
+          surname: pendingProfile.surname,
+          phone: pendingProfile.phone,
+          gender: pendingProfile.gender,
+          birthdate: pendingProfile.birthdate,
+        });
+      }
       setLoginStatus("Dogrulama tamamlandi.", false);
       pendingAction = null;
+      pendingProfile = null;
       hideLoginGate();
     })
     .catch((error) => {
@@ -491,6 +525,9 @@ function hideLoginGate() {
 function switchLoginTab(tab) {
   loginTabs.forEach((btn) => btn.classList.remove("active"));
   tab.classList.add("active");
+  if (loginCard) {
+    loginCard.classList.toggle("signup-active", tab.dataset.tab === "signup");
+  }
   if (tab.dataset.tab === "signup") {
     pendingAction = "signup";
     setLoginStatus("Uye olmak icin e-posta/sifre girin.", false);
@@ -706,7 +743,7 @@ function ensureUserProfile(user) {
     .catch(() => {});
 }
 
-function upsertUserProfile({ uid, email, name, phone, address }) {
+function upsertUserProfile({ uid, email, name, surname, phone, address, gender, birthdate }) {
   if (!uid) return;
   db.collection("users")
     .doc(uid)
@@ -714,8 +751,11 @@ function upsertUserProfile({ uid, email, name, phone, address }) {
       {
         email: email || "",
         name: name || "",
+        surname: surname || "",
         phone: phone || "",
         address: address || "",
+        gender: gender || "",
+        birthdate: birthdate || "",
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       },
