@@ -769,56 +769,6 @@ h4 {
   padding: 18px;
 }
 
-.hero-loop {
-  background: #fff;
-  border-radius: 22px;
-  margin: 0 clamp(16px, 4vw, 60px) 32px;
-  padding: 28px;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(27, 111, 106, 0.08);
-}
-
-.loop-frame {
-  position: relative;
-  border-radius: 18px;
-  overflow: hidden;
-  min-height: 240px;
-  box-shadow: var(--shadow);
-}
-
-.loop-frame img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  animation: loopFade 12s infinite;
-}
-
-.loop-frame img:nth-child(1) {
-  animation-delay: 0s;
-}
-
-.loop-frame img:nth-child(2) {
-  animation-delay: 4s;
-}
-
-.loop-frame img:nth-child(3) {
-  animation-delay: 8s;
-}
-
-@keyframes loopFade {
-  0%,
-  20% {
-    opacity: 1;
-  }
-  33%,
-  100% {
-    opacity: 0;
-  }
-}
-
 .feature-card h3 {
   margin: 0 0 10px;
 }
