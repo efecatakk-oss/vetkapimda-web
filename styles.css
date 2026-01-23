@@ -1281,6 +1281,14 @@ h4 {
   display: none;
 }
 
+.signup-only {
+  display: none;
+}
+
+.login-card.signup-active .signup-only {
+  display: flex;
+}
+
 .signup-gender {
   display: grid;
   gap: 8px;
