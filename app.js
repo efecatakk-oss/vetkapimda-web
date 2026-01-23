@@ -583,21 +583,22 @@ function loadShopProducts() {
   if (!shopGrid) return;
   db.collection("shopProducts")
     .orderBy("order")
-    .get()
-    .then((snapshot) => {
-      const items = [];
-      if (snapshot.empty) {
-        items.push(...fallbackProducts);
-      } else {
-        snapshot.forEach((doc) => {
-          const item = doc.data();
-          if (item.active === false) return;
-          items.push(item);
-        });
-      }
-      renderShopProducts(items);
-    })
-    .catch(() => renderShopProducts(fallbackProducts));
+    .onSnapshot(
+      (snapshot) => {
+        const items = [];
+        if (snapshot.empty) {
+          items.push(...fallbackProducts);
+        } else {
+          snapshot.forEach((doc) => {
+            const item = doc.data();
+            if (item.active === false) return;
+            items.push(item);
+          });
+        }
+        renderShopProducts(items);
+      },
+      () => renderShopProducts(fallbackProducts)
+    );
 }
 
 function renderShopProducts(items) {

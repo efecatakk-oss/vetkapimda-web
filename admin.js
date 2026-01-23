@@ -200,6 +200,10 @@ productStatusFilter.addEventListener("change", () => renderProducts(allProducts)
 bulkApplyBtn.addEventListener("click", () => handleBulkAction());
 bulkPriceApplyBtn.addEventListener("click", () => handleBulkPriceUpdate());
 
+if (productStatusFilter) {
+  productStatusFilter.value = "all";
+}
+
 function isAdmin(email) {
   return email.toLowerCase() === ADMIN_EMAIL;
 }
