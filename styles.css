@@ -42,7 +42,7 @@ a {
   gap: 12px;
   padding: 10px 16px;
   border-radius: 14px;
-  background: linear-gradient(90deg, #ff7a1a 0%, #ffb35c 100%);
+  background: linear-gradient(90deg, #ff6a00 0%, #ff9a3c 55%, #ffbf6b 100%);
   color: #fff;
   font-size: 13px;
   font-weight: 600;
