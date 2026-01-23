@@ -36,6 +36,8 @@ const loginStatus = document.getElementById("loginStatus");
 const userEmailHidden = document.getElementById("userEmail");
 const rememberMe = document.getElementById("rememberMe");
 const acceptTerms = document.getElementById("acceptTerms");
+const loginTriggers = document.querySelectorAll(".login-trigger");
+const loginTabs = document.querySelectorAll(".login-tabs .tab-btn");
 
 let isLoggedIn = false;
 let isVerified = false;
@@ -217,6 +219,12 @@ function bindLoginGate() {
   if (closeButton) {
     closeButton.addEventListener("click", () => hideLoginGate());
   }
+  loginTriggers.forEach((trigger) =>
+    trigger.addEventListener("click", () => showLoginGate())
+  );
+  loginTabs.forEach((tab) =>
+    tab.addEventListener("click", () => switchLoginTab(tab))
+  );
   loginBtn.addEventListener("click", handleLogin);
   signupBtn.addEventListener("click", handleSignup);
   sendCodeBtn.addEventListener("click", handleSendCode);
@@ -478,6 +486,18 @@ function showLoginGate() {
 function hideLoginGate() {
   loginGate.classList.remove("show");
   loginGate.setAttribute("aria-hidden", "true");
+}
+
+function switchLoginTab(tab) {
+  loginTabs.forEach((btn) => btn.classList.remove("active"));
+  tab.classList.add("active");
+  if (tab.dataset.tab === "signup") {
+    pendingAction = "signup";
+    setLoginStatus("Uye olmak icin e-posta/sifre girin.", false);
+  } else {
+    pendingAction = "login";
+    setLoginStatus("", false);
+  }
 }
 
 function getVerifiedEmails() {

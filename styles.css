@@ -1062,6 +1062,30 @@ h4 {
   border: 1px solid rgba(27, 111, 106, 0.08);
 }
 
+.login-tabs {
+  display: flex;
+  gap: 8px;
+  background: #f1f2fb;
+  padding: 6px;
+  border-radius: 999px;
+}
+
+.tab-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.tab-btn.active {
+  background: #fff;
+  color: var(--primary-deep);
+  box-shadow: 0 8px 16px rgba(23, 20, 42, 0.12);
+}
+
 .login-fields {
   display: grid;
   gap: 10px;
