@@ -86,6 +86,8 @@
               <input id="productTag" type="text" placeholder="Yeni, Firsat..." />
               <label for="productDescription">Aciklama</label>
               <textarea id="productDescription" rows="3"></textarea>
+              <label for="productStock">Stok (adet)</label>
+              <input id="productStock" type="number" min="0" step="1" />
               <label for="productPrice">Fiyat (TL)</label>
               <input id="productPrice" type="number" min="0" step="1" required />
               <label for="productOrder">Siralama</label>
@@ -153,7 +155,8 @@
             <div class="admin-import">
               <h4>CSV ile Urun Yukle</h4>
               <p class="admin-muted">
-                Basliklar: title, price, order, active, tag, description, imageUrl
+                Basliklar: title, price, order, active, tag, description, imageUrl,
+                stock
               </p>
               <div class="admin-import-controls">
                 <input id="productImportFile" type="file" accept=".csv" />

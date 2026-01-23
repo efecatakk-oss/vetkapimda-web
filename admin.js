@@ -31,6 +31,7 @@ const productImage = document.getElementById("productImage");
 const productImagePreview = document.getElementById("productImagePreview");
 const productTag = document.getElementById("productTag");
 const productDescription = document.getElementById("productDescription");
+const productStock = document.getElementById("productStock");
 const productPrice = document.getElementById("productPrice");
 const productOrder = document.getElementById("productOrder");
 const productActive = document.getElementById("productActive");
@@ -186,6 +187,7 @@ productForm.addEventListener("submit", (event) => {
     imageUrl: clean(productImage.value),
     tag: clean(productTag.value),
     description: clean(productDescription.value),
+    stock: Number(productStock.value || 0),
     price: Number(productPrice.value || 0),
     order: Number(productOrder.value || 0),
     active: Boolean(productActive.checked),
@@ -348,6 +350,7 @@ function resetProductForm() {
   productImage.value = "";
   productTag.value = "";
   productDescription.value = "";
+  productStock.value = "";
   productPrice.value = "";
   productOrder.value = "0";
   productActive.checked = true;
@@ -715,6 +718,7 @@ function fillForm(item) {
   productImage.value = item.imageUrl || "";
   productTag.value = item.tag || "";
   productDescription.value = item.description || "";
+  productStock.value = item.stock || 0;
   productPrice.value = item.price || "";
   productOrder.value = item.order || 0;
   productActive.checked = item.active !== false;
@@ -933,6 +937,7 @@ function mapCsvRow(headers, row, collection) {
       price,
       order,
       active,
+      stock: Number(data.stock || 0),
       tag: clean(data.tag),
       description: clean(data.description),
       imageUrl: clean(data.imageurl || data.imageUrl),

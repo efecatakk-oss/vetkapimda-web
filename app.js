@@ -609,11 +609,23 @@ function renderShopProducts(items) {
     const card = document.createElement("article");
     card.className = "product-card";
     const tag = item.tag ? `<span class="tag">${item.tag}</span>` : "";
+    let stockBadge = "";
+    if (Number.isFinite(Number(item.stock))) {
+      const stockValue = Number(item.stock);
+      if (stockValue === 0) {
+        stockBadge = `<span class="stock-badge out">Stokta yok</span>`;
+      } else if (stockValue <= 5) {
+        stockBadge = `<span class="stock-badge low">Az kaldı</span>`;
+      } else {
+        stockBadge = `<span class="stock-badge ok">Stokta</span>`;
+      }
+    }
     const image = item.imageUrl
       ? `<img class="product-image" src="${item.imageUrl}" alt="${item.title || "Urun"}" />`
       : "";
     card.innerHTML = `
       ${tag}
+      ${stockBadge}
       ${image}
       <h4>${item.title}</h4>
       <p>${item.description || ""}</p>
