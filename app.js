@@ -18,6 +18,7 @@ const catalogEl = document.getElementById("serviceCatalog");
 const cartEl = document.getElementById("cartSummary");
 const cartTotalEl = document.getElementById("cartTotal");
 const cartTotalStickyEl = document.getElementById("cartTotalSticky");
+const navCartCount = document.getElementById("navCartCount");
 const slides = document.querySelectorAll(".slider-track .slide");
 const dots = document.querySelectorAll(".slider-dots .dot");
 const shopGrid = document.getElementById("shopGrid");
@@ -110,6 +111,7 @@ const fallbackProducts = [
 
 const services = [];
 const shopProducts = [];
+let shopItemsCache = [];
 
 const selectedItems = new Map();
 
@@ -121,6 +123,8 @@ bindLoginGate();
 watchAuth();
 startCooldownTicker();
 loadShopProducts();
+bindShopSearch();
+bindPhoneMask();
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -214,6 +218,7 @@ form.addEventListener("submit", (event) => {
       renderCatalog();
       renderCart();
       showStatus("Talebiniz alindi. Size en kisa surede donus yapacagiz.");
+      trackEvent("booking_submit");
     })
     .catch((error) => {
       showStatus(error.message || "Bir hata olustu. Lutfen tekrar deneyin.", true);
@@ -223,8 +228,12 @@ form.addEventListener("submit", (event) => {
 function bindLoginGate() {
   if (!loginGate) return;
   const closeButton = loginGate.querySelector(".close-gate");
+  const drawerClose = loginGate.querySelector(".drawer-close");
   if (closeButton) {
     closeButton.addEventListener("click", () => hideLoginGate());
+  }
+  if (drawerClose) {
+    drawerClose.addEventListener("click", () => hideLoginGate());
   }
   loginTriggers.forEach((trigger) =>
     trigger.addEventListener("click", () => showLoginGate())
@@ -238,6 +247,34 @@ function bindLoginGate() {
   confirmCodeBtn.addEventListener("click", handleConfirmCode);
   forgotPasswordBtn.addEventListener("click", handleForgotPassword);
   logoutBtn.addEventListener("click", handleLogout);
+
+  document.querySelectorAll('a[href*="wa.me"]').forEach((link) => {
+    link.addEventListener("click", () => trackEvent("whatsapp_click"));
+  });
+}
+
+function bindPhoneMask() {
+  const phoneInput = document.getElementById("phone");
+  if (!phoneInput) return;
+  phoneInput.addEventListener("input", () => {
+    const digits = phoneInput.value.replace(/\D/g, "");
+    if (!digits) return;
+    let formatted = digits;
+    if (digits.startsWith("90")) {
+      formatted = `+${digits}`;
+    } else if (digits.startsWith("0")) {
+      formatted = `+90${digits.slice(1)}`;
+    } else if (digits.length === 10) {
+      formatted = `+90${digits}`;
+    }
+    const cleaned = formatted.replace(/[^\d+]/g, "");
+    const match = cleaned.match(/^(\+90)?(\d{3})(\d{3})(\d{2})(\d{2})$/);
+    if (match) {
+      phoneInput.value = `${match[1] || "+90"} ${match[2]} ${match[3]} ${
+        match[4]
+      } ${match[5]}`;
+    }
+  });
 }
 
 function watchAuth() {
@@ -583,6 +620,12 @@ function showStatus(message, isError = false) {
   statusEl.classList.toggle("error", isError);
 }
 
+function trackEvent(name, params = {}) {
+  if (typeof window.gtag === "function") {
+    window.gtag("event", name, params);
+  }
+}
+
 function serviceMessage(items) {
   const hasVaccine = items.some((item) => item.id.startsWith("vac_"));
   if (hasVaccine) {
@@ -686,7 +729,8 @@ function loadShopProducts() {
             items.push(item);
           });
         }
-        renderShopProducts(items);
+        shopItemsCache = items;
+        renderShopProducts(applyShopFilter(items));
       },
       () => renderShopProducts(fallbackProducts)
     );
@@ -725,6 +769,26 @@ function renderShopProducts(items) {
       <a class="quick-order" href="https://wa.me/905360340920">Hizli Siparis</a>
     `;
     shopGrid.appendChild(card);
+  });
+}
+
+function bindShopSearch() {
+  const shopSearch = document.querySelector(".shop-search input");
+  if (!shopSearch) return;
+  shopSearch.addEventListener("input", () => {
+    renderShopProducts(applyShopFilter(shopItemsCache));
+  });
+}
+
+function applyShopFilter(items) {
+  const shopSearch = document.querySelector(".shop-search input");
+  const query = shopSearch ? shopSearch.value.trim().toLowerCase() : "";
+  if (!query) return items;
+  return items.filter((item) => {
+    return (
+      (item.title || "").toLowerCase().includes(query) ||
+      (item.description || "").toLowerCase().includes(query)
+    );
   });
 }
 
@@ -774,6 +838,9 @@ function renderCart() {
     if (cartTotalStickyEl) {
       cartTotalStickyEl.textContent = "0 TL";
     }
+    if (navCartCount) {
+      navCartCount.textContent = "0";
+    }
     return;
   }
 
@@ -801,6 +868,9 @@ function renderCart() {
   cartTotalEl.textContent = `${total} TL`;
   if (cartTotalStickyEl) {
     cartTotalStickyEl.textContent = `${total} TL`;
+  }
+  if (navCartCount) {
+    navCartCount.textContent = String(selectedItems.size);
   }
 }
 

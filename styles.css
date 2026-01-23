@@ -228,6 +228,21 @@ a {
   box-shadow: 0 8px 18px rgba(23, 20, 42, 0.08);
 }
 
+.nav-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-cart span {
+  background: var(--accent);
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
 .nav-pill:hover {
   background: rgba(255, 122, 26, 0.12);
 }
