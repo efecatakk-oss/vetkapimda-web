@@ -1614,6 +1614,7 @@ textarea {
   box-shadow: var(--shadow);
   position: relative;
   overflow: hidden;
+  grid-template-rows: auto 1fr auto;
 }
 
 .cta-card h3 {
@@ -1629,6 +1630,7 @@ textarea {
 
 .cta-card .btn {
   width: fit-content;
+  justify-self: flex-start;
 }
 
 .cta-card.vet {
