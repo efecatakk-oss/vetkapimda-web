@@ -11,6 +11,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
+const storage = firebase.storage();
 
 const ADMIN_EMAIL = "vetkapim@gmail.com";
 
@@ -27,6 +28,10 @@ const logoutBtn = document.getElementById("adminLogoutBtn");
 const productForm = document.getElementById("productForm");
 const productId = document.getElementById("productId");
 const productTitle = document.getElementById("productTitle");
+const productImage = document.getElementById("productImage");
+const productImagePreview = document.getElementById("productImagePreview");
+const productImageFile = document.getElementById("productImageFile");
+const productImageUploadBtn = document.getElementById("productImageUploadBtn");
 const productTag = document.getElementById("productTag");
 const productDescription = document.getElementById("productDescription");
 const productPrice = document.getElementById("productPrice");
@@ -37,12 +42,24 @@ const productFormTitle = document.getElementById("productFormTitle");
 const productResetBtn = document.getElementById("productResetBtn");
 const productList = document.getElementById("productList");
 const productCount = document.getElementById("productCount");
+const productSearch = document.getElementById("productSearch");
+const productStatusFilter = document.getElementById("productStatusFilter");
+const bulkActionSelect = document.getElementById("bulkActionSelect");
+const bulkApplyBtn = document.getElementById("bulkApplyBtn");
+const bulkPriceMode = document.getElementById("bulkPriceMode");
+const bulkPriceValue = document.getElementById("bulkPriceValue");
+const bulkPriceApplyBtn = document.getElementById("bulkPriceApplyBtn");
 
 const clean = (value) => (value || "").trim();
 const formatPrice = (value) =>
   Number.isFinite(value) ? `${value} TL` : "-";
 
 let productUnsub = null;
+let allProducts = [];
+const selectedIds = new Set();
+
+const placeholderImage =
+  "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=60";
 
 loginForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -58,6 +75,14 @@ loginForm.addEventListener("submit", (event) => {
     .catch((error) => {
       setLoginStatus(error.message || "Giris yapilamadi.", true);
     });
+});
+
+productImage.addEventListener("input", () => {
+  updateImagePreview(productImage.value);
+});
+
+productImageUploadBtn.addEventListener("click", () => {
+  handleImageUpload();
 });
 
 resetBtn.addEventListener("click", () => {
@@ -131,6 +156,7 @@ productForm.addEventListener("submit", (event) => {
   }
   const payload = {
     title: clean(productTitle.value),
+    imageUrl: clean(productImage.value),
     tag: clean(productTag.value),
     description: clean(productDescription.value),
     price: Number(productPrice.value || 0),
@@ -169,6 +195,11 @@ productForm.addEventListener("submit", (event) => {
 
 productResetBtn.addEventListener("click", () => resetProductForm());
 
+productSearch.addEventListener("input", () => renderProducts(allProducts));
+productStatusFilter.addEventListener("change", () => renderProducts(allProducts));
+bulkApplyBtn.addEventListener("click", () => handleBulkAction());
+bulkPriceApplyBtn.addEventListener("click", () => handleBulkPriceUpdate());
+
 function isAdmin(email) {
   return email.toLowerCase() === ADMIN_EMAIL;
 }
@@ -180,6 +211,7 @@ function showLogin() {
     productUnsub();
     productUnsub = null;
   }
+  selectedIds.clear();
 }
 
 function showAdmin(email) {
@@ -204,12 +236,14 @@ function setProductStatus(message, isError) {
 function resetProductForm() {
   productId.value = "";
   productTitle.value = "";
+  productImage.value = "";
   productTag.value = "";
   productDescription.value = "";
   productPrice.value = "";
   productOrder.value = "0";
   productActive.checked = true;
   productFormTitle.textContent = "Yeni Urun";
+  updateImagePreview("");
 }
 
 function startProductListener() {
@@ -223,6 +257,7 @@ function startProductListener() {
         snapshot.forEach((doc) => {
           items.push({ id: doc.id, ...doc.data() });
         });
+        allProducts = items;
         renderProducts(items);
       },
       () => {
@@ -236,29 +271,83 @@ function startProductListener() {
 
 function renderProducts(items) {
   if (!productList) return;
+  const query = clean(productSearch.value).toLowerCase();
+  const filterValue = productStatusFilter.value;
+  const filtered = items.filter((item) => {
+    const matchesQuery =
+      !query ||
+      (item.title || "").toLowerCase().includes(query) ||
+      (item.tag || "").toLowerCase().includes(query);
+    const isActive = item.active !== false;
+    if (filterValue === "active" && !isActive) return false;
+    if (filterValue === "inactive" && isActive) return false;
+    return matchesQuery;
+  });
+
   productList.innerHTML = "";
-  productCount.textContent = `${items.length} urun`;
-  if (items.length === 0) {
+  productCount.textContent = `${filtered.length} urun`;
+  if (filtered.length === 0) {
     productList.innerHTML =
-      "<p class='admin-muted'>Henuz urun eklenmedi.</p>";
+      items.length === 0
+        ? "<p class='admin-muted'>Henuz urun eklenmedi.</p>"
+        : "<p class='admin-muted'>Aramaniza uyan urun bulunamadi.</p>";
     return;
   }
 
-  items.forEach((item) => {
+  filtered.forEach((item) => {
     const row = document.createElement("div");
     row.className = "admin-row";
+
+    const selectWrap = document.createElement("label");
+    selectWrap.className = "admin-select";
+    const selectBox = document.createElement("input");
+    selectBox.type = "checkbox";
+    selectBox.checked = selectedIds.has(item.id);
+    selectBox.addEventListener("change", () => {
+      if (selectBox.checked) {
+        selectedIds.add(item.id);
+      } else {
+        selectedIds.delete(item.id);
+      }
+    });
+    selectWrap.appendChild(selectBox);
+
+    const image = document.createElement("img");
+    image.className = "admin-thumb";
+    image.alt = item.title || "Urun";
+    image.src = item.imageUrl || placeholderImage;
 
     const info = document.createElement("div");
     info.className = "admin-row-info";
     info.innerHTML = `
       <strong>${item.title || "-"}</strong>
-      <span>${formatPrice(Number(item.price || 0))}</span>
+      <div class="admin-inline-price">
+        <input
+          type="number"
+          min="0"
+          step="1"
+          value="${Number(item.price || 0)}"
+          aria-label="Fiyat guncelle"
+        />
+        <button type="button" class="btn ghost">Fiyati Kaydet</button>
+      </div>
       <span class="admin-tag">${item.tag || "Etiket yok"}</span>
       <span class="admin-pill ${
         item.active === false ? "off" : ""
       }">${item.active === false ? "Pasif" : "Aktif"}</span>
       <span class="admin-order">Sira: ${Number(item.order || 0)}</span>
     `;
+
+    const inlineInput = info.querySelector("input");
+    const inlineSave = info.querySelector("button");
+    inlineSave.addEventListener("click", () => {
+      const value = Number(inlineInput.value);
+      if (!Number.isFinite(value) || value <= 0) {
+        setProductStatus("Fiyat pozitif olmali.", true);
+        return;
+      }
+      updatePrice(item.id, value);
+    });
 
     const actions = document.createElement("div");
     actions.className = "admin-row-actions";
@@ -282,6 +371,8 @@ function renderProducts(items) {
     actions.appendChild(toggleBtn);
     actions.appendChild(deleteBtn);
 
+    row.appendChild(selectWrap);
+    row.appendChild(image);
     row.appendChild(info);
     row.appendChild(actions);
     productList.appendChild(row);
@@ -291,6 +382,7 @@ function renderProducts(items) {
 function fillForm(item) {
   productId.value = item.id;
   productTitle.value = item.title || "";
+  productImage.value = item.imageUrl || "";
   productTag.value = item.tag || "";
   productDescription.value = item.description || "";
   productPrice.value = item.price || "";
@@ -298,6 +390,7 @@ function fillForm(item) {
   productActive.checked = item.active !== false;
   productFormTitle.textContent = "Urun Duzenle";
   productForm.scrollIntoView({ behavior: "smooth", block: "start" });
+  updateImagePreview(item.imageUrl || "");
 }
 
 function toggleActive(item) {
@@ -319,3 +412,155 @@ function deleteProduct(item) {
   if (!confirmed) return;
   db.collection("shopProducts").doc(item.id).delete();
 }
+
+function updateImagePreview(url) {
+  if (!productImagePreview) return;
+  const value = clean(url);
+  if (!value) {
+    productImagePreview.src = placeholderImage;
+    productImagePreview.classList.add("is-placeholder");
+    return;
+  }
+  productImagePreview.src = value;
+  productImagePreview.classList.remove("is-placeholder");
+}
+
+function handleImageUpload() {
+  if (!productImageFile || !productImageFile.files?.length) {
+    setProductStatus("Yuklemek icin bir resim secin.", true);
+    return;
+  }
+  if (!auth.currentUser || !isAdmin(auth.currentUser.email || "")) {
+    setProductStatus("Yetkisiz islem.", true);
+    return;
+  }
+  const file = productImageFile.files[0];
+  const fileName = `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
+  const ref = storage.ref(`shopProducts/${fileName}`);
+  setProductStatus("Resim yukleniyor...", false);
+  ref
+    .put(file)
+    .then((snapshot) => snapshot.ref.getDownloadURL())
+    .then((url) => {
+      productImage.value = url;
+      updateImagePreview(url);
+      productImageFile.value = "";
+      setProductStatus("Resim yuklendi.", false);
+    })
+    .catch((error) => {
+      setProductStatus(error.message || "Resim yuklenemedi.", true);
+    });
+}
+
+function handleBulkAction() {
+  const action = bulkActionSelect.value;
+  if (!action) {
+    setProductStatus("Toplu islem secin.", true);
+    return;
+  }
+  if (selectedIds.size === 0) {
+    setProductStatus("Toplu islem icin urun secin.", true);
+    return;
+  }
+  const ids = Array.from(selectedIds);
+  if (action === "delete") {
+    const confirmed = window.confirm(`${ids.length} urun silinsin mi?`);
+    if (!confirmed) return;
+  }
+
+  const batch = db.batch();
+  ids.forEach((id) => {
+    const ref = db.collection("shopProducts").doc(id);
+    if (action === "delete") {
+      batch.delete(ref);
+    } else if (action === "activate") {
+      batch.set(
+        ref,
+        { active: true, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+        { merge: true }
+      );
+    } else if (action === "deactivate") {
+      batch.set(
+        ref,
+        { active: false, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+        { merge: true }
+      );
+    }
+  });
+
+  batch
+    .commit()
+    .then(() => {
+      setProductStatus("Toplu islem tamamlandi.", false);
+      selectedIds.clear();
+      bulkActionSelect.value = "";
+    })
+    .catch((error) => {
+      setProductStatus(error.message || "Toplu islem hatasi.", true);
+    });
+}
+
+function handleBulkPriceUpdate() {
+  const mode = bulkPriceMode.value;
+  const delta = Number(bulkPriceValue.value);
+  if (!Number.isFinite(delta) || delta <= 0) {
+    setProductStatus("Toplu fiyat icin pozitif deger girin.", true);
+    return;
+  }
+  if (selectedIds.size === 0) {
+    setProductStatus("Toplu fiyat icin urun secin.", true);
+    return;
+  }
+
+  const ids = Array.from(selectedIds);
+  const batch = db.batch();
+  ids.forEach((id) => {
+    const item = allProducts.find((product) => product.id === id);
+    if (!item) return;
+    const current = Number(item.price || 0);
+    let next = current;
+    if (mode === "percent_up") {
+      next = current + (current * delta) / 100;
+    } else if (mode === "percent_down") {
+      next = current - (current * delta) / 100;
+    } else if (mode === "amount_up") {
+      next = current + delta;
+    } else if (mode === "amount_down") {
+      next = current - delta;
+    }
+    next = Math.max(0, Math.round(next));
+    const ref = db.collection("shopProducts").doc(id);
+    batch.set(
+      ref,
+      { price: next, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+      { merge: true }
+    );
+  });
+
+  batch
+    .commit()
+    .then(() => {
+      setProductStatus("Toplu fiyat guncellendi.", false);
+      bulkPriceValue.value = "";
+    })
+    .catch((error) => {
+      setProductStatus(error.message || "Toplu fiyat hatasi.", true);
+    });
+}
+
+function updatePrice(id, price) {
+  db.collection("shopProducts")
+    .doc(id)
+    .set(
+      { price, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+      { merge: true }
+    )
+    .then(() => {
+      setProductStatus("Fiyat guncellendi.", false);
+    })
+    .catch((error) => {
+      setProductStatus(error.message || "Fiyat guncellenemedi.", true);
+    });
+}
+
+updateImagePreview("");

@@ -606,8 +606,12 @@ function renderShopProducts(items) {
     const card = document.createElement("article");
     card.className = "product-card";
     const tag = item.tag ? `<span class="tag">${item.tag}</span>` : "";
+    const image = item.imageUrl
+      ? `<img class="product-image" src="${item.imageUrl}" alt="${item.title || "Urun"}" />`
+      : "";
     card.innerHTML = `
       ${tag}
+      ${image}
       <h4>${item.title}</h4>
       <p>${item.description || ""}</p>
       <div class="price-row">

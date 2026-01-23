@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
   </head>
   <body class="admin-body">
     <header class="admin-hero">
@@ -66,6 +67,23 @@
               <input id="productId" type="hidden" />
               <label for="productTitle">Urun Adi</label>
               <input id="productTitle" type="text" required />
+              <label for="productImage">Resim URL</label>
+              <input
+                id="productImage"
+                type="url"
+                placeholder="https://..."
+                autocomplete="off"
+              />
+              <div class="admin-upload">
+                <input id="productImageFile" type="file" accept="image/*" />
+                <button class="btn ghost" id="productImageUploadBtn" type="button">
+                  Resim Yukle
+                </button>
+              </div>
+              <div class="admin-image-preview">
+                <img id="productImagePreview" alt="Urun onizleme" />
+                <span>Onizleme</span>
+              </div>
               <label for="productTag">Etiket (opsiyonel)</label>
               <input id="productTag" type="text" placeholder="Yeni, Firsat..." />
               <label for="productDescription">Aciklama</label>
@@ -92,6 +110,46 @@
             <div class="admin-table-header">
               <h3>Urun Listesi</h3>
               <span id="productCount" class="admin-count"></span>
+            </div>
+            <div class="admin-list-tools">
+              <div class="admin-search">
+                <input
+                  id="productSearch"
+                  type="search"
+                  placeholder="Urun ara..."
+                />
+              </div>
+              <div class="admin-filters">
+                <select id="productStatusFilter">
+                  <option value="all">Tum urunler</option>
+                  <option value="active">Sadece aktif</option>
+                  <option value="inactive">Sadece pasif</option>
+                </select>
+                <select id="bulkActionSelect">
+                  <option value="">Toplu islem</option>
+                  <option value="activate">Secilenleri aktif et</option>
+                  <option value="deactivate">Secilenleri pasif et</option>
+                  <option value="delete">Secilenleri sil</option>
+                </select>
+                <button class="btn ghost" id="bulkApplyBtn" type="button">
+                  Uygula
+                </button>
+              </div>
+            </div>
+            <div class="admin-bulk-price">
+              <label for="bulkPriceValue">Toplu Fiyat</label>
+              <div class="admin-bulk-controls">
+                <select id="bulkPriceMode">
+                  <option value="percent_up">+ %</option>
+                  <option value="percent_down">- %</option>
+                  <option value="amount_up">+ TL</option>
+                  <option value="amount_down">- TL</option>
+                </select>
+                <input id="bulkPriceValue" type="number" min="0" step="1" />
+                <button class="btn ghost" id="bulkPriceApplyBtn" type="button">
+                  Secilenlere Uygula
+                </button>
+              </div>
             </div>
             <div id="productList" class="admin-table"></div>
           </div>
