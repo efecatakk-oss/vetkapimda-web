@@ -1268,6 +1268,87 @@ textarea {
   margin: 0 0 28px;
 }
 
+.cta-band {
+  margin: 10px clamp(16px, 4vw, 60px) 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.cta-card {
+  border-radius: 20px;
+  padding: 18px;
+  display: grid;
+  gap: 10px;
+  min-height: 220px;
+  color: #fff;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-card h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.cta-card p {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.cta-card .btn {
+  width: fit-content;
+}
+
+.cta-card.vet {
+  background: linear-gradient(160deg, #2a7b74 0%, #1b4c48 100%);
+}
+
+.cta-card.whatsapp {
+  background: linear-gradient(160deg, #ff8a00 0%, #ffb84a 100%);
+}
+
+.cta-card.app {
+  background: linear-gradient(160deg, #1e1b3a 0%, #3b2f68 100%);
+}
+
+.cta-card.social {
+  background: linear-gradient(160deg, #3a3456 0%, #6a5a92 100%);
+}
+
+.store-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.store-badges span {
+  background: rgba(255, 255, 255, 0.18);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.social-row {
+  display: flex;
+  gap: 10px;
+}
+
+.social-row a {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+}
+
 .category-bar a {
   background: #ffffff;
   padding: 8px 14px;
@@ -1916,6 +1997,9 @@ textarea {
   .footer-meta {
     flex-direction: column;
     gap: 6px;
+  }
+  .cta-card {
+    min-height: 190px;
   }
   .brand-mark {
     font-size: 34px;
