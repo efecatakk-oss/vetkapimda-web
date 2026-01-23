@@ -1707,6 +1707,18 @@ textarea {
   border-radius: 999px;
 }
 
+.admin-inline-image {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.admin-inline-image input {
+  min-width: 200px;
+  border-radius: 999px;
+}
+
 .admin-row-actions {
   display: flex;
   gap: 8px;

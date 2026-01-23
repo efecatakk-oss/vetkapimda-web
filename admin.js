@@ -328,6 +328,15 @@ function renderProducts(items) {
         />
         <button type="button" class="btn ghost">Fiyati Kaydet</button>
       </div>
+      <div class="admin-inline-image">
+        <input
+          type="url"
+          placeholder="Resim URL"
+          value="${item.imageUrl || ""}"
+          aria-label="Resim URL guncelle"
+        />
+        <button type="button" class="btn ghost">Resmi Kaydet</button>
+      </div>
       <span class="admin-tag">${item.tag || "Etiket yok"}</span>
       <span class="admin-pill ${
         item.active === false ? "off" : ""
@@ -335,8 +344,8 @@ function renderProducts(items) {
       <span class="admin-order">Sira: ${Number(item.order || 0)}</span>
     `;
 
-    const inlineInput = info.querySelector("input");
-    const inlineSave = info.querySelector("button");
+    const inlineInput = info.querySelector(".admin-inline-price input");
+    const inlineSave = info.querySelector(".admin-inline-price button");
     inlineSave.addEventListener("click", () => {
       const value = Number(inlineInput.value);
       if (!Number.isFinite(value) || value <= 0) {
@@ -344,6 +353,12 @@ function renderProducts(items) {
         return;
       }
       updatePrice(item.id, value);
+    });
+
+    const imageInput = info.querySelector(".admin-inline-image input");
+    const imageSave = info.querySelector(".admin-inline-image button");
+    imageSave.addEventListener("click", () => {
+      updateImageUrl(item.id, imageInput.value);
     });
 
     const actions = document.createElement("div");
@@ -530,6 +545,22 @@ function updatePrice(id, price) {
     })
     .catch((error) => {
       setProductStatus(error.message || "Fiyat guncellenemedi.", true);
+    });
+}
+
+function updateImageUrl(id, imageUrl) {
+  const value = clean(imageUrl);
+  db.collection("shopProducts")
+    .doc(id)
+    .set(
+      { imageUrl: value, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+      { merge: true }
+    )
+    .then(() => {
+      setProductStatus("Resim guncellendi.", false);
+    })
+    .catch((error) => {
+      setProductStatus(error.message || "Resim guncellenemedi.", true);
     });
 }
 
