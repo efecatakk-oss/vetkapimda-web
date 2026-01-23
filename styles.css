@@ -2135,6 +2135,37 @@ textarea {
   flex-wrap: wrap;
 }
 
+.booking-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.booking-status.new {
+  background: #e8f7ff;
+  color: #0f5570;
+}
+
+.booking-status.confirmed {
+  background: #e9fbf4;
+  color: #0f6f51;
+}
+
+.booking-status.closed {
+  background: #f1f0ff;
+  color: #2a2162;
+}
+
+.booking-status.cancelled {
+  background: #ffe6e6;
+  color: #a62828;
+}
+
 .admin-tag {
   background: #e8f7ff;
   color: #0f5570;

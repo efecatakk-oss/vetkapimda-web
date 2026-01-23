@@ -76,6 +76,11 @@ const userList = document.getElementById("userList");
 const userCount = document.getElementById("userCount");
 const userSearch = document.getElementById("userSearch");
 
+const bookingsPanel = document.getElementById("bookingsPanel");
+const bookingList = document.getElementById("bookingList");
+const bookingCount = document.getElementById("bookingCount");
+const bookingSearch = document.getElementById("bookingSearch");
+
 const clean = (value) => (value || "").trim();
 const formatPrice = (value) =>
   Number.isFinite(value) ? `${value} TL` : "-";
@@ -94,6 +99,8 @@ let serviceUnsub = null;
 let allServices = [];
 let userUnsub = null;
 let allUsers = [];
+let bookingUnsub = null;
+let allBookings = [];
 let productDragId = null;
 let serviceDragId = null;
 
@@ -259,6 +266,7 @@ serviceCategoryFilter?.addEventListener("change", () => renderServices(allServic
 serviceStatusFilter?.addEventListener("change", () => renderServices(allServices));
 serviceResetBtn?.addEventListener("click", () => resetServiceForm());
 userSearch?.addEventListener("input", () => renderUsers(allUsers));
+bookingSearch?.addEventListener("input", () => renderBookings(allBookings));
 
 serviceForm?.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -315,6 +323,9 @@ function showLogin() {
   if (usersPanel) {
     usersPanel.classList.add("admin-hidden");
   }
+  if (bookingsPanel) {
+    bookingsPanel.classList.add("admin-hidden");
+  }
   if (productUnsub) {
     productUnsub();
     productUnsub = null;
@@ -326,6 +337,10 @@ function showLogin() {
   if (userUnsub) {
     userUnsub();
     userUnsub = null;
+  }
+  if (bookingUnsub) {
+    bookingUnsub();
+    bookingUnsub = null;
   }
   selectedIds.clear();
 }
@@ -339,10 +354,14 @@ function showAdmin(email) {
   if (usersPanel) {
     usersPanel.classList.remove("admin-hidden");
   }
+  if (bookingsPanel) {
+    bookingsPanel.classList.remove("admin-hidden");
+  }
   setLoginStatus(`Giris yapildi: ${email}`, false);
   startProductListener();
   startServiceListener();
   startUserListener();
+  startBookingListener();
 }
 
 function setLoginStatus(message, isError) {
@@ -451,6 +470,29 @@ function startUserListener() {
       () => {
         if (userList) {
           userList.innerHTML = "<p class='admin-muted'>Uyeler yuklenemedi.</p>";
+        }
+      }
+    );
+}
+
+function startBookingListener() {
+  if (bookingUnsub) return;
+  bookingUnsub = db
+    .collection("bookings")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(
+      (snapshot) => {
+        const items = [];
+        snapshot.forEach((doc) => {
+          items.push({ id: doc.id, ...doc.data() });
+        });
+        allBookings = items;
+        renderBookings(items);
+      },
+      () => {
+        if (bookingList) {
+          bookingList.innerHTML =
+            "<p class='admin-muted'>Randevular yuklenemedi.</p>";
         }
       }
     );
@@ -821,6 +863,98 @@ function editUserInline(item) {
     .then(() => {
       if (userSearch) userSearch.value = "";
     });
+}
+
+function renderBookings(items) {
+  if (!bookingList) return;
+  const query = clean(bookingSearch.value).toLowerCase();
+  const filtered = items.filter((item) => {
+    if (!query) return true;
+    return (
+      (item.name || "").toLowerCase().includes(query) ||
+      (item.email || "").toLowerCase().includes(query) ||
+      (item.phone || "").toLowerCase().includes(query)
+    );
+  });
+
+  bookingList.innerHTML = "";
+  bookingCount.textContent = `${filtered.length} randevu`;
+  if (filtered.length === 0) {
+    bookingList.innerHTML =
+      items.length === 0
+        ? "<p class='admin-muted'>Henuz randevu yok.</p>"
+        : "<p class='admin-muted'>Aramaniza uyan randevu bulunamadi.</p>";
+    return;
+  }
+
+  filtered.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = "admin-row booking-row";
+
+    const info = document.createElement("div");
+    info.className = "admin-row-info";
+
+    const services = Array.isArray(item.services)
+      ? item.services.map((s) => s.title || s.name || s).join(", ")
+      : item.services || "-";
+
+    const totalText = item.total ? `${item.total} TL` : "-";
+
+    info.innerHTML = `
+      <strong>${item.name || "Isim yok"}</strong>
+      <span>${item.email || "-"}</span>
+      <span>${item.phone || "-"}</span>
+      <span>${item.datetime || "-"}</span>
+      <span>${services}</span>
+      <span>${totalText}</span>
+      <span class="booking-status ${item.status || "new"}">${
+        statusLabel(item.status)
+      }</span>
+    `;
+
+    const actions = document.createElement("div");
+    actions.className = "admin-row-actions";
+
+    const confirmBtn = document.createElement("button");
+    confirmBtn.className = "btn ghost";
+    confirmBtn.textContent = "Onayla";
+    confirmBtn.addEventListener("click", () => updateBookingStatus(item.id, "confirmed"));
+
+    const doneBtn = document.createElement("button");
+    doneBtn.className = "btn ghost";
+    doneBtn.textContent = "Tamamlandı";
+    doneBtn.addEventListener("click", () => updateBookingStatus(item.id, "closed"));
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "btn primary";
+    cancelBtn.textContent = "İptal";
+    cancelBtn.addEventListener("click", () => updateBookingStatus(item.id, "cancelled"));
+
+    actions.appendChild(confirmBtn);
+    actions.appendChild(doneBtn);
+    actions.appendChild(cancelBtn);
+
+    row.appendChild(info);
+    row.appendChild(actions);
+    bookingList.appendChild(row);
+  });
+}
+
+function updateBookingStatus(id, status) {
+  db.collection("bookings")
+    .doc(id)
+    .set(
+      { status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+      { merge: true }
+    )
+    .catch(() => {});
+}
+
+function statusLabel(status) {
+  if (status === "confirmed") return "Onaylandı";
+  if (status === "closed") return "Tamamlandı";
+  if (status === "cancelled") return "İptal";
+  return "Yeni";
 }
 
 function fillForm(item) {
