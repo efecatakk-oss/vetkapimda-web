@@ -1067,6 +1067,30 @@ h4 {
   border: 1px solid rgba(27, 111, 106, 0.08);
   transform: translateX(40px);
   animation: slideIn 0.35s ease forwards;
+  position: relative;
+}
+
+.drawer-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border: none;
+  background: #fff1e1;
+  color: #8a3f00;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 8px 16px rgba(255, 122, 26, 0.2);
+}
+
+.login-card h3 {
+  color: var(--primary-deep);
+}
+
+.login-card p {
+  color: #5a556c;
 }
 
 .signup-page {
@@ -1148,6 +1172,20 @@ h4 {
   background: #fff;
   color: var(--primary-deep);
   box-shadow: 0 8px 16px rgba(23, 20, 42, 0.12);
+}
+
+.login-actions .btn.primary {
+  background: linear-gradient(120deg, #1b6f6a 0%, #0f4f4b 100%);
+  color: #fff;
+}
+
+.login-actions .btn.ghost {
+  border-color: #ff7a1a;
+  color: #ff7a1a;
+}
+
+.login-actions .btn.ghost:hover {
+  background: rgba(255, 122, 26, 0.12);
 }
 
 .login-fields {
