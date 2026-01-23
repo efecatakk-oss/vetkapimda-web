@@ -42,8 +42,8 @@ a {
   gap: 12px;
   padding: 10px 16px;
   border-radius: 14px;
-  background: linear-gradient(90deg, #ff6a00 0%, #ff9a3c 55%, #ffbf6b 100%);
-  color: #fff;
+  background: linear-gradient(90deg, #d95800 0%, #f07a15 55%, #ff9f3c 100%);
+  color: #2b1400;
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 14px;
@@ -63,7 +63,7 @@ a {
 .topbar-link {
   padding: 4px 8px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .topbar-link:hover {
@@ -87,8 +87,8 @@ a {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.55);
+  color: #2b1400;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -96,7 +96,7 @@ a {
 }
 
 .topbar-link {
-  color: #fff;
+  color: #2b1400;
   text-decoration: none;
   font-weight: 700;
 }
