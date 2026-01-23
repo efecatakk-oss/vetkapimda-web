@@ -47,6 +47,23 @@ const bulkPriceMode = document.getElementById("bulkPriceMode");
 const bulkPriceValue = document.getElementById("bulkPriceValue");
 const bulkPriceApplyBtn = document.getElementById("bulkPriceApplyBtn");
 
+const servicePanel = document.getElementById("servicePanel");
+const serviceForm = document.getElementById("serviceForm");
+const serviceId = document.getElementById("serviceId");
+const serviceTitle = document.getElementById("serviceTitle");
+const serviceCategory = document.getElementById("serviceCategory");
+const servicePrice = document.getElementById("servicePrice");
+const serviceOrder = document.getElementById("serviceOrder");
+const serviceActive = document.getElementById("serviceActive");
+const serviceFormStatus = document.getElementById("serviceFormStatus");
+const serviceFormTitle = document.getElementById("serviceFormTitle");
+const serviceResetBtn = document.getElementById("serviceResetBtn");
+const serviceList = document.getElementById("serviceList");
+const serviceCount = document.getElementById("serviceCount");
+const serviceSearch = document.getElementById("serviceSearch");
+const serviceCategoryFilter = document.getElementById("serviceCategoryFilter");
+const serviceStatusFilter = document.getElementById("serviceStatusFilter");
+
 const clean = (value) => (value || "").trim();
 const formatPrice = (value) =>
   Number.isFinite(value) ? `${value} TL` : "-";
@@ -54,6 +71,8 @@ const formatPrice = (value) =>
 let productUnsub = null;
 let allProducts = [];
 const selectedIds = new Set();
+let serviceUnsub = null;
+let allServices = [];
 
 const placeholderImage =
   "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=60";
@@ -197,6 +216,60 @@ if (productStatusFilter) {
   productStatusFilter.value = "all";
 }
 
+if (serviceCategoryFilter) {
+  serviceCategoryFilter.value = "all";
+}
+if (serviceStatusFilter) {
+  serviceStatusFilter.value = "all";
+}
+
+serviceSearch?.addEventListener("input", () => renderServices(allServices));
+serviceCategoryFilter?.addEventListener("change", () => renderServices(allServices));
+serviceStatusFilter?.addEventListener("change", () => renderServices(allServices));
+serviceResetBtn?.addEventListener("click", () => resetServiceForm());
+
+serviceForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (!auth.currentUser || !isAdmin(auth.currentUser.email || "")) {
+    setServiceStatus("Yetkisiz islem.", true);
+    return;
+  }
+  const payload = {
+    title: clean(serviceTitle.value),
+    category: serviceCategory.value || "procedures",
+    price: Number(servicePrice.value || 0),
+    order: Number(serviceOrder.value || 0),
+    active: Boolean(serviceActive.checked),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  };
+
+  if (!payload.title) {
+    setServiceStatus("Hizmet adi zorunlu.", true);
+    return;
+  }
+  if (!Number.isFinite(payload.price) || payload.price <= 0) {
+    setServiceStatus("Fiyat pozitif olmalidir.", true);
+    return;
+  }
+
+  const docId = clean(serviceId.value);
+  const request = docId
+    ? db.collection("serviceItems").doc(docId).set(payload, { merge: true })
+    : db.collection("serviceItems").add({
+        ...payload,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+  request
+    .then(() => {
+      setServiceStatus("Hizmet kaydedildi.", false);
+      resetServiceForm();
+    })
+    .catch((error) => {
+      setServiceStatus(error.message || "Kayit sirasinda hata.", true);
+    });
+});
+
 function isAdmin(email) {
   return email.toLowerCase() === ADMIN_EMAIL;
 }
@@ -204,9 +277,16 @@ function isAdmin(email) {
 function showLogin() {
   loginPanel.classList.remove("admin-hidden");
   adminPanel.classList.add("admin-hidden");
+  if (servicePanel) {
+    servicePanel.classList.add("admin-hidden");
+  }
   if (productUnsub) {
     productUnsub();
     productUnsub = null;
+  }
+  if (serviceUnsub) {
+    serviceUnsub();
+    serviceUnsub = null;
   }
   selectedIds.clear();
 }
@@ -214,8 +294,12 @@ function showLogin() {
 function showAdmin(email) {
   loginPanel.classList.add("admin-hidden");
   adminPanel.classList.remove("admin-hidden");
+  if (servicePanel) {
+    servicePanel.classList.remove("admin-hidden");
+  }
   setLoginStatus(`Giris yapildi: ${email}`, false);
   startProductListener();
+  startServiceListener();
 }
 
 function setLoginStatus(message, isError) {
@@ -230,6 +314,12 @@ function setProductStatus(message, isError) {
   productFormStatus.classList.toggle("error", isError);
 }
 
+function setServiceStatus(message, isError) {
+  if (!serviceFormStatus) return;
+  serviceFormStatus.textContent = message;
+  serviceFormStatus.classList.toggle("error", isError);
+}
+
 function resetProductForm() {
   productId.value = "";
   productTitle.value = "";
@@ -241,6 +331,17 @@ function resetProductForm() {
   productActive.checked = true;
   productFormTitle.textContent = "Yeni Urun";
   updateImagePreview("");
+}
+
+function resetServiceForm() {
+  if (!serviceForm) return;
+  serviceId.value = "";
+  serviceTitle.value = "";
+  serviceCategory.value = "procedures";
+  servicePrice.value = "";
+  serviceOrder.value = "0";
+  serviceActive.checked = true;
+  serviceFormTitle.textContent = "Yeni Hizmet";
 }
 
 function startProductListener() {
@@ -261,6 +362,29 @@ function startProductListener() {
         if (productList) {
           productList.innerHTML =
             "<p class='admin-muted'>Urunler yuklenemedi.</p>";
+        }
+      }
+    );
+}
+
+function startServiceListener() {
+  if (serviceUnsub) return;
+  serviceUnsub = db
+    .collection("serviceItems")
+    .orderBy("order")
+    .onSnapshot(
+      (snapshot) => {
+        const items = [];
+        snapshot.forEach((doc) => {
+          items.push({ id: doc.id, ...doc.data() });
+        });
+        allServices = items;
+        renderServices(items);
+      },
+      () => {
+        if (serviceList) {
+          serviceList.innerHTML =
+            "<p class='admin-muted'>Hizmetler yuklenemedi.</p>";
         }
       }
     );
@@ -391,6 +515,99 @@ function renderProducts(items) {
   });
 }
 
+function renderServices(items) {
+  if (!serviceList) return;
+  const query = clean(serviceSearch.value).toLowerCase();
+  const categoryValue = serviceCategoryFilter.value;
+  const statusValue = serviceStatusFilter.value;
+
+  const filtered = items.filter((item) => {
+    const matchesQuery =
+      !query || (item.title || "").toLowerCase().includes(query);
+    const matchesCategory =
+      categoryValue === "all" || item.category === categoryValue;
+    const isActive = item.active !== false;
+    const matchesStatus =
+      statusValue === "all" ||
+      (statusValue === "active" && isActive) ||
+      (statusValue === "inactive" && !isActive);
+    return matchesQuery && matchesCategory && matchesStatus;
+  });
+
+  serviceList.innerHTML = "";
+  serviceCount.textContent = `${filtered.length} hizmet`;
+  if (filtered.length === 0) {
+    serviceList.innerHTML =
+      items.length === 0
+        ? "<p class='admin-muted'>Henuz hizmet eklenmedi.</p>"
+        : "<p class='admin-muted'>Aramaniza uyan hizmet bulunamadi.</p>";
+    return;
+  }
+
+  filtered.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = "admin-row";
+
+    const info = document.createElement("div");
+    info.className = "admin-row-info";
+    info.innerHTML = `
+      <strong>${item.title || "-"}</strong>
+      <div class="admin-inline-price">
+        <input
+          type="number"
+          min="0"
+          step="1"
+          value="${Number(item.price || 0)}"
+          aria-label="Fiyat guncelle"
+        />
+        <button type="button" class="btn ghost">Fiyati Kaydet</button>
+      </div>
+      <span class="admin-tag">${item.category || "procedures"}</span>
+      <span class="admin-pill ${
+        item.active === false ? "off" : ""
+      }">${item.active === false ? "Pasif" : "Aktif"}</span>
+      <span class="admin-order">Sira: ${Number(item.order || 0)}</span>
+    `;
+
+    const inlineInput = info.querySelector(".admin-inline-price input");
+    const inlineSave = info.querySelector(".admin-inline-price button");
+    inlineSave.addEventListener("click", () => {
+      const value = Number(inlineInput.value);
+      if (!Number.isFinite(value) || value <= 0) {
+        setServiceStatus("Fiyat pozitif olmali.", true);
+        return;
+      }
+      updateServicePrice(item.id, value);
+    });
+
+    const actions = document.createElement("div");
+    actions.className = "admin-row-actions";
+
+    const editBtn = document.createElement("button");
+    editBtn.className = "btn ghost";
+    editBtn.textContent = "Duzenle";
+    editBtn.addEventListener("click", () => fillServiceForm(item));
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.className = "btn ghost";
+    toggleBtn.textContent = item.active === false ? "Aktif Et" : "Pasif Et";
+    toggleBtn.addEventListener("click", () => toggleServiceActive(item));
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "btn primary";
+    deleteBtn.textContent = "Sil";
+    deleteBtn.addEventListener("click", () => deleteService(item));
+
+    actions.appendChild(editBtn);
+    actions.appendChild(toggleBtn);
+    actions.appendChild(deleteBtn);
+
+    row.appendChild(info);
+    row.appendChild(actions);
+    serviceList.appendChild(row);
+  });
+}
+
 function fillForm(item) {
   productId.value = item.id;
   productTitle.value = item.title || "";
@@ -423,6 +640,52 @@ function deleteProduct(item) {
   );
   if (!confirmed) return;
   db.collection("shopProducts").doc(item.id).delete();
+}
+
+function fillServiceForm(item) {
+  serviceId.value = item.id;
+  serviceTitle.value = item.title || "";
+  serviceCategory.value = item.category || "procedures";
+  servicePrice.value = item.price || "";
+  serviceOrder.value = item.order || 0;
+  serviceActive.checked = item.active !== false;
+  serviceFormTitle.textContent = "Hizmet Duzenle";
+  serviceForm.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function toggleServiceActive(item) {
+  db.collection("serviceItems")
+    .doc(item.id)
+    .set(
+      {
+        active: item.active === false,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
+}
+
+function deleteService(item) {
+  const confirmed = window.confirm(
+    `"${item.title || "Hizmet"}" silinsin mi?`
+  );
+  if (!confirmed) return;
+  db.collection("serviceItems").doc(item.id).delete();
+}
+
+function updateServicePrice(id, price) {
+  db.collection("serviceItems")
+    .doc(id)
+    .set(
+      { price, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+      { merge: true }
+    )
+    .then(() => {
+      setServiceStatus("Fiyat guncellendi.", false);
+    })
+    .catch((error) => {
+      setServiceStatus(error.message || "Fiyat guncellenemedi.", true);
+    });
 }
 
 function updateImagePreview(url) {

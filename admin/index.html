@@ -153,6 +153,71 @@
           </div>
         </div>
       </section>
+
+      <section class="admin-card admin-hidden" id="servicePanel">
+        <div class="admin-toolbar">
+          <div>
+            <h2>Hizmetler / Asilar</h2>
+            <p class="admin-muted">Firestore: serviceItems</p>
+          </div>
+        </div>
+
+        <div class="admin-grid">
+          <div class="admin-form-card">
+            <h3 id="serviceFormTitle">Yeni Hizmet</h3>
+            <form id="serviceForm" class="admin-form">
+              <input id="serviceId" type="hidden" />
+              <label for="serviceTitle">Hizmet Adi</label>
+              <input id="serviceTitle" type="text" required />
+              <label for="serviceCategory">Kategori</label>
+              <select id="serviceCategory">
+                <option value="procedures">Evde Islemler</option>
+                <option value="vaccines">Evde Kopek Asilari</option>
+              </select>
+              <label for="servicePrice">Fiyat (TL)</label>
+              <input id="servicePrice" type="number" min="0" step="1" required />
+              <label for="serviceOrder">Siralama</label>
+              <input id="serviceOrder" type="number" min="0" step="1" value="0" />
+              <label class="admin-checkbox">
+                <input id="serviceActive" type="checkbox" checked />
+                Aktif olarak yayinla
+              </label>
+              <div class="admin-actions">
+                <button class="btn primary" type="submit">Kaydet</button>
+                <button class="btn ghost" id="serviceResetBtn" type="button">
+                  Temizle
+                </button>
+              </div>
+              <p id="serviceFormStatus" class="admin-status" role="status"></p>
+            </form>
+          </div>
+
+          <div class="admin-table-card">
+            <div class="admin-table-header">
+              <h3>Hizmet Listesi</h3>
+              <span id="serviceCount" class="admin-count"></span>
+            </div>
+            <div class="admin-list-tools">
+              <div class="admin-search">
+                <input id="serviceSearch" type="search" placeholder="Hizmet ara..." />
+              </div>
+              <div class="admin-filters">
+                <select id="serviceCategoryFilter">
+                  <option value="all">Tum kategoriler</option>
+                  <option value="procedures">Evde Islemler</option>
+                  <option value="vaccines">Evde Kopek Asilari</option>
+                </select>
+                <select id="serviceStatusFilter">
+                  <option value="all">Tum durumlar</option>
+                  <option value="active">Sadece aktif</option>
+                  <option value="inactive">Sadece pasif</option>
+                </select>
+              </div>
+            </div>
+            <div id="serviceList" class="admin-table"></div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <script src="/admin.js"></script>
