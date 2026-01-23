@@ -71,6 +71,11 @@ const serviceImportFile = document.getElementById("serviceImportFile");
 const serviceImportBtn = document.getElementById("serviceImportBtn");
 const serviceImportStatus = document.getElementById("serviceImportStatus");
 
+const usersPanel = document.getElementById("usersPanel");
+const userList = document.getElementById("userList");
+const userCount = document.getElementById("userCount");
+const userSearch = document.getElementById("userSearch");
+
 const clean = (value) => (value || "").trim();
 const formatPrice = (value) =>
   Number.isFinite(value) ? `${value} TL` : "-";
@@ -87,6 +92,8 @@ let allProducts = [];
 const selectedIds = new Set();
 let serviceUnsub = null;
 let allServices = [];
+let userUnsub = null;
+let allUsers = [];
 let productDragId = null;
 let serviceDragId = null;
 
@@ -251,6 +258,7 @@ serviceSearch?.addEventListener("input", () => renderServices(allServices));
 serviceCategoryFilter?.addEventListener("change", () => renderServices(allServices));
 serviceStatusFilter?.addEventListener("change", () => renderServices(allServices));
 serviceResetBtn?.addEventListener("click", () => resetServiceForm());
+userSearch?.addEventListener("input", () => renderUsers(allUsers));
 
 serviceForm?.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -304,6 +312,9 @@ function showLogin() {
   if (servicePanel) {
     servicePanel.classList.add("admin-hidden");
   }
+  if (usersPanel) {
+    usersPanel.classList.add("admin-hidden");
+  }
   if (productUnsub) {
     productUnsub();
     productUnsub = null;
@@ -311,6 +322,10 @@ function showLogin() {
   if (serviceUnsub) {
     serviceUnsub();
     serviceUnsub = null;
+  }
+  if (userUnsub) {
+    userUnsub();
+    userUnsub = null;
   }
   selectedIds.clear();
 }
@@ -321,9 +336,13 @@ function showAdmin(email) {
   if (servicePanel) {
     servicePanel.classList.remove("admin-hidden");
   }
+  if (usersPanel) {
+    usersPanel.classList.remove("admin-hidden");
+  }
   setLoginStatus(`Giris yapildi: ${email}`, false);
   startProductListener();
   startServiceListener();
+  startUserListener();
 }
 
 function setLoginStatus(message, isError) {
@@ -410,6 +429,28 @@ function startServiceListener() {
         if (serviceList) {
           serviceList.innerHTML =
             "<p class='admin-muted'>Hizmetler yuklenemedi.</p>";
+        }
+      }
+    );
+}
+
+function startUserListener() {
+  if (userUnsub) return;
+  userUnsub = db
+    .collection("users")
+    .orderBy("createdAt")
+    .onSnapshot(
+      (snapshot) => {
+        const items = [];
+        snapshot.forEach((doc) => {
+          items.push({ id: doc.id, ...doc.data() });
+        });
+        allUsers = items;
+        renderUsers(items);
+      },
+      () => {
+        if (userList) {
+          userList.innerHTML = "<p class='admin-muted'>Uyeler yuklenemedi.</p>";
         }
       }
     );
@@ -710,6 +751,76 @@ function renderServices(items) {
       });
     }
   });
+}
+
+function renderUsers(items) {
+  if (!userList) return;
+  const query = clean(userSearch.value).toLowerCase();
+  const filtered = items.filter((item) => {
+    if (!query) return true;
+    return (
+      (item.name || "").toLowerCase().includes(query) ||
+      (item.email || "").toLowerCase().includes(query) ||
+      (item.phone || "").toLowerCase().includes(query)
+    );
+  });
+
+  userList.innerHTML = "";
+  userCount.textContent = `${filtered.length} uye`;
+  if (filtered.length === 0) {
+    userList.innerHTML =
+      items.length === 0
+        ? "<p class='admin-muted'>Henuz uye yok.</p>"
+        : "<p class='admin-muted'>Aramaniza uyan uye bulunamadi.</p>";
+    return;
+  }
+
+  filtered.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = "admin-row user-row";
+
+    const info = document.createElement("div");
+    info.className = "admin-row-info";
+    info.innerHTML = `
+      <strong>${item.name || "Isim yok"}</strong>
+      <span>${item.email || "-"}</span>
+      <span>${item.phone || "-"}</span>
+    `;
+
+    const actions = document.createElement("div");
+    actions.className = "admin-row-actions";
+
+    const editBtn = document.createElement("button");
+    editBtn.className = "btn ghost";
+    editBtn.textContent = "Duzenle";
+    editBtn.addEventListener("click", () => editUserInline(item));
+
+    actions.appendChild(editBtn);
+
+    row.appendChild(info);
+    row.appendChild(actions);
+    userList.appendChild(row);
+  });
+}
+
+function editUserInline(item) {
+  const name = window.prompt("Uye adi", item.name || "");
+  if (name === null) return;
+  const phone = window.prompt("Telefon", item.phone || "");
+  if (phone === null) return;
+  db.collection("users")
+    .doc(item.id)
+    .set(
+      {
+        name: clean(name),
+        phone: clean(phone),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
+    .then(() => {
+      if (userSearch) userSearch.value = "";
+    });
 }
 
 function fillForm(item) {

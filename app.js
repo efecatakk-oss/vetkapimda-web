@@ -161,6 +161,16 @@ form.addEventListener("submit", (event) => {
   const formData = new FormData(form);
   const payload = new URLSearchParams(formData).toString();
 
+  if (auth.currentUser) {
+    upsertUserProfile({
+      uid: auth.currentUser.uid,
+      email: auth.currentUser.email,
+      name,
+      phone,
+      address,
+    });
+  }
+
   fetch("/api/booking", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -202,6 +212,9 @@ function watchAuth() {
     isVerified = Boolean(user && isEmailVerified(user.email));
     if (userEmailHidden) {
       userEmailHidden.value = user?.email || "";
+    }
+    if (user) {
+      ensureUserProfile(user);
     }
     updateLoginUI(user);
   });
@@ -637,6 +650,39 @@ function renderShopProducts(items) {
     `;
     shopGrid.appendChild(card);
   });
+}
+
+function ensureUserProfile(user) {
+  const docRef = db.collection("users").doc(user.uid);
+  docRef
+    .get()
+    .then((doc) => {
+      if (doc.exists) return;
+      return docRef.set({
+        email: user.email || "",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+    })
+    .catch(() => {});
+}
+
+function upsertUserProfile({ uid, email, name, phone, address }) {
+  if (!uid) return;
+  db.collection("users")
+    .doc(uid)
+    .set(
+      {
+        email: email || "",
+        name: name || "",
+        phone: phone || "",
+        address: address || "",
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
+    .catch(() => {});
 }
 function renderCart() {
   cartEl.innerHTML = "";

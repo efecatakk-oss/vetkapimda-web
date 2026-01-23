@@ -253,6 +253,27 @@
           </div>
         </div>
       </section>
+
+      <section class="admin-card admin-hidden" id="usersPanel">
+        <div class="admin-toolbar">
+          <div>
+            <h2>Uyeler</h2>
+            <p class="admin-muted">Firestore: users</p>
+          </div>
+        </div>
+        <div class="admin-table-card">
+          <div class="admin-table-header">
+            <h3>Uye Listesi</h3>
+            <span id="userCount" class="admin-count"></span>
+          </div>
+          <div class="admin-list-tools">
+            <div class="admin-search">
+              <input id="userSearch" type="search" placeholder="Uye ara..." />
+            </div>
+          </div>
+          <div id="userList" class="admin-table"></div>
+        </div>
+      </section>
     </main>
 
     <script src="/admin.js"></script>
