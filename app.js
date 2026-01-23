@@ -299,8 +299,24 @@ function handleLogin() {
     return;
   }
   pendingAction = "login";
-  setLoginStatus("Onay kodu gonderiyoruz...", false);
-  handleSendCode();
+  setLoginStatus("Giris yapiliyor...", false);
+  auth
+    .signInWithEmailAndPassword(email, password)
+    .then(() => {
+      setLoginStatus("Giris basarili.", false);
+      hideLoginGate();
+    })
+    .catch((error) => {
+      if (error.code === "auth/user-not-found") {
+        setLoginStatus("Kullanici bulunamadi. Uye olun.", true);
+        return;
+      }
+      if (error.code === "auth/wrong-password") {
+        setLoginStatus("Sifre hatali.", true);
+        return;
+      }
+      setLoginStatus(error.message || "Giris yapilamadi.", true);
+    });
 }
 
 function handleSignup() {
@@ -419,6 +435,10 @@ function handleLogout() {
 }
 
 function handleSendCode() {
+  if (pendingAction !== "signup") {
+    setLoginStatus("Kod yalnizca uyelik icin gonderilir.", true);
+    return;
+  }
   const email = loginEmail.value.trim();
   if (!email) {
     setLoginStatus("E-posta adresinizi girin.", true);

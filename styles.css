@@ -1274,6 +1274,13 @@ h4 {
   display: grid;
 }
 
+.login-card:not(.signup-active) #loginPasswordConfirm,
+.login-card:not(.signup-active) .login-code,
+.login-card:not(.signup-active) .otp-actions,
+.login-card:not(.signup-active) .terms-row {
+  display: none;
+}
+
 .signup-gender {
   display: grid;
   gap: 8px;
