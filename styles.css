@@ -1575,6 +1575,23 @@ textarea {
   font-weight: 700;
 }
 
+.cart-total.sticky {
+  position: sticky;
+  bottom: 16px;
+  margin-top: 14px;
+  background: linear-gradient(120deg, #fff8f0 0%, #fff1e1 100%);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 12px 26px rgba(255, 122, 26, 0.2);
+  border: 1px solid rgba(255, 122, 26, 0.25);
+  font-size: 18px;
+}
+
+.cart-total.sticky strong {
+  color: var(--accent-deep);
+  font-size: 20px;
+}
+
 .footer {
   padding: 28px clamp(16px, 4vw, 60px);
   display: flex;

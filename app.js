@@ -17,6 +17,7 @@ const statusEl = document.getElementById("formStatus");
 const catalogEl = document.getElementById("serviceCatalog");
 const cartEl = document.getElementById("cartSummary");
 const cartTotalEl = document.getElementById("cartTotal");
+const cartTotalStickyEl = document.getElementById("cartTotalSticky");
 const slides = document.querySelectorAll(".slider-track .slide");
 const dots = document.querySelectorAll(".slider-dots .dot");
 const shopGrid = document.getElementById("shopGrid");
@@ -632,6 +633,9 @@ function renderCart() {
     empty.textContent = "Sepetiniz bos.";
     cartEl.appendChild(empty);
     cartTotalEl.textContent = "0 TL";
+    if (cartTotalStickyEl) {
+      cartTotalStickyEl.textContent = "0 TL";
+    }
     return;
   }
 
@@ -657,6 +661,9 @@ function renderCart() {
     total += item.price;
   });
   cartTotalEl.textContent = `${total} TL`;
+  if (cartTotalStickyEl) {
+    cartTotalStickyEl.textContent = `${total} TL`;
+  }
 }
 
 function toggleItem(item) {
