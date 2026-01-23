@@ -1051,15 +1051,24 @@ h4 {
 }
 
 .login-card {
+  margin-left: auto;
   background: linear-gradient(180deg, #ffffff 0%, #f6fbff 100%);
   border-radius: 18px;
   padding: 24px;
-  max-width: 420px;
+  max-width: 380px;
   width: 100%;
   box-shadow: var(--shadow);
   display: grid;
   gap: 12px;
   border: 1px solid rgba(27, 111, 106, 0.08);
+  transform: translateX(40px);
+  animation: slideIn 0.35s ease forwards;
+}
+
+@keyframes slideIn {
+  to {
+    transform: translateX(0);
+  }
 }
 
 .login-tabs {
