@@ -1066,6 +1066,57 @@ h4 {
   animation: slideIn 0.35s ease forwards;
 }
 
+.signup-page {
+  background: radial-gradient(circle at top, #ffffff 0%, #f4fbff 50%, #fdf3e6 100%);
+  min-height: 100vh;
+}
+
+.signup-wrap {
+  padding: 40px clamp(16px, 4vw, 60px);
+  display: grid;
+  gap: 16px;
+}
+
+.signup-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 24px;
+  max-width: 520px;
+  margin: 0 auto;
+  width: 100%;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(27, 111, 106, 0.08);
+}
+
+.signup-form {
+  display: grid;
+  gap: 12px;
+}
+
+.signup-form .form-row {
+  display: grid;
+  gap: 6px;
+}
+
+.signup-form input {
+  border: 1px solid #e0e0eb;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.gender-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.signup-back {
+  justify-self: flex-start;
+}
+
 @keyframes slideIn {
   to {
     transform: translateX(0);
