@@ -42,8 +42,8 @@ a {
   gap: 12px;
   padding: 10px 16px;
   border-radius: 14px;
-  background: linear-gradient(90deg, #d95800 0%, #f07a15 55%, #ff9f3c 100%);
-  color: #2b1400;
+  background: linear-gradient(90deg, #b94900 0%, #d8610f 55%, #f08724 100%);
+  color: #1f0f00;
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 14px;
@@ -87,8 +87,8 @@ a {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.55);
-  color: #2b1400;
+  background: rgba(255, 255, 255, 0.65);
+  color: #1f0f00;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -96,7 +96,7 @@ a {
 }
 
 .topbar-link {
-  color: #2b1400;
+  color: #1f0f00;
   text-decoration: none;
   font-weight: 700;
 }
