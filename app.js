@@ -621,7 +621,7 @@ function renderShopProducts(items) {
       }
     }
     const image = item.imageUrl
-      ? `<img class="product-image" src="${item.imageUrl}" alt="${item.title || "Urun"}" />`
+      ? `<img class="product-image" src="${item.imageUrl}" alt="${item.title || "Urun"}" loading="lazy" decoding="async" />`
       : "";
     card.innerHTML = `
       ${tag}
