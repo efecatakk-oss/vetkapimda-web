@@ -582,6 +582,7 @@ function loadServiceItems() {
 function loadShopProducts() {
   if (!shopGrid) return;
   db.collection("shopProducts")
+    .where("active", "==", true)
     .orderBy("order")
     .onSnapshot(
       (snapshot) => {
