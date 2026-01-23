@@ -1903,6 +1903,12 @@ textarea {
   border-top: 1px solid rgba(27, 111, 106, 0.1);
 }
 
+.footer-col {
+  display: grid;
+  gap: 10px;
+  min-width: 220px;
+}
+
 .footer-map {
   display: grid;
   gap: 6px;
@@ -1928,6 +1934,7 @@ textarea {
   gap: 16px;
   color: var(--primary-deep);
   font-weight: 600;
+  flex-direction: column;
 }
 
 .footer-meta a {
