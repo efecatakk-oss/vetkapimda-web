@@ -477,6 +477,18 @@ h4 {
   overflow: hidden;
 }
 
+.hero-badge {
+  justify-self: flex-start;
+  background: linear-gradient(120deg, #ffe1c2 0%, #fff1e1 100%);
+  color: #8a4b00;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  box-shadow: 0 10px 20px rgba(255, 122, 26, 0.2);
+}
+
 .slider-track {
   position: relative;
   min-height: 220px;
