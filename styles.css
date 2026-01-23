@@ -689,6 +689,19 @@ h4 {
   line-height: 1.5;
 }
 
+.service-price {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(31, 27, 45, 0.08);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
 .service-chip {
   display: inline-flex;
   align-items: center;
@@ -754,6 +767,56 @@ h4 {
   background: #f8f7ff;
   border-radius: 16px;
   padding: 18px;
+}
+
+.hero-loop {
+  background: #fff;
+  border-radius: 22px;
+  margin: 0 clamp(16px, 4vw, 60px) 32px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(27, 111, 106, 0.08);
+}
+
+.loop-frame {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  min-height: 240px;
+  box-shadow: var(--shadow);
+}
+
+.loop-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  animation: loopFade 12s infinite;
+}
+
+.loop-frame img:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loop-frame img:nth-child(2) {
+  animation-delay: 4s;
+}
+
+.loop-frame img:nth-child(3) {
+  animation-delay: 8s;
+}
+
+@keyframes loopFade {
+  0%,
+  20% {
+    opacity: 1;
+  }
+  33%,
+  100% {
+    opacity: 0;
+  }
 }
 
 .feature-card h3 {
@@ -1013,6 +1076,13 @@ h4 {
 .price-row button:hover {
   transform: translateY(-1px);
   filter: brightness(1.05);
+}
+
+.quick-order {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #25d366;
 }
 
 .login-gate {
@@ -1654,6 +1724,26 @@ textarea {
   border-top: 1px solid rgba(27, 111, 106, 0.1);
 }
 
+.footer-map {
+  display: grid;
+  gap: 6px;
+}
+
+.map-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 10px 12px;
+  border: 1px solid rgba(27, 111, 106, 0.08);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 4px;
+}
+
+.map-card span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .footer-meta {
   display: flex;
   gap: 16px;
@@ -2096,6 +2186,9 @@ textarea {
   .footer-meta {
     flex-direction: column;
     gap: 6px;
+  }
+  .footer-map {
+    width: 100%;
   }
   .cta-card {
     min-height: 190px;

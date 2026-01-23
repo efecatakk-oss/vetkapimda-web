@@ -633,6 +633,7 @@ function renderShopProducts(items) {
         <strong>${item.price} TL</strong>
         <button type="button">Sepete Ekle</button>
       </div>
+      <a class="quick-order" href="https://wa.me/905360340920">Hizli Siparis</a>
     `;
     shopGrid.appendChild(card);
   });
