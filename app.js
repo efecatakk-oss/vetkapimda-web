@@ -280,6 +280,9 @@ function bindPhoneMask() {
 function watchAuth() {
   auth.onAuthStateChanged((user) => {
     isLoggedIn = Boolean(user);
+    if (user && !isEmailVerified(user.email)) {
+      markEmailVerified(user.email);
+    }
     isVerified = Boolean(user && isEmailVerified(user.email));
     if (userEmailHidden) {
       userEmailHidden.value = user?.email || "";
@@ -304,6 +307,7 @@ function handleLogin() {
     .signInWithEmailAndPassword(email, password)
     .then(() => {
       setLoginStatus("Giris basarili.", false);
+      markEmailVerified(email);
       hideLoginGate();
     })
     .catch((error) => {
