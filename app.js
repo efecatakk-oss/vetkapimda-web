@@ -750,7 +750,7 @@ function loadShopProducts() {
           snapshot.forEach((doc) => {
             const item = doc.data();
             if (item.active === false) return;
-            items.push(item);
+            items.push({ id: doc.id, ...item });
           });
         }
         shopItemsCache = items;
@@ -765,6 +765,10 @@ function renderShopProducts(items) {
   items.forEach((item) => {
     const card = document.createElement("article");
     card.className = "product-card";
+    const hasId = Boolean(item.id);
+    const detailUrl = hasId
+      ? `product.html?id=${encodeURIComponent(item.id)}`
+      : `product.html?title=${encodeURIComponent(item.title || "")}`;
     const tag = item.tag ? `<span class="tag">${item.tag}</span>` : "";
     let stockBadge = "";
     if (Number.isFinite(Number(item.stock))) {
@@ -793,18 +797,31 @@ function renderShopProducts(items) {
         <div class="product-chip-row">
           <span class="product-chip">VETKAPIMDA Shop</span>
         </div>
-        <h4>${item.title}</h4>
+        <a class="product-title" href="${detailUrl}">${item.title}</a>
         ${description}
         <div class="product-actions">
           <div class="price-stack">
             <span>Fiyat</span>
             <strong>${item.price} TL</strong>
           </div>
-          <button type="button">Sepete Ekle</button>
+          <button type="button" class="add-to-cart">Sepete Ekle</button>
         </div>
+        <a class="product-detail" href="${detailUrl}">Urun Detayi</a>
         <a class="quick-order" href="https://wa.me/905360340920">Hizli Siparis</a>
       </div>
     `;
+    const addButton = card.querySelector(".add-to-cart");
+    addButton?.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      addShopToCart(item);
+      addButton.textContent = "Eklendi";
+      addButton.classList.add("is-added");
+      setTimeout(() => {
+        addButton.textContent = "Sepete Ekle";
+        addButton.classList.remove("is-added");
+      }, 1200);
+    });
     shopGrid.appendChild(card);
   });
 }
@@ -812,7 +829,18 @@ function renderShopProducts(items) {
 function bindShopSearch() {
   const shopSearch = document.querySelector(".shop-search input");
   if (!shopSearch) return;
+  shopSearch.setAttribute("autocomplete", "off");
+  if (shopSearch.value.includes("@")) {
+    shopSearch.value = "";
+  }
+  shopSearch.addEventListener("focus", () => {
+    if (!shopSearch.dataset.userModified && shopSearch.value.includes("@")) {
+      shopSearch.value = "";
+      renderShopProducts(applyShopFilter(shopItemsCache));
+    }
+  });
   shopSearch.addEventListener("input", () => {
+    shopSearch.dataset.userModified = "true";
     renderShopProducts(applyShopFilter(shopItemsCache));
   });
 }
@@ -828,6 +856,24 @@ function applyShopFilter(items) {
     );
   });
 }
+
+function addShopToCart(item) {
+  try {
+    const cart = JSON.parse(localStorage.getItem("shopCart") || "[]");
+    const id = item.id || item.title || String(Date.now());
+    const exists = cart.some((entry) => entry.id === id);
+    if (!exists) {
+      cart.push({
+        id,
+        title: item.title || "",
+        price: Number(item.price || 0),
+        imageUrl: item.imageUrl || "",
+      });
+      localStorage.setItem("shopCart", JSON.stringify(cart));
+    }
+  } catch (_) {}
+}
+
 
 function ensureUserProfile(user) {
   const docRef = db.collection("users").doc(user.uid);

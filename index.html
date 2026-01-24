@@ -329,10 +329,20 @@
             <h2>VETKAPIMDA Shop</h2>
             <p>Evcil dostlar icin secilmis urunler.</p>
           </div>
-          <div class="shop-search">
-            <input type="text" placeholder="Urun ara..." />
+          <form class="shop-search" autocomplete="off" role="search">
+            <input
+              type="search"
+              name="shopSearch"
+              placeholder="Urun ara..."
+              autocomplete="off"
+              spellcheck="false"
+              inputmode="search"
+              aria-label="Urun ara"
+              autocapitalize="off"
+              data-lpignore="true"
+            />
             <button type="button">Ara</button>
-          </div>
+          </form>
         </div>
         <div class="shop-tabs">
           <button class="tab active">Kedi</button>
