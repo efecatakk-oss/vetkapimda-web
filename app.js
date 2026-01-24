@@ -124,6 +124,7 @@ watchAuth();
 startCooldownTicker();
 loadShopProducts();
 bindShopSearch();
+bindHeroSearch();
 bindPhoneMask();
 
 form.addEventListener("submit", (event) => {
@@ -844,6 +845,23 @@ function bindShopSearch() {
   shopSearch.addEventListener("input", () => {
     shopSearch.dataset.userModified = "true";
     renderShopProducts(applyShopFilter(shopItemsCache));
+  });
+}
+
+function bindHeroSearch() {
+  const heroSearch = document.querySelector(".hero-search input");
+  if (!heroSearch) return;
+  heroSearch.setAttribute("autocomplete", "off");
+  if (heroSearch.value.includes("@")) {
+    heroSearch.value = "";
+  }
+  heroSearch.addEventListener("focus", () => {
+    if (!heroSearch.dataset.userModified && heroSearch.value.includes("@")) {
+      heroSearch.value = "";
+    }
+  });
+  heroSearch.addEventListener("input", () => {
+    heroSearch.dataset.userModified = "true";
   });
 }
 

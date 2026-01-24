@@ -2910,15 +2910,19 @@ textarea {
   }
   .nav-utils {
     width: 100%;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    justify-content: flex-start;
-    gap: 10px;
-    padding-bottom: 4px;
+    flex-wrap: wrap;
+    overflow: visible;
+    justify-content: center;
+    gap: 8px;
+    padding-bottom: 0;
   }
   .nav-pill,
   .nav-link {
     white-space: nowrap;
+  }
+  .nav-pill {
+    padding: 5px 8px;
+    font-size: 11px;
   }
   .nav-link {
     font-size: 12px;
