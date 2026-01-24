@@ -274,6 +274,27 @@
           <div id="userList" class="admin-table"></div>
         </div>
       </section>
+
+      <section class="admin-card admin-hidden" id="bookingsPanel">
+        <div class="admin-toolbar">
+          <div>
+            <h2>Randevular</h2>
+            <p class="admin-muted">Firestore: bookings</p>
+          </div>
+        </div>
+        <div class="admin-table-card">
+          <div class="admin-table-header">
+            <h3>Randevu Listesi</h3>
+            <span id="bookingCount" class="admin-count"></span>
+          </div>
+          <div class="admin-list-tools">
+            <div class="admin-search">
+              <input id="bookingSearch" type="search" placeholder="Isim/e-posta/telefon ara..." />
+            </div>
+          </div>
+          <div id="bookingList" class="admin-table"></div>
+        </div>
+      </section>
     </main>
 
     <script src="/admin.js"></script>
