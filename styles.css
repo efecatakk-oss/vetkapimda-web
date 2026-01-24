@@ -83,6 +83,23 @@ a {
   flex-wrap: wrap;
 }
 
+.mobile-quicklinks {
+  display: none;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.mobile-quicklinks a {
+  background: #fff;
+  border: 1px solid rgba(255, 122, 26, 0.3);
+  color: var(--primary-deep);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .topbar-icon {
   width: 24px;
   height: 24px;
@@ -2847,6 +2864,9 @@ textarea {
   }
   .topbar-right a:nth-child(n + 5) {
     display: none;
+  }
+  .mobile-quicklinks {
+    display: flex;
   }
   .topbar-link,
   .topbar-icon {
