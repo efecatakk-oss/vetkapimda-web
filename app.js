@@ -772,25 +772,38 @@ function renderShopProducts(items) {
       if (stockValue === 0) {
         stockBadge = `<span class="stock-badge out">Stokta yok</span>`;
       } else if (stockValue <= 5) {
-        stockBadge = `<span class="stock-badge low">Az kaldı</span>`;
+        stockBadge = `<span class="stock-badge low">Az kaldi</span>`;
       } else {
         stockBadge = `<span class="stock-badge ok">Stokta</span>`;
       }
     }
-    const image = item.imageUrl
+    const media = item.imageUrl
       ? `<img class="product-image" src="${item.imageUrl}" alt="${item.title || "Urun"}" loading="lazy" decoding="async" />`
+      : `<div class="product-placeholder">Gorsel yok</div>`;
+    const description = item.description
+      ? `<p class="product-desc">${item.description}</p>`
       : "";
     card.innerHTML = `
-      ${tag}
-      ${stockBadge}
-      ${image}
-      <h4>${item.title}</h4>
-      <p>${item.description || ""}</p>
-      <div class="price-row">
-        <strong>${item.price} TL</strong>
-        <button type="button">Sepete Ekle</button>
+      <div class="product-media">
+        ${tag}
+        ${stockBadge}
+        ${media}
       </div>
-      <a class="quick-order" href="https://wa.me/905360340920">Hizli Siparis</a>
+      <div class="product-content">
+        <div class="product-chip-row">
+          <span class="product-chip">VETKAPIMDA Shop</span>
+        </div>
+        <h4>${item.title}</h4>
+        ${description}
+        <div class="product-actions">
+          <div class="price-stack">
+            <span>Fiyat</span>
+            <strong>${item.price} TL</strong>
+          </div>
+          <button type="button">Sepete Ekle</button>
+        </div>
+        <a class="quick-order" href="https://wa.me/905360340920">Hizli Siparis</a>
+      </div>
     `;
     shopGrid.appendChild(card);
   });

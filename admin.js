@@ -526,7 +526,7 @@ function renderProducts(items) {
 
   filtered.forEach((item) => {
     const row = document.createElement("div");
-    row.className = "admin-row";
+    row.className = "admin-row admin-product-row";
     row.dataset.id = item.id;
     row.draggable = isSortable;
     row.title = isSortable
@@ -547,39 +547,68 @@ function renderProducts(items) {
     });
     selectWrap.appendChild(selectBox);
 
-    const image = document.createElement("img");
-    image.className = "admin-thumb";
-    image.alt = item.title || "Urun";
-    image.src = item.imageUrl || placeholderImage;
+    const imageUrl = item.imageUrl || placeholderImage;
+    const stockValue = Number(item.stock);
+    let stockText = "";
+    let stockClass = "";
+    if (Number.isFinite(stockValue)) {
+      if (stockValue === 0) {
+        stockText = "Stokta yok";
+        stockClass = "out";
+      } else if (stockValue <= 5) {
+        stockText = "Az kaldi";
+        stockClass = "low";
+      } else {
+        stockText = "Stokta";
+        stockClass = "ok";
+      }
+    }
+    const description = item.description
+      ? `<p class="admin-product-desc">${item.description}</p>`
+      : "";
 
     const info = document.createElement("div");
-    info.className = "admin-row-info";
+    info.className = "admin-row-info admin-product-info";
     info.innerHTML = `
-      <strong>${item.title || "-"}</strong>
-      <div class="admin-inline-price">
-        <input
-          type="number"
-          min="0"
-          step="1"
-          value="${Number(item.price || 0)}"
-          aria-label="Fiyat guncelle"
-        />
-        <button type="button" class="btn ghost">Fiyati Kaydet</button>
+      <div class="admin-product-card">
+        <div class="admin-product-media">
+          <img src="${imageUrl}" alt="${item.title || "Urun"}" loading="lazy" decoding="async" />
+          ${item.tag ? `<span class="admin-badge">${item.tag}</span>` : ""}
+          ${stockText ? `<span class="admin-stock ${stockClass}">${stockText}</span>` : ""}
+        </div>
+        <div class="admin-product-body">
+          <div class="admin-product-header">
+            <strong>${item.title || "-"}</strong>
+            <span class="admin-pill ${item.active === false ? "off" : ""}">${
+              item.active === false ? "Pasif" : "Aktif"
+            }</span>
+          </div>
+          ${description}
+          <div class="admin-inline-price">
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value="${Number(item.price || 0)}"
+              aria-label="Fiyat guncelle"
+            />
+            <button type="button" class="btn ghost">Fiyati Kaydet</button>
+          </div>
+          <div class="admin-inline-image">
+            <input
+              type="url"
+              placeholder="Resim URL"
+              value="${item.imageUrl || ""}"
+              aria-label="Resim URL guncelle"
+            />
+            <button type="button" class="btn ghost">Resmi Kaydet</button>
+          </div>
+          <div class="admin-product-meta">
+            ${item.tag ? `<span class="admin-tag">${item.tag}</span>` : ""}
+            <span class="admin-order">Sira: ${Number(item.order || 0)}</span>
+          </div>
+        </div>
       </div>
-      <div class="admin-inline-image">
-        <input
-          type="url"
-          placeholder="Resim URL"
-          value="${item.imageUrl || ""}"
-          aria-label="Resim URL guncelle"
-        />
-        <button type="button" class="btn ghost">Resmi Kaydet</button>
-      </div>
-      <span class="admin-tag">${item.tag || "Etiket yok"}</span>
-      <span class="admin-pill ${
-        item.active === false ? "off" : ""
-      }">${item.active === false ? "Pasif" : "Aktif"}</span>
-      <span class="admin-order">Sira: ${Number(item.order || 0)}</span>
     `;
 
     const inlineInput = info.querySelector(".admin-inline-price input");
@@ -622,7 +651,6 @@ function renderProducts(items) {
     actions.appendChild(deleteBtn);
 
     row.appendChild(selectWrap);
-    row.appendChild(image);
     row.appendChild(info);
     row.appendChild(actions);
     productList.appendChild(row);
