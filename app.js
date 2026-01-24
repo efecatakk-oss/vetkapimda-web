@@ -769,6 +769,9 @@ function renderShopProducts(items) {
     const detailUrl = hasId
       ? `product.html?id=${encodeURIComponent(item.id)}`
       : `product.html?title=${encodeURIComponent(item.title || "")}`;
+    const cartItem = mapShopItem(item);
+    const isInCart = selectedItems.has(cartItem.id);
+    card.dataset.cartId = cartItem.id;
     const tag = item.tag ? `<span class="tag">${item.tag}</span>` : "";
     let stockBadge = "";
     if (Number.isFinite(Number(item.stock))) {
@@ -804,7 +807,9 @@ function renderShopProducts(items) {
             <span>Fiyat</span>
             <strong>${item.price} TL</strong>
           </div>
-          <button type="button" class="add-to-cart">Sepete Ekle</button>
+          <button type="button" class="add-to-cart">
+            ${isInCart ? "Sepetten Cikar" : "Sepete Ekle"}
+          </button>
         </div>
         <a class="product-detail" href="${detailUrl}">Urun Detayi</a>
         <a class="quick-order" href="https://wa.me/905360340920">Hizli Siparis</a>
@@ -814,13 +819,10 @@ function renderShopProducts(items) {
     addButton?.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
-      addShopToCart(item);
-      addButton.textContent = "Eklendi";
-      addButton.classList.add("is-added");
-      setTimeout(() => {
-        addButton.textContent = "Sepete Ekle";
-        addButton.classList.remove("is-added");
-      }, 1200);
+      toggleItem(cartItem);
+      const nowInCart = selectedItems.has(cartItem.id);
+      addButton.textContent = nowInCart ? "Sepetten Cikar" : "Sepete Ekle";
+      addButton.classList.toggle("is-added", nowInCart);
     });
     shopGrid.appendChild(card);
   });
@@ -857,21 +859,14 @@ function applyShopFilter(items) {
   });
 }
 
-function addShopToCart(item) {
-  try {
-    const cart = JSON.parse(localStorage.getItem("shopCart") || "[]");
-    const id = item.id || item.title || String(Date.now());
-    const exists = cart.some((entry) => entry.id === id);
-    if (!exists) {
-      cart.push({
-        id,
-        title: item.title || "",
-        price: Number(item.price || 0),
-        imageUrl: item.imageUrl || "",
-      });
-      localStorage.setItem("shopCart", JSON.stringify(cart));
-    }
-  } catch (_) {}
+function mapShopItem(item) {
+  const id = item.id || item.title || String(Date.now());
+  return {
+    id: `shop_${id}`,
+    title: item.title || "",
+    price: Number(item.price || 0),
+    type: "shop",
+  };
 }
 
 
@@ -924,6 +919,7 @@ function renderCart() {
     if (navCartCount) {
       navCartCount.textContent = "0";
     }
+    updateShopButtons();
     return;
   }
 
@@ -955,6 +951,7 @@ function renderCart() {
   if (navCartCount) {
     navCartCount.textContent = String(selectedItems.size);
   }
+  updateShopButtons();
 }
 
 function toggleItem(item) {
@@ -969,6 +966,19 @@ function toggleItem(item) {
   }
   renderCatalog();
   renderCart();
+}
+
+function updateShopButtons() {
+  if (!shopGrid) return;
+  shopGrid.querySelectorAll(".product-card").forEach((card) => {
+    const cartId = card.dataset.cartId;
+    if (!cartId) return;
+    const inCart = selectedItems.has(cartId);
+    const button = card.querySelector(".add-to-cart");
+    if (!button) return;
+    button.textContent = inCart ? "Sepetten Cikar" : "Sepete Ekle";
+    button.classList.toggle("is-added", inCart);
+  });
 }
 
 function bindServiceCards() {
