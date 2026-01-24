@@ -46,15 +46,27 @@ const signupSurname = document.getElementById("signupSurname");
 const signupPhone = document.getElementById("signupPhone");
 const signupBirthdate = document.getElementById("signupBirthdate");
 
-// Mobile-first UX: show booking section above shop on small screens.
-(function reorderSectionsForMobile() {
+// Mobile-first UX: show booking section above shop on small screens, keep desktop sırayı koru.
+(() => {
   const mainEl = document.querySelector("main");
   const booking = document.getElementById("randevu");
   const shop = document.getElementById("shop");
-  const isMobile = window.matchMedia("(max-width: 720px)").matches;
-  if (mainEl && booking && shop && isMobile && shop.previousElementSibling !== booking) {
-    mainEl.insertBefore(booking, shop);
-  }
+  if (!mainEl || !booking || !shop) return;
+
+  const reorder = () => {
+    const isMobile = window.matchMedia("(max-width: 720px)").matches;
+    const bookingBeforeShop = shop.previousElementSibling === booking;
+
+    if (isMobile && !bookingBeforeShop) {
+      mainEl.insertBefore(booking, shop);
+    } else if (!isMobile && bookingBeforeShop) {
+      // Masaüstünde eski sırayı geri getir (shop, sonra booking)
+      mainEl.insertBefore(shop, booking);
+    }
+  };
+
+  reorder();
+  window.addEventListener("resize", reorder);
 })();
 
 let isLoggedIn = false;
