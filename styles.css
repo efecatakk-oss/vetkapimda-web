@@ -7,8 +7,8 @@
   --lavender: #f3f6ff;
   --primary: #1b6f6a;
   --primary-deep: #0f4f4b;
-  --accent: #ff7a1a;
-  --accent-deep: #d96312;
+  --accent: #f66d0f;
+  --accent-deep: #c8540f;
   --card: #ffffff;
   --shadow: 0 22px 50px rgba(23, 20, 42, 0.12);
   --glow: 0 14px 30px rgba(255, 122, 26, 0.25);
@@ -25,6 +25,13 @@ body {
   background: radial-gradient(circle at top left, #ffffff 0%, #f7fbff 45%, #eef6f4 100%);
 }
 
+input,
+button,
+select,
+textarea {
+  font-size: 16px;
+}
+
 a {
   text-decoration: none;
   color: inherit;
@@ -33,6 +40,7 @@ a {
 .hero {
   padding: 28px clamp(16px, 4vw, 60px) 60px;
   position: relative;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 70%);
 }
 
 .topbar {
@@ -81,6 +89,7 @@ a {
   display: flex;
   gap: 14px;
   flex-wrap: wrap;
+  scroll-snap-type: x mandatory;
 }
 
 .mobile-quicklinks {
@@ -110,12 +119,14 @@ a {
   align-items: center;
   justify-content: center;
   font-weight: 800;
+  scroll-snap-align: start;
 }
 
 .topbar-link {
   color: #1f0f00;
   text-decoration: none;
   font-weight: 700;
+  scroll-snap-align: start;
 }
 
 .hero-blob {
@@ -153,6 +164,7 @@ a {
   position: sticky;
   top: 12px;
   z-index: 20;
+  min-height: 72px;
 }
 
 .nav-center {
@@ -243,6 +255,7 @@ a {
   font-size: 12px;
   font-weight: 700;
   box-shadow: 0 8px 18px rgba(23, 20, 42, 0.08);
+  min-height: 38px;
 }
 
 .nav-cart {
@@ -405,6 +418,7 @@ h4 {
   justify-content: center;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  min-height: 44px;
 }
 
 .btn.primary {
@@ -460,6 +474,7 @@ h4 {
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
+  min-height: 38px;
 }
 
 .trust-inline {
