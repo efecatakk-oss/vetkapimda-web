@@ -46,6 +46,17 @@ const signupSurname = document.getElementById("signupSurname");
 const signupPhone = document.getElementById("signupPhone");
 const signupBirthdate = document.getElementById("signupBirthdate");
 
+// Mobile-first UX: show booking section above shop on small screens.
+(function reorderSectionsForMobile() {
+  const mainEl = document.querySelector("main");
+  const booking = document.getElementById("randevu");
+  const shop = document.getElementById("shop");
+  const isMobile = window.matchMedia("(max-width: 720px)").matches;
+  if (mainEl && booking && shop && isMobile && shop.previousElementSibling !== booking) {
+    mainEl.insertBefore(booking, shop);
+  }
+})();
+
 let isLoggedIn = false;
 let isVerified = false;
 let pendingToken = null;
