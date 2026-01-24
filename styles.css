@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap");
+﻿@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap");
 
 :root {
   color-scheme: light;
@@ -703,7 +703,7 @@ h4 {
 }
 
 .faq details[open] summary::after {
-  content: "–";
+  content: "â€“";
 }
 
 .faq p {
@@ -2846,10 +2846,24 @@ textarea {
 }
 
 @media (max-width: 720px) {
+  body {
+    background: #fff;
+  }
+
+  .hero {
+    padding: 16px 12px 32px;
+  }
+
+  .hero-blob {
+    display: none;
+  }
+
   .topbar {
     flex-direction: column;
     align-items: stretch;
     padding: 10px 12px;
+    margin-bottom: 10px;
+    gap: 8px;
   }
   .topbar-left span {
     font-size: 11px;
@@ -2859,103 +2873,113 @@ textarea {
     width: 100%;
     flex-wrap: nowrap;
     overflow-x: auto;
-    gap: 8px;
+    gap: 10px;
     padding-bottom: 2px;
+    scrollbar-width: none;
   }
-  .topbar-right a:nth-child(n + 5) {
+  .topbar-right::-webkit-scrollbar {
     display: none;
   }
+  /* Sadece WhatsApp, Ara ve Admin kalsın */
+  .topbar-right a:nth-child(n + 4) {
+    display: none;
+  }
+
   .mobile-quicklinks {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
   }
-  .topbar-link,
-  .topbar-icon {
-    padding: 4px 8px;
-    font-size: 11px;
+  .mobile-quicklinks a {
+    text-align: center;
+    padding: 8px 10px;
+    border-radius: 12px;
+    font-size: 12px;
   }
-  .booking-grid {
-    grid-template-columns: 1fr;
-  }
-  .slider-track {
-    grid-template-columns: 1fr;
-  }
-  .footer {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .footer-meta {
-    flex-direction: column;
-    gap: 6px;
-  }
-  .footer-map {
-    width: 100%;
-  }
-  .cta-card {
-    min-height: 190px;
-  }
-  .brand-mark {
-    font-size: 34px;
-    transform: none;
+
+  .nav {
+    position: static;
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    gap: 10px;
+    box-shadow: 0 6px 18px rgba(23, 20, 42, 0.06);
   }
   .nav-center {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
+    gap: 10px;
   }
-  .nav-center .nav-actions {
-    display: flex;
+  .brand-mark {
+    font-size: 32px;
+    transform: none;
+    text-shadow: 0 6px 14px rgba(255, 122, 26, 0.18);
+  }
+  .nav-actions {
+    width: 100%;
     flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
-  }
-  .nav-utils {
-    width: 100%;
-    flex-wrap: wrap;
-    overflow: visible;
-    justify-content: center;
-    gap: 8px;
-    padding-bottom: 0;
-  }
-  .nav-pill,
-  .nav-link {
-    white-space: nowrap;
-  }
-  .nav-pill {
-    padding: 5px 8px;
-    font-size: 11px;
-  }
-  .nav-link {
-    font-size: 12px;
   }
   .nav-cta {
     width: 100%;
     text-align: center;
   }
-  .admin-grid {
+  .nav-utils {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+  }
+  .nav-pill {
+    padding: 5px 8px;
+    font-size: 11px;
+    box-shadow: none;
+    border-color: rgba(255, 122, 26, 0.25);
+  }
+  .nav-link {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .hero-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
-  .admin-row {
-    grid-template-columns: auto 1fr;
+
+  .hero-search {
+    flex-direction: column;
+    box-shadow: none;
+    border: 1px solid #e8edf5;
+    border-radius: 12px;
   }
-  .admin-product-row {
-    grid-template-columns: auto 1fr;
+  .hero-search button {
+    width: 100%;
   }
-  .admin-product-card {
-    grid-template-columns: 1fr;
+
+  .cta-row {
+    flex-direction: column;
+    gap: 10px;
   }
-  .admin-product-media {
-    min-height: 140px;
+
+  .pill-row {
+    gap: 8px;
   }
-  .admin-product-media img {
-    height: 140px;
+  .pill {
+    padding: 5px 10px;
+    font-size: 11px;
   }
-  .admin-row-actions {
-    grid-column: 1 / -1;
+
+  .hero-stats {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
-  .admin-list-tools {
-    align-items: stretch;
+
+  .shop-hero,
+  .product-card,
+  .shop-hero-card {
+    box-shadow: 0 8px 16px rgba(23, 20, 42, 0.08);
   }
-}
-:root {
+}:root {
   scroll-behavior: smooth;
 }
+
