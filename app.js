@@ -1,4 +1,4 @@
-const firebaseConfig = {
+﻿const firebaseConfig = {
   apiKey: "AIzaSyAl563jzr7ddmdaOEWXrm1Bx7hFEYXY-PI",
   authDomain: "vetkapim.firebaseapp.com",
   projectId: "vetkapim",
@@ -47,7 +47,7 @@ const signupPhone = document.getElementById("signupPhone");
 const signupBirthdate = document.getElementById("signupBirthdate");
 let productToggleInit = false;
 
-// Mobile-first UX: show booking section above shop on small screens, keep desktop sırayı koru.
+// Mobile-first UX: show booking section above shop on small screens, keep desktop sÄ±rayÄ± koru.
 (() => {
   const mainEl = document.querySelector("main");
   const booking = document.getElementById("randevu");
@@ -61,7 +61,7 @@ let productToggleInit = false;
     if (isMobile && !bookingBeforeShop) {
       mainEl.insertBefore(booking, shop);
     } else if (!isMobile && bookingBeforeShop) {
-      // Masaüstünde eski sırayı geri getir (shop, sonra booking)
+      // MasaÃ¼stÃ¼nde eski sÄ±rayÄ± geri getir (shop, sonra booking)
       mainEl.insertBefore(shop, booking);
     }
   };
@@ -184,6 +184,7 @@ startCooldownTicker();
 loadShopProducts();
 bindShopSearch();
 bindHeroSearch();
+compactBookingForm();
 bindPhoneMask();
 
 form.addEventListener("submit", (event) => {
@@ -845,7 +846,7 @@ function renderShopProducts(items) {
       }
     }
     const media = item.imageUrl
-      ? `<img class="product-image" src="${item.imageUrl}" alt="${item.title || "Urun"}" loading="lazy" decoding="async" />`
+      ? `<img class="product-image" src="${item.imageUrl}" alt="${item.title || "Urun"}" loading="lazy" decoding="async" width="240" height="180" />`
       : `<div class="product-placeholder">Gorsel yok</div>`;
     const description = item.description
       ? `<p class="product-desc">${item.description}</p>`
@@ -968,6 +969,28 @@ function ensureProductToggleControls() {
   });
 
   productToggleInit = true;
+}
+
+function compactBookingForm() {
+  const mql = window.matchMedia("(max-width: 720px)");
+  const formEl = document.getElementById("bookingForm");
+  if (!formEl) return;
+  const apply = () => {
+    if (mql.matches) {
+      formEl.classList.add("mobile-compact");
+      formEl.querySelectorAll(".field").forEach((field) => {
+        const label = field.querySelector("label");
+        const input = field.querySelector("input, textarea");
+        if (label && input && !input.placeholder) {
+          input.placeholder = label.textContent.trim();
+        }
+      });
+    } else {
+      formEl.classList.remove("mobile-compact");
+    }
+  };
+  apply();
+  mql.addEventListener("change", apply);
 }
 
 
@@ -1136,3 +1159,4 @@ function initSlider() {
     setActive(index);
   }, 4500);
 }
+
