@@ -993,6 +993,28 @@ function compactBookingForm() {
   mql.addEventListener("change", apply);
 }
 
+function compactBookingForm() {
+  const mql = window.matchMedia("(max-width: 720px)");
+  const formEl = document.getElementById("bookingForm");
+  if (!formEl) return;
+  const apply = () => {
+    if (mql.matches) {
+      formEl.classList.add("mobile-compact");
+      formEl.querySelectorAll(".field").forEach((field) => {
+        const label = field.querySelector("label");
+        const input = field.querySelector("input, textarea");
+        if (label && input && !input.placeholder) {
+          input.placeholder = label.textContent.trim();
+        }
+      });
+    } else {
+      formEl.classList.remove("mobile-compact");
+    }
+  };
+  apply();
+  mql.addEventListener("change", apply);
+}
+
 
 function ensureUserProfile(user) {
   const docRef = db.collection("users").doc(user.uid);
