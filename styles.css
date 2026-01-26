@@ -1068,6 +1068,18 @@ h4 {
   position: relative;
 }
 
+.product-toggle {
+  display: none;
+  margin: 6px 0 4px;
+  border: 1px solid rgba(27, 111, 106, 0.25);
+  background: #fff;
+  color: var(--primary-deep);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .product-media {
   position: relative;
   border-radius: 14px;
@@ -1104,6 +1116,12 @@ h4 {
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 18px 36px rgba(23, 20, 42, 0.16);
+}
+
+.product-card.collapsed .product-desc,
+.product-card.collapsed .product-detail,
+.product-card.collapsed .quick-order {
+  display: none;
 }
 
 .product-card .tag {
@@ -2876,6 +2894,12 @@ textarea {
 }
 
 @media (max-width: 720px) {
+  .product-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
   body {
     background: #fff;
   }

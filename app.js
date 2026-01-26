@@ -45,6 +45,8 @@ const signupName = document.getElementById("signupName");
 const signupSurname = document.getElementById("signupSurname");
 const signupPhone = document.getElementById("signupPhone");
 const signupBirthdate = document.getElementById("signupBirthdate");
+const productToggleMql = window.matchMedia("(max-width: 720px)");
+let productToggleInit = false;
 
 // Mobile-first UX: show booking section above shop on small screens, keep desktop sırayı koru.
 (() => {
@@ -860,6 +862,7 @@ function renderShopProducts(items) {
           <span class="product-chip">VETKAPIMDA Shop</span>
         </div>
         <a class="product-title" href="${detailUrl}">${item.title}</a>
+        <button type="button" class="product-toggle">Detayı Göster</button>
         ${description}
         <div class="product-actions">
           <div class="price-stack">
@@ -885,6 +888,7 @@ function renderShopProducts(items) {
     });
     shopGrid.appendChild(card);
   });
+  ensureProductToggleControls();
 }
 
 function bindShopSearch() {
@@ -943,6 +947,39 @@ function mapShopItem(item) {
     price: Number(item.price || 0),
     type: "shop",
   };
+}
+
+function ensureProductToggleControls() {
+  const applyState = () => {
+    const isMobile = productToggleMql.matches;
+    document.querySelectorAll(".product-card").forEach((card) => {
+      const toggle = card.querySelector(".product-toggle");
+      if (!toggle) return;
+      if (isMobile) {
+        card.classList.add("collapsed");
+        toggle.hidden = false;
+        toggle.textContent = "Detayı Göster";
+      } else {
+        card.classList.remove("collapsed");
+        toggle.hidden = true;
+        toggle.textContent = "Detayı Göster";
+      }
+    });
+  };
+
+  if (!productToggleInit) {
+    document.addEventListener("click", (evt) => {
+      const btn = evt.target.closest(".product-toggle");
+      if (!btn) return;
+      const card = btn.closest(".product-card");
+      const collapsed = card.classList.toggle("collapsed");
+      btn.textContent = collapsed ? "Detayı Göster" : "Detayı Gizle";
+    });
+    productToggleMql.addEventListener("change", applyState);
+    productToggleInit = true;
+  }
+
+  applyState();
 }
 
 
