@@ -69,6 +69,41 @@ const signupBirthdate = document.getElementById("signupBirthdate");
   window.addEventListener("resize", reorder);
 })();
 
+// Mobile sticky CTA: show when booking section out of view on small screens.
+(() => {
+  const bookingSection = document.getElementById("randevu");
+  const bookingForm = document.getElementById("bookingForm");
+  const stickyBar = document.getElementById("stickyCta");
+  const stickyBtn = document.getElementById("stickyCtaSubmit");
+  if (!bookingSection || !bookingForm || !stickyBar || !stickyBtn) return;
+
+  const mql = window.matchMedia("(max-width: 720px)");
+
+  const toggle = (entries) => {
+    entries.forEach((entry) => {
+      const shouldShow = !entry.isIntersecting && mql.matches;
+      stickyBar.classList.toggle("visible", shouldShow);
+    });
+  };
+
+  const observer = new IntersectionObserver(toggle, {
+    rootMargin: "-20% 0px 0px 0px",
+    threshold: 0,
+  });
+
+  observer.observe(bookingSection);
+
+  mql.addEventListener("change", () => {
+    if (!mql.matches) {
+      stickyBar.classList.remove("visible");
+    }
+  });
+
+  stickyBtn.addEventListener("click", () => {
+    bookingForm.requestSubmit ? bookingForm.requestSubmit() : bookingForm.submit();
+  });
+})();
+
 let isLoggedIn = false;
 let isVerified = false;
 let pendingToken = null;

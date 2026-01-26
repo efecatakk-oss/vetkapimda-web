@@ -461,6 +461,21 @@ h4 {
   width: 100%;
 }
 
+.sticky-cta {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  display: none;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.sticky-cta.visible {
+  display: flex;
+  pointer-events: auto;
+}
+
 .pill-row {
   display: flex;
   flex-wrap: wrap;
@@ -2994,7 +3009,13 @@ textarea {
   .shop-hero-card {
     box-shadow: 0 8px 16px rgba(23, 20, 42, 0.08);
   }
-}:root {
+
+  .sticky-cta {
+    left: 10px;
+    right: 10px;
+  }
+}
+:root {
   scroll-behavior: smooth;
 }
 
