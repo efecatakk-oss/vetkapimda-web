@@ -1072,14 +1072,15 @@ h4 {
 .product-card {
   background: #fff;
   border-radius: 18px;
-  padding: 14px;
+  padding: 12px;
   box-shadow: var(--shadow);
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 10px;
   border: 1px solid rgba(27, 111, 106, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
+  min-height: 220px;
 }
 
 .product-toggle {
@@ -1100,17 +1101,17 @@ h4 {
   position: relative;
   border-radius: 14px;
   background: linear-gradient(135deg, #f8f7ff 0%, #f1fbf7 100%);
-  padding: 10px;
+  padding: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 180px;
+  min-height: 140px;
   overflow: hidden;
 }
 
 .product-image {
   width: 100%;
-  height: 160px;
+  height: 130px;
   object-fit: contain;
   border-radius: 12px;
   background: transparent;
@@ -1222,7 +1223,7 @@ h4 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -1256,6 +1257,10 @@ h4 {
 .product-actions button:hover {
   transform: translateY(-1px);
   filter: brightness(1.05);
+}
+
+.product-actions button.is-added {
+  background: #1db954;
 }
 
 .product-actions button.is-added {
