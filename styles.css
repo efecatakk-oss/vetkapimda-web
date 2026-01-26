@@ -474,7 +474,7 @@ h4 {
   position: fixed;
   left: 12px;
   right: 12px;
-  bottom: 12px;
+  bottom: 70px;
   display: none;
   z-index: 50;
   pointer-events: none;
