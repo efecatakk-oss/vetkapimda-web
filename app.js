@@ -870,7 +870,7 @@ function renderShopProducts(items) {
             <strong>${item.price} TL</strong>
           </div>
           <button type="button" class="add-to-cart">
-            ${isInCart ? "Sepetten Cikar" : "Sepete Ekle"}
+            ${isInCart ? "✓ Sepette" : "Sepete Ekle"}
           </button>
         </div>
         <a class="product-detail" href="${detailUrl}">Urun Detayi</a>
@@ -1122,7 +1122,7 @@ function updateShopButtons() {
     const inCart = selectedItems.has(cartId);
     const button = card.querySelector(".add-to-cart");
     if (!button) return;
-    button.textContent = inCart ? "Sepetten Cikar" : "Sepete Ekle";
+    button.textContent = inCart ? "✓ Sepette" : "Sepete Ekle";
     button.classList.toggle("is-added", inCart);
   });
 }
