@@ -474,7 +474,7 @@ h4 {
   position: fixed;
   left: 12px;
   right: 12px;
-  bottom: 70px;
+  bottom: 12px;
   display: none;
   z-index: 50;
   pointer-events: none;
@@ -3126,7 +3126,15 @@ textarea {
 
   .sticky-cta {
     left: 10px;
-    right: 10px;
+    right: 86px;
+    bottom: 16px;
+    max-width: calc(100% - 120px);
+  }
+
+  .whatsapp-float {
+    right: 12px;
+    bottom: 12px;
+    z-index: 60;
   }
 }
 :root {
