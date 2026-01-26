@@ -1069,7 +1069,9 @@ h4 {
 }
 
 .product-toggle {
-  display: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin: 6px 0 4px;
   border: 1px solid rgba(27, 111, 106, 0.25);
   background: #fff;

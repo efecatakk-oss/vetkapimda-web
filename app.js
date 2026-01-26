@@ -45,7 +45,6 @@ const signupName = document.getElementById("signupName");
 const signupSurname = document.getElementById("signupSurname");
 const signupPhone = document.getElementById("signupPhone");
 const signupBirthdate = document.getElementById("signupBirthdate");
-const productToggleMql = window.matchMedia("(max-width: 720px)");
 let productToggleInit = false;
 
 // Mobile-first UX: show booking section above shop on small screens, keep desktop sırayı koru.
@@ -950,36 +949,25 @@ function mapShopItem(item) {
 }
 
 function ensureProductToggleControls() {
-  const applyState = () => {
-    const isMobile = productToggleMql.matches;
-    document.querySelectorAll(".product-card").forEach((card) => {
-      const toggle = card.querySelector(".product-toggle");
-      if (!toggle) return;
-      if (isMobile) {
-        card.classList.add("collapsed");
-        toggle.hidden = false;
-        toggle.textContent = "Detayı Göster";
-      } else {
-        card.classList.remove("collapsed");
-        toggle.hidden = true;
-        toggle.textContent = "Detayı Göster";
-      }
-    });
-  };
+  document.querySelectorAll(".product-card").forEach((card) => {
+    const toggle = card.querySelector(".product-toggle");
+    if (!toggle) return;
+    card.classList.add("collapsed");
+    toggle.hidden = false;
+    toggle.textContent = "Detayı Göster";
+  });
 
-  if (!productToggleInit) {
-    document.addEventListener("click", (evt) => {
-      const btn = evt.target.closest(".product-toggle");
-      if (!btn) return;
-      const card = btn.closest(".product-card");
-      const collapsed = card.classList.toggle("collapsed");
-      btn.textContent = collapsed ? "Detayı Göster" : "Detayı Gizle";
-    });
-    productToggleMql.addEventListener("change", applyState);
-    productToggleInit = true;
-  }
+  if (productToggleInit) return;
 
-  applyState();
+  document.addEventListener("click", (evt) => {
+    const btn = evt.target.closest(".product-toggle");
+    if (!btn) return;
+    const card = btn.closest(".product-card");
+    const collapsed = card.classList.toggle("collapsed");
+    btn.textContent = collapsed ? "Detayı Göster" : "Detayı Gizle";
+  });
+
+  productToggleInit = true;
 }
 
 
