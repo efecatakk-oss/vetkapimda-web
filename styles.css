@@ -1819,6 +1819,20 @@ h4 {
   background: linear-gradient(180deg, #f6fbff 0%, #f1f6ff 100%);
 }
 
+.booking-summary {
+  margin: 12px 0;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid #e8edf5;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  color: var(--primary-deep);
+  box-shadow: var(--shadow);
+}
+
 .booking-form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

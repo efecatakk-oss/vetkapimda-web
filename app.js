@@ -1058,6 +1058,7 @@ function renderCart() {
     empty.className = "cart-item";
     empty.textContent = "Sepetiniz bos.";
     cartEl.appendChild(empty);
+    updateBookingSummary(0, 0);
     cartTotalEl.textContent = "0 TL";
     if (cartTotalStickyEl) {
       cartTotalStickyEl.textContent = "0 TL";
@@ -1090,6 +1091,7 @@ function renderCart() {
     cartEl.appendChild(row);
     total += item.price;
   });
+  updateBookingSummary(total, selectedItems.size);
   cartTotalEl.textContent = `${total} TL`;
   if (cartTotalStickyEl) {
     cartTotalStickyEl.textContent = `${total} TL`;
@@ -1125,6 +1127,16 @@ function updateShopButtons() {
     button.textContent = inCart ? "✓ Sepette" : "Sepete Ekle";
     button.classList.toggle("is-added", inCart);
   });
+}
+
+function updateBookingSummary(total, count) {
+  const el = document.getElementById("bookingSummary");
+  if (!el) return;
+  if (!count) {
+    el.textContent = "Sepetiniz boş.";
+    return;
+  }
+  el.textContent = `${count} kalem · ${total} TL`;
 }
 
 function bindServiceCards() {
