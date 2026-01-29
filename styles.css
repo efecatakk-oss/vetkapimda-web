@@ -540,7 +540,7 @@ h4 {
   transform: translateY(0);
 }
 
-.sticky-cta { position: fixed; right: 14px; bottom: 18px; display: none; z-index: 70; pointer-events: none; gap: 10px; flex-direction: column; align-items: flex-end; }
+.sticky-cta { position: fixed; left: 12px; right: 12px; bottom: 16px; display: none; z-index: 70; pointer-events: none; gap: 0; flex-direction: row; justify-content: space-between; align-items: center; }
 
 .sticky-cta.visible { display: flex; pointer-events: auto; }
 
@@ -3311,7 +3311,7 @@ textarea {
     box-shadow: 0 8px 16px rgba(23, 20, 42, 0.08);
   }
 
-  .sticky-cta { position: fixed; right: 14px; bottom: 18px; display: none; z-index: 70; pointer-events: none; gap: 10px; flex-direction: column; align-items: flex-end; }
+  .sticky-cta { position: fixed; left: 12px; right: 12px; bottom: 16px; display: none; z-index: 70; pointer-events: none; gap: 0; flex-direction: row; justify-content: space-between; align-items: center; }
 
 .whatsapp-float { position: fixed; right: 18px; bottom: 18px; background: #25d366; color: #fff; padding: 10px 14px; border-radius: 999px; font-weight: 700; box-shadow: 0 16px 30px rgba(37,211,102,0.35); z-index: 60; }
 @media (max-width: 720px) {
@@ -3484,4 +3484,41 @@ textarea {
 
 .sticky-icon:active {
   transform: translateY(0);
+}
+
+
+.sticky-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #fff;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
+  cursor: pointer;
+  transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+  text-decoration: none;
+  pointer-events: auto;
+}
+
+.sticky-icon.book {
+  background: linear-gradient(135deg, #1b6f6a 0%, #0f4f4b 100%);
+  box-shadow: 0 16px 30px rgba(15, 79, 75, 0.35);
+}
+
+.sticky-icon.wa {
+  background: #25d366;
+  box-shadow: 0 16px 30px rgba(37, 211, 102, 0.38);
+}
+
+.sticky-icon:hover {
+  transform: translateY(-1px) scale(1.05);
+  filter: brightness(1.06);
+}
+
+.sticky-icon:active {
+  transform: translateY(0.5px) scale(0.99);
 }
