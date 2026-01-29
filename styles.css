@@ -3307,7 +3307,7 @@ textarea {
 .cta-cards {
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
 .cta-card {
@@ -3317,7 +3317,7 @@ textarea {
   color: #fff;
   display: grid;
   gap: 6px;
-  min-height: 140px;
+  min-height: 150px;
   align-content: space-between;
 }
 
@@ -3366,12 +3366,12 @@ textarea {
 }
 
 .cta-card h3 {
-  font-size: 17px;
+  font-size: 18px;
   margin: 0;
 }
 
 .cta-card .lede {
-  font-size: 13px;
+  font-size: 14px;
   margin: 0;
 }
 
