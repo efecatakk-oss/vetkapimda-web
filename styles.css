@@ -18,12 +18,21 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   font-family: "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif;
   color: var(--ink);
   background: radial-gradient(circle at top left, #ffffff 0%, #f7fbff 45%, #eef6f4 100%);
   overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 input,
@@ -628,6 +637,7 @@ h4 {
 
 .section {
   padding: 40px clamp(16px, 4vw, 60px);
+  overflow-x: hidden;
 }
 
 
@@ -1067,7 +1077,7 @@ h4 {
 
 .shop-grid-large {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
 }
 
