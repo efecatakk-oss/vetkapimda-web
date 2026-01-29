@@ -309,6 +309,19 @@ h1 {
   margin: 0 0 12px;
 }
 
+.eta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #f1f6ff;
+  color: var(--primary-deep);
+  font-weight: 700;
+  margin: 6px 0 10px;
+  box-shadow: 0 8px 18px rgba(23, 20, 42, 0.08);
+}
+
 h2,
 h3,
 h4 {
