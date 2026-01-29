@@ -930,9 +930,14 @@ function bindHeroSearch() {
   const heroSearch = document.querySelector(".hero-search input");
   if (!heroSearch) return;
   heroSearch.setAttribute("autocomplete", "off");
-  if (heroSearch.value.includes("@")) {
-    heroSearch.value = "";
-  }
+  const clearEmail = () => {
+    if (heroSearch.value.includes("@")) {
+      heroSearch.value = "";
+      delete heroSearch.dataset.userModified;
+    }
+  };
+  clearEmail();
+  setTimeout(clearEmail, 800);
   heroSearch.addEventListener("focus", () => {
     if (!heroSearch.dataset.userModified && heroSearch.value.includes("@")) {
       heroSearch.value = "";
