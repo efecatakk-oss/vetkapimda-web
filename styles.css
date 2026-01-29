@@ -3306,16 +3306,19 @@ textarea {
 /* CTA cards */
 .cta-cards {
   display: grid;
-  gap: 14px;
+  gap: 12px;
+  grid-template-columns: 1fr;
 }
 
 .cta-card {
-  border-radius: 22px;
-  padding: 18px;
+  border-radius: 18px;
+  padding: 14px 16px;
   box-shadow: var(--shadow);
   color: #fff;
   display: grid;
-  gap: 10px;
+  gap: 8px;
+  min-height: 180px;
+  align-content: space-between;
 }
 
 .cta-card .btn {
@@ -3360,6 +3363,15 @@ textarea {
 
 .cta-card .pill-row {
   gap: 6px;
+}
+
+@media (min-width: 540px) {
+  .cta-cards {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .cta-card {
+    min-height: 200px;
+  }
 }
 
   .shop-tabs {
