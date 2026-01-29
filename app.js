@@ -368,14 +368,16 @@ function startHeroPlaceholder() {
   const inputEl = document.querySelector(".hero-search input");
   if (!inputEl) return;
   stopHeroPlaceholder();
-  if (inputEl.dataset.userActive === "true" || inputEl.value.trim()) return;
+  if (inputEl.dataset.userActive === "true") return;
+
+  inputEl.placeholder = "";
 
   const phrase = heroPlaceholderPhrases[heroPlaceholderIndex % heroPlaceholderPhrases.length];
   let pos = 0;
   let deleting = false;
 
   const tick = () => {
-    if (inputEl.dataset.userActive === "true" || inputEl.value.trim()) {
+    if (inputEl.dataset.userActive === "true") {
       stopHeroPlaceholder();
       return;
     }
@@ -396,7 +398,7 @@ function startHeroPlaceholder() {
         heroPlaceholderIndex = (heroPlaceholderIndex + 1) % heroPlaceholderPhrases.length;
       }
     }
-    heroPlaceholderTimer = setTimeout(tick, deleting ? 40 : 90);
+    heroPlaceholderTimer = setTimeout(tick, deleting ? 45 : 110);
   };
 
   tick();
