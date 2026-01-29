@@ -2190,6 +2190,18 @@ textarea {
   gap: 16px;
 }
 
+@media (max-width: 720px) {
+  .testimonial-grid.compact .testimonial:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+.testimonial-toggle {
+  align-self: center;
+  padding: 10px 16px;
+  border-color: rgba(27, 111, 106, 0.25);
+}
+
 .testimonial {
   background: #fff;
   border-radius: 16px;

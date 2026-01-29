@@ -187,6 +187,7 @@ bindShopSearch();
 bindHeroSearch();
 compactBookingForm();
 bindPhoneMask();
+bindTestimonialsToggle();
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -1142,6 +1143,23 @@ function updateShopButtons() {
     button.textContent = inCart ? "✓ Sepette" : "Sepete Ekle";
     button.classList.toggle("is-added", inCart);
   });
+}
+
+function bindTestimonialsToggle() {
+  const grid = document.getElementById("testimonialGrid");
+  const toggle = document.getElementById("testimonialToggle");
+  if (!grid || !toggle) return;
+  const apply = () => {
+    const isMobile = window.matchMedia("(max-width: 720px)").matches;
+    grid.classList.toggle("compact", isMobile && !toggle.dataset.expanded);
+    toggle.textContent = toggle.dataset.expanded ? "Daha az yorum" : "Daha fazla yorum";
+  };
+  toggle.addEventListener("click", () => {
+    toggle.dataset.expanded = toggle.dataset.expanded ? "" : "true";
+    apply();
+  });
+  apply();
+  window.addEventListener("resize", apply);
 }
 
 function updateBookingSummary(total, count) {
