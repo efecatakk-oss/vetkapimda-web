@@ -171,6 +171,7 @@ const fallbackProducts = [
 const services = [];
 const shopProducts = [];
 let shopItemsCache = [];
+const BOOKING_RATE_LIMIT_MS = 45000;
 
 const selectedItems = new Map();
 
@@ -203,6 +204,19 @@ form.addEventListener("submit", (event) => {
   const phone = normalizePhone(rawPhone);
   const items = Array.from(selectedItems.values());
   const total = items.reduce((sum, item) => sum + item.price, 0);
+  const hpValue = (document.getElementById("hpField")?.value || "").trim();
+  const now = Date.now();
+  const lastBooking = Number(localStorage.getItem("bookingLastSubmitAt") || "0");
+
+  if (hpValue) {
+    showStatus("Islem tamamlanamadi. Lutfen tekrar deneyin.", true);
+    return;
+  }
+
+  if (now - lastBooking < BOOKING_RATE_LIMIT_MS) {
+    showStatus("Lutfen biraz bekleyip tekrar deneyin.", true);
+    return;
+  }
 
   if (items.length === 0) {
     showStatus("Lutfen en az bir hizmet secin.", true);
@@ -278,6 +292,7 @@ form.addEventListener("submit", (event) => {
       selectedItems.clear();
       renderCatalog();
       renderCart();
+      localStorage.setItem("bookingLastSubmitAt", String(now));
       showStatus("Talebiniz alindi. Size en kisa surede donus yapacagiz.");
       trackEvent("booking_submit");
     })

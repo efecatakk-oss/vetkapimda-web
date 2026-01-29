@@ -1845,6 +1845,14 @@ h4 {
   box-shadow: var(--shadow);
 }
 
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .booking-form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

@@ -485,6 +485,10 @@
         <div class="booking-summary" id="bookingSummary">Sepetiniz boş.</div>
 
         <form id="bookingForm" class="booking-form" method="POST">
+          <div class="hp-field" aria-hidden="true">
+            <label for="hpField">Email</label>
+            <input id="hpField" name="hpField" type="text" tabindex="-1" autocomplete="off" />
+          </div>
           <input type="hidden" id="selectedServices" name="selectedServices" />
           <input type="hidden" id="totalPrice" name="totalPrice" />
           <input type="hidden" id="serviceNote" name="serviceNote" />
