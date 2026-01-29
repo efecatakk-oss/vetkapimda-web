@@ -46,6 +46,14 @@ const signupSurname = document.getElementById("signupSurname");
 const signupPhone = document.getElementById("signupPhone");
 const signupBirthdate = document.getElementById("signupBirthdate");
 let productToggleInit = false;
+let heroPlaceholderTimer = null;
+let heroPlaceholderIndex = 0;
+const heroPlaceholderPhrases = [
+  "Evde aşı randevusu",
+  "Kedi tırnak kesimi",
+  "Canlı video danışmanlık",
+  "Acil veteriner sorusu",
+];
 
 // Mobile-first UX: show booking section above shop on small screens, keep desktop sÄ±rayÄ± koru.
 (() => {
@@ -187,6 +195,8 @@ bindShopSearch();
 bindHeroSearch();
 compactBookingForm();
 bindPhoneMask();
+bindTestimonialsToggle();
+startHeroPlaceholder();
 bindTestimonialsToggle();
 
 form.addEventListener("submit", (event) => {
@@ -352,6 +362,51 @@ function bindPhoneMask() {
       } ${match[5]}`;
     }
   });
+}
+
+function startHeroPlaceholder() {
+  const inputEl = document.querySelector(".hero-search input");
+  if (!inputEl) return;
+  stopHeroPlaceholder();
+  if (inputEl.dataset.userActive === "true" || inputEl.value.trim()) return;
+
+  const phrase = heroPlaceholderPhrases[heroPlaceholderIndex % heroPlaceholderPhrases.length];
+  let pos = 0;
+  let deleting = false;
+
+  const tick = () => {
+    if (inputEl.dataset.userActive === "true" || inputEl.value.trim()) {
+      stopHeroPlaceholder();
+      return;
+    }
+
+    if (!deleting) {
+      inputEl.placeholder = phrase.slice(0, pos + 1);
+      pos += 1;
+      if (pos === phrase.length) {
+        deleting = true;
+        heroPlaceholderTimer = setTimeout(tick, 1200);
+        return;
+      }
+    } else {
+      inputEl.placeholder = phrase.slice(0, Math.max(pos - 1, 0));
+      pos -= 1;
+      if (pos === 0) {
+        deleting = false;
+        heroPlaceholderIndex = (heroPlaceholderIndex + 1) % heroPlaceholderPhrases.length;
+      }
+    }
+    heroPlaceholderTimer = setTimeout(tick, deleting ? 40 : 90);
+  };
+
+  tick();
+}
+
+function stopHeroPlaceholder() {
+  if (heroPlaceholderTimer) {
+    clearTimeout(heroPlaceholderTimer);
+    heroPlaceholderTimer = null;
+  }
 }
 
 function watchAuth() {
@@ -942,10 +997,19 @@ function bindHeroSearch() {
     if (!heroSearch.dataset.userModified && heroSearch.value.includes("@")) {
       heroSearch.value = "";
     }
+    stopHeroPlaceholder();
+    heroSearch.dataset.userActive = "true";
   });
   heroSearch.addEventListener("input", () => {
     heroSearch.dataset.userModified = "true";
   });
+  heroSearch.addEventListener("blur", () => {
+    heroSearch.dataset.userActive = "";
+    if (!heroSearch.value.trim()) {
+      startHeroPlaceholder(heroSearch);
+    }
+  });
+  startHeroPlaceholder(heroSearch);
 }
 
 function applyShopFilter(items) {
