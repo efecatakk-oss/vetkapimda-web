@@ -853,11 +853,11 @@ function renderShopProducts(items) {
     if (Number.isFinite(Number(item.stock))) {
       const stockValue = Number(item.stock);
       if (stockValue === 0) {
-        stockBadge = `<span class="stock-badge out">Stokta yok</span>`;
+        stockBadge = `<span class="stock-badge out">⛔ Stokta yok</span>`;
       } else if (stockValue <= 5) {
-        stockBadge = `<span class="stock-badge low">Az kaldi</span>`;
+        stockBadge = `<span class="stock-badge low">⚠️ Az kaldı</span>`;
       } else {
-        stockBadge = `<span class="stock-badge ok">Stokta</span>`;
+        stockBadge = `<span class="stock-badge ok">✓ Stokta</span>`;
       }
     }
     const media = item.imageUrl

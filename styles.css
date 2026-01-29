@@ -1174,6 +1174,9 @@ h4 {
   padding: 4px 10px;
   border-radius: 999px;
   width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .stock-badge.ok {
