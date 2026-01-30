@@ -984,11 +984,14 @@ function renderProductSlider(items) {
     const tags = [];
     if (item.tag) tags.push(item.tag);
     tags.push("Hızlı Teslim");
+    const description = item.description || "";
+    const showMore = description.length > 90;
 
     slide.innerHTML = `
       <div class="tag-stack">
         ${tags.map((t) => `<span class="tag-chip">${t}</span>`).join("")}
       </div>
+      <button class="favorite-btn" type="button" aria-label="Favorilere ekle">♡</button>
       <div class="image-box">
         ${
           item.imageUrl
@@ -996,8 +999,13 @@ function renderProductSlider(items) {
             : `<div class="product-placeholder">Görsel yok</div>`
         }
       </div>
+      <div class="slide-meta">
+        <span class="brand">VETKAPIMDA Shop</span>
+        <span class="rating">★★★★★ <em>8</em></span>
+      </div>
       <h4>${item.title}</h4>
-      <p>${item.description || ""}</p>
+      <p class="slider-desc">${description}</p>
+      ${showMore ? `<button class="slider-more" type="button">Detayı Göster</button>` : ""}
       <div class="price-row">
         <span class="price-new">${item.price} TL</span>
       </div>
@@ -1009,6 +1017,16 @@ function renderProductSlider(items) {
     dot.className = "dot";
     dot.dataset.index = index;
     dots.appendChild(dot);
+
+    if (showMore) {
+      const toggle = slide.querySelector(".slider-more");
+      toggle?.addEventListener("click", () => {
+        slide.classList.toggle("expanded");
+        toggle.textContent = slide.classList.contains("expanded")
+          ? "Detayı Gizle"
+          : "Detayı Göster";
+      });
+    }
   });
 
   const slides = Array.from(slider.children);
