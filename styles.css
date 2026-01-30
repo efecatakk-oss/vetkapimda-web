@@ -4015,3 +4015,29 @@ textarea {
     padding: 14px;
   }
 }
+
+/* Mobile booking form compact */
+@media (max-width: 720px) {
+  .booking-form {
+    padding: 16px;
+    gap: 12px;
+  }
+  .field {
+    gap: 4px;
+  }
+  label {
+    font-size: 13px;
+  }
+  input,
+  textarea,
+  select {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+  .field-help {
+    font-size: 11px;
+  }
+  .form-success {
+    padding: 12px;
+  }
+}
