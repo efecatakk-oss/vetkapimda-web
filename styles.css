@@ -4111,3 +4111,56 @@ textarea {
     font-size: 13px;
   }
 }
+
+/* Stepper line + icons */
+.booking-stepper {
+  position: relative;
+}
+
+.booking-stepper::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 50%;
+  height: 2px;
+  background: #e6e0f0;
+  z-index: 0;
+}
+
+.booking-stepper .step-dot {
+  z-index: 1;
+  background: #fff;
+}
+
+.booking-stepper .step-dot.active {
+  box-shadow: 0 8px 16px rgba(255, 122, 26, 0.25);
+}
+
+.booking-stepper .step-dot::after {
+  content: "";
+  font-size: 14px;
+}
+
+.booking-stepper .step-dot[data-step="1"]::after {
+  content: "👤";
+}
+
+.booking-stepper .step-dot[data-step="2"]::after {
+  content: "📍";
+}
+
+.booking-stepper .step-dot[data-step="3"]::after {
+  content: "✅";
+}
+
+.booking-stepper .step-dot {
+  color: transparent;
+}
+
+@media (max-width: 720px) {
+  .booking-stepper::before {
+    left: 12px;
+    right: 12px;
+  }
+}
