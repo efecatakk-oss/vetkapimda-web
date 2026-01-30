@@ -888,9 +888,14 @@ function loadShopProducts() {
           });
         }
         shopItemsCache = items;
-        renderShopProducts(applyShopFilter(items));
+        const filtered = applyShopFilter(items);
+        renderShopProducts(filtered);
+        renderProductSlider(filtered);
       },
-      () => renderShopProducts(fallbackProducts)
+      () => {
+        renderShopProducts(fallbackProducts);
+        renderProductSlider(fallbackProducts);
+      }
     );
 }
 
@@ -962,6 +967,85 @@ function renderShopProducts(items) {
     shopGrid.appendChild(card);
   });
   ensureProductToggleControls();
+}
+
+function renderProductSlider(items) {
+  const slider = document.getElementById("productSlider");
+  const dots = document.getElementById("productDots");
+  if (!slider || !dots) return;
+  slider.innerHTML = "";
+  dots.innerHTML = "";
+
+  const list = items.slice(0, 8);
+  list.forEach((item, index) => {
+    const slide = document.createElement("div");
+    slide.className = "product-slide";
+    slide.dataset.index = index;
+    const tags = [];
+    if (item.tag) tags.push(item.tag);
+    tags.push("Hızlı Teslim");
+
+    slide.innerHTML = `
+      <div class="tag-stack">
+        ${tags.map((t) => `<span class="tag-chip">${t}</span>`).join("")}
+      </div>
+      <div class="image-box">
+        ${
+          item.imageUrl
+            ? `<img src="${item.imageUrl}" alt="${item.title}" loading="lazy" />`
+            : `<div class="product-placeholder">Görsel yok</div>`
+        }
+      </div>
+      <h4>${item.title}</h4>
+      <p>${item.description || ""}</p>
+      <div class="price-row">
+        <span class="price-new">${item.price} TL</span>
+      </div>
+      <a class="btn primary" href="#randevu">Sepete Ekle</a>
+    `;
+    slider.appendChild(slide);
+
+    const dot = document.createElement("span");
+    dot.className = "dot";
+    dot.dataset.index = index;
+    dots.appendChild(dot);
+  });
+
+  const slides = Array.from(slider.children);
+  const dotsArr = Array.from(dots.children);
+
+  const activate = (idx) => {
+    dotsArr.forEach((d, i) => d.classList.toggle("active", i === idx));
+    const target = slides[idx];
+    if (target) {
+      slider.scrollTo({ left: target.offsetLeft - 12, behavior: "smooth" });
+    }
+  };
+
+  dotsArr.forEach((dot) => {
+    dot.addEventListener("click", () => activate(Number(dot.dataset.index)));
+  });
+
+  const updateActive = () => {
+    const sliderRect = slider.getBoundingClientRect();
+    let nearest = 0;
+    let minDist = Infinity;
+    slides.forEach((slide, i) => {
+      const rect = slide.getBoundingClientRect();
+      const dist = Math.abs(rect.left - sliderRect.left);
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = i;
+      }
+    });
+    dotsArr.forEach((d, i) => d.classList.toggle("active", i === nearest));
+  };
+
+  slider.addEventListener("scroll", () => {
+    window.requestAnimationFrame(updateActive);
+  });
+
+  if (dotsArr[0]) dotsArr[0].classList.add("active");
 }
 
 function bindShopSearch() {
