@@ -48,6 +48,7 @@ const signupBirthdate = document.getElementById("signupBirthdate");
 let productToggleInit = false;
 let heroPlaceholderTimer = null;
 let heroPlaceholderIndex = 0;
+let productSliderTimer = null;
 const heroPlaceholderPhrases = [
   "Evde aşı randevusu",
   "Kedi tırnak kesimi",
@@ -1066,14 +1067,16 @@ function renderProductSlider(items) {
   if (dotsArr[0]) dotsArr[0].classList.add("active");
 
   // auto-slide
-  let autoIndex = 0;
-  if (slider.dataset.autoBound !== "true") {
-    slider.dataset.autoBound = "true";
-    setInterval(() => {
-      if (!slides.length) return;
+  if (productSliderTimer) {
+    clearInterval(productSliderTimer);
+    productSliderTimer = null;
+  }
+  if (slides.length > 1) {
+    let autoIndex = 0;
+    productSliderTimer = setInterval(() => {
       autoIndex = (autoIndex + 1) % slides.length;
       activate(autoIndex);
-    }, 2200);
+    }, 1500);
   }
 }
 
