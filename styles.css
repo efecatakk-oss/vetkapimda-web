@@ -1586,6 +1586,7 @@ h4 {
   background: rgba(17, 16, 37, 0.4);
   z-index: 99;
   padding: 16px;
+  overflow: auto;
 }
 
 .login-gate.show {
@@ -1606,6 +1607,8 @@ h4 {
   transform: translateX(40px);
   animation: slideIn 0.35s ease forwards;
   position: relative;
+  max-height: 86vh;
+  overflow: auto;
 }
 
 .drawer-close {
@@ -1621,6 +1624,21 @@ h4 {
   cursor: pointer;
   font-weight: 700;
   box-shadow: 0 8px 16px rgba(255, 122, 26, 0.2);
+}
+
+@media (max-width: 720px) {
+  .login-card {
+    margin: 0;
+    max-height: 88vh;
+    padding: 16px;
+  }
+  .login-fields input,
+  .signup-fields input {
+    font-size: 14px;
+  }
+  .social-login {
+    display: none;
+  }
 }
 
 .login-card h3 {

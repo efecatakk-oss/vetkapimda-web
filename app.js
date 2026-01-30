@@ -324,6 +324,11 @@ function bindLoginGate() {
   if (drawerClose) {
     drawerClose.addEventListener("click", () => hideLoginGate());
   }
+  loginGate.addEventListener("click", (event) => {
+    if (event.target === loginGate) {
+      hideLoginGate();
+    }
+  });
   loginTriggers.forEach((trigger) =>
     trigger.addEventListener("click", () => showLoginGate())
   );
