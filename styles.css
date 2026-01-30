@@ -3990,3 +3990,28 @@ textarea {
     padding: 6px 0;
   }
 }
+
+/* Mobile card spacing */
+@media (max-width: 720px) {
+  .section {
+    padding: 28px 16px;
+  }
+  .cards {
+    gap: 12px;
+  }
+  .card img {
+    height: 150px;
+  }
+  .feature,
+  .shop-showcase,
+  .impact,
+  .legal {
+    margin: 0 16px 20px;
+    padding: 20px;
+  }
+  .info-strip,
+  .catalog,
+  .cart {
+    padding: 14px;
+  }
+}
