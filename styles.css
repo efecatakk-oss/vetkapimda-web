@@ -4164,3 +4164,17 @@ textarea {
     right: 12px;
   }
 }
+
+/* Stepper colors */
+.booking-stepper .step-dot {
+  border: 1px solid #f0d0b5;
+}
+
+.booking-stepper .step-dot.active {
+  background: linear-gradient(135deg, #ff7a1a 0%, #ffb14a 100%);
+  border-color: #ff7a1a;
+}
+
+.booking-stepper .step-dot.active::after {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
