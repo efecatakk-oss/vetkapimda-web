@@ -3714,3 +3714,41 @@ textarea {
 .slider-dots#productDots .dot.active {
   background: var(--accent);
 }
+
+/* Shop slider tweaks */
+.product-slide .slider-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-height: 4.2em;
+}
+
+.product-slide.expanded .slider-desc {
+  -webkit-line-clamp: initial;
+  max-height: none;
+}
+
+.slider-more {
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 12px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.product-slide .btn.primary {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 720px) {
+  .shop-grid-large {
+    display: none;
+  }
+  .product-slide {
+    flex: 0 0 86%;
+  }
+}
