@@ -913,34 +913,37 @@ function loadServiceItems() {
   const categories = new Map();
   db.collection("serviceItems")
     .orderBy("order")
-    .get()
-    .then((snapshot) => {
-      if (snapshot.empty) {
+    .onSnapshot(
+      (snapshot) => {
+        if (snapshot.empty) {
+          services.splice(0, services.length, ...fallbackServices);
+          renderCatalog();
+          return;
+        }
+        categories.clear();
+        snapshot.forEach((doc) => {
+          const item = doc.data();
+          if (item.active === false) return;
+          const slug = item.category || "procedures";
+          if (!categories.has(slug)) {
+            const title = slug === "vaccines" ? "Evde Kopek Asilari" : "Evde Islemler";
+            categories.set(slug, { title, slug, items: [] });
+          }
+          categories.get(slug).items.push({
+            id: doc.id,
+            title: item.title,
+            price: Number(item.price || 0),
+          });
+        });
+        services.splice(0, services.length, ...Array.from(categories.values()));
+        renderCatalog();
+      },
+      (error) => {
+        console.error("serviceItems snapshot error:", error);
         services.splice(0, services.length, ...fallbackServices);
         renderCatalog();
-        return;
       }
-      snapshot.forEach((doc) => {
-        const item = doc.data();
-        if (item.active === false) return;
-        const slug = item.category || "procedures";
-        if (!categories.has(slug)) {
-          const title = slug === "vaccines" ? "Evde Kopek Asilari" : "Evde Islemler";
-          categories.set(slug, { title, slug, items: [] });
-        }
-        categories.get(slug).items.push({
-          id: doc.id,
-          title: item.title,
-          price: Number(item.price || 0),
-        });
-      });
-      services.splice(0, services.length, ...Array.from(categories.values()));
-      renderCatalog();
-    })
-    .catch(() => {
-      services.splice(0, services.length, ...fallbackServices);
-      renderCatalog();
-    });
+    );
 }
 
 function loadShopProducts() {

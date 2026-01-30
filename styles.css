@@ -2303,20 +2303,70 @@ textarea {
 
 .footer-accordion {
   display: grid;
-  gap: 10px;
-  margin-top: 16px;
+  gap: 12px;
+  margin-top: 18px;
 }
 
 .footer-accordion details {
-  border: 1px solid #e3e7f2;
-  border-radius: 14px;
-  background: #fff;
-  padding: 10px 12px;
+  border: 1px solid rgba(255, 122, 26, 0.14);
+  border-radius: 16px;
+  background: linear-gradient(140deg, #ffffff 0%, #f6f9ff 100%);
+  padding: 12px 14px;
+  box-shadow: 0 12px 28px rgba(16, 30, 60, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.footer-accordion details:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 30px rgba(16, 30, 60, 0.12);
 }
 
 .footer-accordion summary {
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #1a2a3a;
+  gap: 12px;
+}
+
+.footer-accordion summary::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff7a1a 0%, #ffb14a 100%);
+  box-shadow: 0 4px 10px rgba(255, 122, 26, 0.35);
+}
+
+.footer-accordion summary::after {
+  content: "+";
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(255, 122, 26, 0.12);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.footer-accordion details[open] {
+  border-color: rgba(27, 111, 106, 0.3);
+  box-shadow: 0 18px 34px rgba(27, 111, 106, 0.16);
+}
+
+.footer-accordion details[open] summary {
+  color: var(--primary-deep);
+}
+
+.footer-accordion details[open] summary::after {
+  content: "-";
+  background: rgba(27, 111, 106, 0.16);
 }
 
 .footer-accordion ul {
@@ -2327,26 +2377,90 @@ textarea {
   gap: 6px;
 }
 
+.footer-accordion li {
+  position: relative;
+  padding-left: 18px;
+}
+
+.footer-accordion li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(27, 111, 106, 0.6);
+}
+
 .footer-accordion a {
   color: var(--primary-deep);
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.footer-accordion a:hover {
+  color: var(--accent);
 }
 
 .footer-contact {
-  margin-top: 14px;
-  padding: 14px;
-  border-radius: 14px;
-  border: 1px solid #e8edf5;
-  background: #fff;
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(27, 111, 106, 0.15);
+  background: linear-gradient(135deg, #f7fbff 0%, #f2fffa 100%);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 10px;
+  box-shadow: 0 14px 28px rgba(16, 30, 60, 0.1);
+}
+
+.footer-contact strong {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 16px;
+  color: var(--primary-deep);
+}
+
+.footer-contact p {
+  margin: 4px 0;
+  color: var(--muted);
+}
+
+.footer-contact a {
+  color: var(--primary-deep);
+  font-weight: 600;
 }
 
 .contact-badges {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.footer-contact .social-pill {
+  border: none;
+  background: #fff;
+  box-shadow: 0 10px 18px rgba(27, 111, 106, 0.12);
+}
+
+.footer-contact .social-pill:first-child {
+  background: linear-gradient(135deg, #1ebe5d 0%, #5ad98a 100%);
+  color: #fff;
+}
+
+.footer-contact .social-pill:last-child {
+  background: linear-gradient(135deg, #ff8b2c 0%, #ffb347 100%);
+  color: #fff;
+}
+
+.footer-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.footer-accordion summary::marker {
+  content: "";
 }
 
 @media (max-width: 720px) {
@@ -3148,7 +3262,7 @@ textarea {
   .booking-form {
     gap: 8px;
   }
-  .booking-form.mobile-compact label {
+  .booking-form.mobile-compact label:not(.keep-visible) {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -3158,6 +3272,24 @@ textarea {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
+  }
+  .booking-form.mobile-compact .field.checkbox label {
+    position: relative !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: normal !important;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+  }
+  .booking-form.mobile-compact .field.checkbox input {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
   }
   .booking-form.mobile-compact .field {
     margin-bottom: 8px;
