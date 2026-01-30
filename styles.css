@@ -3968,3 +3968,25 @@ textarea {
     gap: 6px;
   }
 }
+
+/* Mobile shop search compact */
+@media (max-width: 720px) {
+  .shop-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .shop-search {
+    width: 100%;
+    padding: 6px;
+  }
+  .shop-search input {
+    font-size: 14px;
+  }
+  .shop-search button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .shop-tabs {
+    padding: 6px 0;
+  }
+}
