@@ -195,6 +195,7 @@ loadShopProducts();
 bindShopSearch();
 bindHeroSearch();
 compactBookingForm();
+initBookingStepper();
 bindPhoneMask();
 bindTestimonialsToggle();
 startHeroPlaceholder();
@@ -363,6 +364,72 @@ function bindPhoneMask() {
       } ${match[5]}`;
     }
   });
+}
+
+function initBookingStepper() {
+  const formEl = document.getElementById("bookingForm");
+  const steps = Array.from(document.querySelectorAll(".booking-step"));
+  const dots = Array.from(document.querySelectorAll(".booking-stepper .step-dot"));
+  if (!formEl || steps.length === 0) return;
+
+  const mql = window.matchMedia("(max-width: 720px)");
+  let current = 1;
+
+  const setRequired = (stepIndex) => {
+    steps.forEach((step, idx) => {
+      step.querySelectorAll("input, textarea, select").forEach((el) => {
+        if (mql.matches) {
+          if (idx + 1 === stepIndex) {
+            if (el.dataset.req === "true") el.required = true;
+          } else {
+            if (el.required) {
+              el.dataset.req = "true";
+              el.required = false;
+            }
+          }
+        } else {
+          if (el.dataset.req === "true") el.required = true;
+        }
+      });
+    });
+  };
+
+  const update = () => {
+    steps.forEach((step, idx) => {
+      step.classList.toggle("active", idx + 1 === current);
+    });
+    dots.forEach((dot, idx) => {
+      dot.classList.toggle("active", idx + 1 === current);
+    });
+    setRequired(current);
+  };
+
+  formEl.addEventListener("click", (event) => {
+    const next = event.target.closest(".next-step");
+    const prev = event.target.closest(".prev-step");
+    if (next) {
+      const activeStep = steps[current - 1];
+      const inputs = Array.from(activeStep.querySelectorAll("input, textarea, select"));
+      const invalid = inputs.find((el) => el.required && !el.checkValidity());
+      if (invalid) {
+        invalid.reportValidity();
+        return;
+      }
+      current = Math.min(current + 1, steps.length);
+      update();
+    }
+    if (prev) {
+      current = Math.max(current - 1, 1);
+      update();
+    }
+  });
+
+  mql.addEventListener("change", () => {
+    current = 1;
+    update();
+  });
+
+  update();
 }
 
 function startHeroPlaceholder() {
@@ -977,57 +1044,55 @@ function renderProductSlider(items) {
   slider.innerHTML = "";
   dots.innerHTML = "";
 
-  const list = items.slice(0, 8);
-  list.forEach((item, index) => {
-    const slide = document.createElement("div");
-    slide.className = "product-slide";
-    slide.dataset.index = index;
+  const list = items.slice(0, 10);
+  const pages = [];
+  for (let i = 0; i < list.length; i += 2) {
+    pages.push(list.slice(i, i + 2));
+  }
+
+  const renderMini = (item) => {
     const tags = [];
     if (item.tag) tags.push(item.tag);
     tags.push("Hızlı Teslim");
     const description = item.description || "";
-    const showMore = description.length > 90;
-
-    slide.innerHTML = `
-      <div class="tag-stack">
-        ${tags.map((t) => `<span class="tag-chip">${t}</span>`).join("")}
-      </div>
-      <button class="favorite-btn" type="button" aria-label="Favorilere ekle">♡</button>
-      <div class="image-box">
-        ${
-          item.imageUrl
-            ? `<img src="${item.imageUrl}" alt="${item.title}" loading="lazy" />`
-            : `<div class="product-placeholder">Görsel yok</div>`
-        }
-      </div>
-      <div class="slide-meta">
-        <span class="brand">VETKAPIMDA Shop</span>
-        <span class="rating">★★★★★ <em>8</em></span>
-      </div>
-      <h4>${item.title}</h4>
-      <p class="slider-desc">${description}</p>
-      ${showMore ? `<button class="slider-more" type="button">Detayı Göster</button>` : ""}
-      <div class="price-row">
-        <span class="price-new">${item.price} TL</span>
-      </div>
-      <a class="btn primary" href="#randevu">Sepete Ekle</a>
+    return `
+      <article class="product-mini">
+        <div class="tag-stack">
+          ${tags.map((t) => `<span class="tag-chip">${t}</span>`).join("")}
+        </div>
+        <button class="favorite-btn" type="button" aria-label="Favorilere ekle">♡</button>
+        <div class="image-box">
+          ${
+            item.imageUrl
+              ? `<img src="${item.imageUrl}" alt="${item.title}" loading="lazy" />`
+              : `<div class="product-placeholder">Görsel yok</div>`
+          }
+        </div>
+        <div class="slide-meta">
+          <span class="brand">VETKAPIMDA Shop</span>
+          <span class="rating">★★★★★ <em>8</em></span>
+        </div>
+        <h4>${item.title}</h4>
+        <p class="slider-desc">${description}</p>
+        <div class="price-row">
+          <span class="price-new">${item.price} TL</span>
+        </div>
+        <a class="btn primary" href="#randevu">Sepete Ekle</a>
+      </article>
     `;
-    slider.appendChild(slide);
+  };
+
+  pages.forEach((group, pageIndex) => {
+    const page = document.createElement("div");
+    page.className = "product-slide";
+    page.dataset.index = pageIndex;
+    page.innerHTML = group.map(renderMini).join("");
+    slider.appendChild(page);
 
     const dot = document.createElement("span");
     dot.className = "dot";
-    dot.dataset.index = index;
+    dot.dataset.index = pageIndex;
     dots.appendChild(dot);
-
-    if (showMore) {
-      const toggle = slide.querySelector(".slider-more");
-      toggle?.addEventListener("click", () => {
-        slide.classList.toggle("expanded");
-        toggle.textContent = slide.classList.contains("expanded")
-          ? "Detayı Gizle"
-          : "Detayı Göster";
-      });
-    }
   });
 
   const slides = Array.from(slider.children);

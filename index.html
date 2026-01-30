@@ -493,71 +493,95 @@
           <input type="hidden" id="totalPrice" name="totalPrice" />
           <input type="hidden" id="serviceNote" name="serviceNote" />
           <input type="hidden" id="userEmail" name="userEmail" />
-          <div class="field">
-            <label for="name">Ad Soyad</label>
-            <div class="input-wrap">
-              <span class="input-icon">👤</span>
-              <input id="name" name="name" type="text" required />
+          <div class="booking-stepper" id="bookingStepper" aria-hidden="true">
+            <span class="step-dot active" data-step="1">1</span>
+            <span class="step-dot" data-step="2">2</span>
+            <span class="step-dot" data-step="3">3</span>
+          </div>
+
+          <div class="booking-step" data-step="1">
+            <div class="field">
+              <label for="name">Ad Soyad</label>
+              <div class="input-wrap">
+                <span class="input-icon">👤</span>
+                <input id="name" name="name" type="text" required />
+              </div>
+              <small class="field-help">Adınız ve soyadınızı yazın.</small>
             </div>
-            <small class="field-help">Adınız ve soyadınızı yazın.</small>
-          </div>
-          <div class="field">
-            <label for="phone">Telefon</label>
-            <div class="input-wrap">
-              <span class="input-icon">📞</span>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                inputmode="tel"
-                placeholder="+90 5xx xxx xx xx"
-                required
-              />
+            <div class="field">
+              <label for="phone">Telefon</label>
+              <div class="input-wrap">
+                <span class="input-icon">📞</span>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  inputmode="tel"
+                  placeholder="+90 5xx xxx xx xx"
+                  required
+                />
+              </div>
+              <small class="field-help">Telefonla hızlıca dönüş yapıyoruz.</small>
             </div>
-            <small class="field-help">Telefonla hızlıca dönüş yapıyoruz.</small>
-          </div>
-          <div class="field">
-            <label for="address">Adres</label>
-            <div class="input-wrap">
-              <span class="input-icon">📍</span>
-              <input id="address" name="address" type="text" required />
+            <div class="step-actions">
+              <button type="button" class="btn primary next-step">Devam Et</button>
             </div>
-            <small class="field-help">Ev ziyaretleri için açık adres.</small>
           </div>
-          <div class="field">
-            <label for="datetime">Tarih / Saat</label>
-            <div class="input-wrap">
-              <span class="input-icon">🗓️</span>
-              <input id="datetime" name="datetime" type="datetime-local" />
+
+          <div class="booking-step" data-step="2">
+            <div class="field">
+              <label for="address">Adres</label>
+              <div class="input-wrap">
+                <span class="input-icon">📍</span>
+                <input id="address" name="address" type="text" required />
+              </div>
+              <small class="field-help">Ev ziyaretleri için açık adres.</small>
             </div>
-            <small class="field-help">Uygun zamanı seçebilirsiniz.</small>
-          </div>
-          <div class="field full">
-            <label for="notes">Not</label>
-            <div class="input-wrap textarea">
-              <span class="input-icon">📝</span>
-              <textarea id="notes" name="notes" rows="3" placeholder="Ek bilgi"></textarea>
+            <div class="field">
+              <label for="datetime">Tarih / Saat</label>
+              <div class="input-wrap">
+                <span class="input-icon">🗓️</span>
+                <input id="datetime" name="datetime" type="datetime-local" />
+              </div>
+              <small class="field-help">Uygun zamanı seçebilirsiniz.</small>
             </div>
-            <small class="field-help">Varsa özel notlarınızı yazın.</small>
+            <div class="field full">
+              <label for="notes">Not</label>
+              <div class="input-wrap textarea">
+                <span class="input-icon">📝</span>
+                <textarea id="notes" name="notes" rows="3" placeholder="Ek bilgi"></textarea>
+              </div>
+              <small class="field-help">Varsa özel notlarınızı yazın.</small>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="btn ghost prev-step">Geri</button>
+              <button type="button" class="btn primary next-step">Devam Et</button>
+            </div>
           </div>
-          <div class="field full checkbox">
-            <label>
-              <input id="robotCheck" type="checkbox" required />
-              Robot değilim
-            </label>
-          </div>
-          <button class="btn primary full" type="submit">Randevu Talebi Gönder</button>
-          <p class="fineprint">
-            Gönder butonuna basınca e-posta uygulamanız açılır ve randevu talebi
-            hazırlanır.
-          </p>
-          <p class="fineprint">
-            Devam ederek <a href="kvkk.html">KVKK</a> ve <a href="terms.html">Hizmet Şartları</a> metnini kabul etmiş olursunuz.
-          </p>
-          <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
-          <div id="formSuccess" class="form-success" aria-hidden="true">
-            <p>Randevu talebiniz alındı. En kısa sürede dönüş yapacağız.</p>
-            <a class="btn ghost" href="#randevu">Yeni Randevu Oluştur</a>
+
+          <div class="booking-step" data-step="3">
+            <div class="field full checkbox">
+              <label>
+                <input id="robotCheck" type="checkbox" required />
+                Robot değilim
+              </label>
+            </div>
+            <button class="btn primary full" type="submit">Randevu Talebi Gönder</button>
+            <p class="fineprint">
+              Gönder butonuna basınca e-posta uygulamanız açılır ve randevu talebi
+              hazırlanır.
+            </p>
+            <p class="fineprint">
+              Devam ederek <a href="kvkk.html">KVKK</a> ve <a href="terms.html">Hizmet Şartları</a> metnini kabul etmiş olursunuz.
+            </p>
+            <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
+            <div id="formSuccess" class="form-success" aria-hidden="true">
+              <p>Randevu talebiniz alındı. En kısa sürede dönüş yapacağız.</p>
+              <a class="btn ghost" href="#randevu">Yeni Randevu Oluştur</a>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="btn ghost prev-step">Geri</button>
+            </div>
           </div>
         </form>
 

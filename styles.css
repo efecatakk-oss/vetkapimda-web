@@ -4041,3 +4041,57 @@ textarea {
     padding: 12px;
   }
 }
+
+/* Booking stepper */
+.booking-stepper {
+  display: none;
+  gap: 8px;
+  justify-content: center;
+  margin: 0 0 8px;
+}
+
+.booking-stepper .step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #e6e0f0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--muted);
+  background: #fff;
+}
+
+.booking-stepper .step-dot.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.booking-step {
+  display: contents;
+}
+
+.step-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 720px) {
+  .booking-stepper {
+    display: flex;
+  }
+  .booking-step {
+    display: none;
+  }
+  .booking-step.active {
+    display: contents;
+  }
+  .step-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
