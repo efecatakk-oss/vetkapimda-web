@@ -2569,9 +2569,9 @@ textarea {
   text-decoration: none;
 }
 
-.whatsapp-float { position: fixed; right: 18px; bottom: 18px; background: #25d366; color: #fff; padding: 10px 14px; border-radius: 999px; font-weight: 700; box-shadow: 0 16px 30px rgba(37,211,102,0.35); z-index: 60; }
+.whatsapp-float { display: none !important; }
 
-.whatsapp-float:hover { filter: brightness(1.05); }
+
 
 .admin-body {
   background: radial-gradient(circle at top, #f7fffd 0%, #f7f3ff 45%, #fff7ed 100%);
@@ -3313,9 +3313,9 @@ textarea {
 
   .sticky-cta { position: fixed; left: 12px; right: 12px; bottom: 16px; display: none; z-index: 70; pointer-events: none; gap: 0; flex-direction: row; justify-content: space-between; align-items: center; }
 
-.whatsapp-float { position: fixed; right: 18px; bottom: 18px; background: #25d366; color: #fff; padding: 10px 14px; border-radius: 999px; font-weight: 700; box-shadow: 0 16px 30px rgba(37,211,102,0.35); z-index: 60; }
+.whatsapp-float { display: none !important; }
 @media (max-width: 720px) {
-  .whatsapp-float { position: fixed; right: 18px; bottom: 18px; background: #25d366; color: #fff; padding: 10px 14px; border-radius: 999px; font-weight: 700; box-shadow: 0 16px 30px rgba(37,211,102,0.35); z-index: 60; }
+  .whatsapp-float { display: none !important; }
 }
 
 /* CTA cards */
@@ -3522,3 +3522,4 @@ textarea {
 .sticky-icon:active {
   transform: translateY(0.5px) scale(0.99);
 }
+
