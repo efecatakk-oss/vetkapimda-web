@@ -4095,3 +4095,19 @@ textarea {
     justify-content: center;
   }
 }
+
+.step-title {
+  font-weight: 800;
+  color: var(--primary-deep);
+  background: #f5f8ff;
+  border: 1px solid #e6eef9;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin-bottom: 6px;
+}
+
+@media (max-width: 720px) {
+  .step-title {
+    font-size: 13px;
+  }
+}
