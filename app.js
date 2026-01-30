@@ -1064,6 +1064,17 @@ function renderProductSlider(items) {
   });
 
   if (dotsArr[0]) dotsArr[0].classList.add("active");
+
+  // auto-slide
+  let autoIndex = 0;
+  if (slider.dataset.autoBound !== "true") {
+    slider.dataset.autoBound = "true";
+    setInterval(() => {
+      if (!slides.length) return;
+      autoIndex = (autoIndex + 1) % slides.length;
+      activate(autoIndex);
+    }, 2200);
+  }
 }
 
 function bindShopSearch() {
