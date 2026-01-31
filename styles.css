@@ -3511,7 +3511,10 @@ textarea {
     margin-bottom: 12px;
     padding: 8px 10px;
     gap: 8px;
-    box-shadow: 0 4px 12px rgba(23, 20, 42, 0.06);
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 255, 0.96) 100%);
+    border: 1px solid rgba(255, 122, 26, 0.18);
+    box-shadow: 0 10px 24px rgba(23, 20, 42, 0.12);
   }
   .nav-center {
     flex-direction: column;
@@ -3519,9 +3522,14 @@ textarea {
     gap: 10px;
   }
   .brand-mark {
-    font-size: 32px;
+    font-size: 34px;
     transform: none;
     text-shadow: 0 6px 14px rgba(255, 122, 26, 0.18);
+    letter-spacing: 1.4px;
+    background: linear-gradient(120deg, #ff7a1a 0%, #ffb14a 45%, #ff7a1a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .nav-actions {
     width: 100%;
@@ -3532,18 +3540,32 @@ textarea {
   .nav-cta {
     width: 100%;
     text-align: center;
+    background: linear-gradient(135deg, #ff7a1a 0%, #ffb14a 100%);
+    box-shadow: 0 12px 24px rgba(255, 122, 26, 0.3);
+    font-size: 13px;
+    letter-spacing: 0.2px;
   }
   .nav-utils {
     width: 100%;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
   }
   .nav-pill {
-    padding: 5px 8px;
+    padding: 8px 10px;
     font-size: 11px;
-    box-shadow: none;
-    border-color: rgba(255, 122, 26, 0.25);
+    border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(23, 20, 42, 0.08);
+    border-color: rgba(255, 122, 26, 0.22);
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+  }
+  .nav-pill.nav-cart span {
+    padding: 2px 6px;
+    font-size: 10px;
   }
   .nav-link {
     font-size: 12px;
