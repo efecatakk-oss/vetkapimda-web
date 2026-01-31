@@ -2520,14 +2520,59 @@ textarea {
 }
 
 .catalog {
-  background: #fff;
-  border-radius: 18px;
-  padding: 20px;
-  box-shadow: var(--shadow);
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f4f8ff 55%, #fff1e6 100%);
+  border-radius: 20px;
+  padding: 22px;
+  border: 1px solid rgba(255, 122, 26, 0.14);
+  box-shadow: 0 20px 40px rgba(20, 30, 60, 0.1);
+  overflow: hidden;
+}
+
+.catalog::before,
+.catalog::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(0);
+  opacity: 0.5;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.catalog::before {
+  width: 180px;
+  height: 180px;
+  top: -90px;
+  right: -60px;
+  background: radial-gradient(circle, rgba(255, 177, 74, 0.5) 0%, rgba(255, 177, 74, 0) 70%);
+}
+
+.catalog::after {
+  width: 220px;
+  height: 220px;
+  bottom: -120px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(27, 111, 106, 0.35) 0%, rgba(27, 111, 106, 0) 70%);
+}
+
+.catalog > * {
+  position: relative;
+  z-index: 1;
 }
 
 .catalog-header h3 {
   margin: 0 0 8px;
+  font-size: 20px;
+  color: #142033;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.catalog-header h3::before {
+  content: "🎯";
+  font-size: 18px;
 }
 
 .catalog-header p {
@@ -2548,6 +2593,14 @@ textarea {
 .category h4 {
   margin: 0;
   font-size: 16px;
+  color: var(--primary-deep);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(27, 111, 106, 0.12);
+  border: 1px solid rgba(27, 111, 106, 0.2);
 }
 
 .service-grid {
@@ -2557,18 +2610,19 @@ textarea {
 }
 
 .service-card {
-  border-radius: 14px;
-  border: 1px solid #e7e6f2;
-  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(27, 111, 106, 0.18);
+  padding: 14px;
   display: grid;
-  gap: 8px;
-  background: #faf9ff;
+  gap: 10px;
+  background: linear-gradient(160deg, #ffffff 0%, #f6f9ff 70%, #fff6eb 100%);
+  box-shadow: 0 12px 26px rgba(20, 30, 60, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .service-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 16px 30px rgba(23, 20, 42, 0.12);
+  box-shadow: 0 18px 34px rgba(23, 20, 42, 0.16);
 }
 
 .service-card h5 {
@@ -2577,23 +2631,31 @@ textarea {
 }
 
 .service-card span {
-  color: var(--muted);
-  font-size: 13px;
+  color: #0f3f3b;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(27, 111, 106, 0.12);
+  border: 1px solid rgba(27, 111, 106, 0.18);
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
 }
 
 .service-card button {
   border: none;
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-weight: 600;
-  background: var(--primary);
+  padding: 9px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #0f6b64 0%, #1a8f85 100%);
   color: #fff;
   cursor: pointer;
   transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .service-card button.active {
-  background: var(--accent);
+  background: linear-gradient(135deg, #ff7a1a 0%, #ffb14a 100%);
 }
 
 .service-card button:hover {
@@ -2602,10 +2664,11 @@ textarea {
 }
 
 .cart {
-  background: #fff;
-  border-radius: 18px;
+  background: linear-gradient(135deg, #ffffff 0%, #f3fbff 60%, #fef2e7 100%);
+  border-radius: 20px;
   padding: 20px;
-  box-shadow: var(--shadow);
+  border: 1px solid rgba(27, 111, 106, 0.12);
+  box-shadow: 0 18px 36px rgba(20, 30, 60, 0.12);
   display: grid;
   gap: 12px;
 }
@@ -2626,8 +2689,11 @@ textarea {
 
 .cart-item button {
   border: none;
-  background: transparent;
+  background: rgba(255, 122, 26, 0.12);
   color: var(--accent);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 700;
   cursor: pointer;
 }
 
