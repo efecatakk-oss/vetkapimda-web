@@ -2278,8 +2278,11 @@ textarea {
   flex: 1 1 240px;
   border: 1px solid #e0e4ef;
   border-radius: 12px;
-  padding: 12px;
+  padding: 10px 12px;
   font-size: 14px;
+  height: 48px;
+  line-height: 1.2;
+  box-sizing: border-box;
 }
 
 .footer-cta-social {
