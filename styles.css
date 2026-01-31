@@ -2281,8 +2281,18 @@ textarea {
   padding: 10px 12px;
   font-size: 14px;
   height: 48px;
+  min-height: 48px;
+  max-height: 48px;
   line-height: 1.2;
   box-sizing: border-box;
+}
+
+.footer-cta-card .footer-cta-form input[type="email"] {
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  padding: 10px 12px !important;
+  line-height: 1.2 !important;
 }
 
 .footer-cta-social {
