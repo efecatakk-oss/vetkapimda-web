@@ -828,12 +828,23 @@ h4 {
 }
 
 .card {
-  background: var(--card);
-  border-radius: 18px;
+  background: linear-gradient(135deg, #ffffff 0%, #f6f9ff 70%, #fff3e9 100%);
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: var(--shadow);
+  box-shadow: 0 16px 32px rgba(17, 16, 37, 0.12);
   color: inherit;
   display: block;
+  position: relative;
+  border: 1px solid rgba(255, 122, 26, 0.12);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(255, 177, 74, 0.25), transparent 45%);
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 .card img {
@@ -841,12 +852,15 @@ h4 {
   height: 180px;
   object-fit: contain;
   object-position: center;
-  background: linear-gradient(180deg, #f7f6ff 0%, #f3f1fb 100%);
-  padding: 8px;
+  background: linear-gradient(180deg, #f7f9ff 0%, #ffffff 100%);
+  padding: 10px;
+  transition: transform 0.3s ease;
 }
 
 .card-body {
   padding: 16px;
+  position: relative;
+  z-index: 1;
 }
 
 .card-body h3 {
@@ -864,7 +878,7 @@ h4 {
   letter-spacing: 0.5px;
   padding: 6px 10px;
   border-radius: 999px;
-  background: #ffe2c6;
+  background: linear-gradient(135deg, #ffe2c6 0%, #ffd3a1 100%);
   color: #8a3f00;
   margin-bottom: 8px;
 }
@@ -909,6 +923,7 @@ h4 {
   padding: 6px 10px;
   border-radius: 999px;
   background: rgba(27, 111, 106, 0.12);
+  border: 1px solid rgba(27, 111, 106, 0.2);
   color: var(--primary-deep);
   font-size: 12px;
   font-weight: 700;
@@ -921,6 +936,7 @@ h4 {
 
 .service-chip.warm {
   background: rgba(255, 122, 26, 0.18);
+  border: 1px solid rgba(255, 122, 26, 0.25);
   color: #8a3f00;
 }
 
@@ -938,7 +954,11 @@ h4 {
 
 .card-link:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 38px rgba(17, 16, 37, 0.18);
+  box-shadow: 0 22px 40px rgba(17, 16, 37, 0.2);
+}
+
+.card-link:hover img {
+  transform: translateY(-2px) scale(1.02);
 }
 
 .category.highlight {
