@@ -2142,6 +2142,11 @@ textarea {
   gap: 10px;
   flex-wrap: wrap;
   margin: 0 0 28px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 60%, #fff2e6 100%);
+  border: 1px solid rgba(255, 122, 26, 0.15);
+  box-shadow: 0 14px 28px rgba(23, 20, 42, 0.08);
 }
 
 .cta-band {
@@ -2228,12 +2233,12 @@ textarea {
 }
 
 .category-bar a {
-  background: #ffffff;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fbff 100%);
   padding: 8px 14px;
   border-radius: 999px;
   font-size: 13px;
   color: var(--primary);
-  box-shadow: 0 10px 20px rgba(23, 20, 42, 0.08);
+  box-shadow: 0 10px 20px rgba(23, 20, 42, 0.1);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -2247,7 +2252,14 @@ textarea {
 }
 
 .quick-icon {
-  font-size: 14px;
+  font-size: 13px;
+  width: 24px;
+  height: 24px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 122, 26, 0.14);
 }
 
 .testimonials {
@@ -3587,6 +3599,22 @@ textarea {
   .nav-link {
     font-size: 12px;
     padding: 4px 8px;
+  }
+
+  .category-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 8px 10px;
+    scrollbar-width: none;
+  }
+  .category-bar::-webkit-scrollbar {
+    display: none;
+  }
+  .category-bar a {
+    white-space: nowrap;
+    scroll-snap-align: start;
   }
 
   .hero-grid {
