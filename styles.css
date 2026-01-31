@@ -298,8 +298,18 @@ a {
 }
 
 .eyebrow {
-  color: var(--accent);
-  font-weight: 600;
+  color: #ff7a1a;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 122, 26, 0.12);
+  border: 1px solid rgba(255, 122, 26, 0.2);
+  padding: 6px 10px;
+  border-radius: 999px;
   margin-bottom: 12px;
 }
 
@@ -314,12 +324,13 @@ h1 {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  border-radius: 12px;
-  background: #f1f6ff;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255, 247, 236, 0.95) 0%, rgba(255, 238, 218, 0.95) 100%);
+  border: 1px solid rgba(255, 122, 26, 0.2);
   color: var(--primary-deep);
   font-weight: 700;
   margin: 6px 0 10px;
-  box-shadow: 0 8px 18px rgba(23, 20, 42, 0.08);
+  box-shadow: 0 10px 22px rgba(255, 122, 26, 0.18);
 }
 
 h2,
@@ -341,8 +352,8 @@ h4 {
 }
 
 .hero-underline {
-  width: 120px;
-  height: 6px;
+  width: 140px;
+  height: 7px;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--accent) 0%, #ffd3a1 100%);
   margin: 10px 0 16px;
@@ -374,29 +385,31 @@ h4 {
 .hero-search {
   display: flex;
   gap: 8px;
-  background: #fff;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
   padding: 8px;
-  border-radius: 999px;
-  box-shadow: var(--shadow);
+  border-radius: 16px;
+  border: 1px solid rgba(27, 111, 106, 0.16);
+  box-shadow: 0 12px 28px rgba(23, 20, 42, 0.08);
   margin-bottom: 16px;
 }
 
 .hero-search input {
   border: none;
   outline: none;
-  padding: 6px 10px;
+  padding: 8px 10px;
   width: min(360px, 100%);
   background: transparent;
 }
 
 .hero-search button {
   border: none;
-  background: var(--accent);
+  background: linear-gradient(135deg, #ff7a1a 0%, #ffb14a 100%);
   color: #fff;
   padding: 8px 16px;
-  border-radius: 999px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 700;
+  box-shadow: 0 10px 20px rgba(255, 122, 26, 0.25);
 }
 
 .whatsapp-mini {
@@ -416,10 +429,11 @@ h4 {
 }
 
 .hero-stats div {
-  background: #ffffff;
-  border-radius: 14px;
+  background: linear-gradient(135deg, #ffffff 0%, #f5fbff 100%);
+  border-radius: 16px;
   padding: 12px;
-  box-shadow: var(--shadow);
+  border: 1px solid rgba(27, 111, 106, 0.12);
+  box-shadow: 0 12px 26px rgba(23, 20, 42, 0.08);
   display: grid;
   gap: 4px;
 }
@@ -427,6 +441,9 @@ h4 {
 .hero-stats strong {
   font-size: 18px;
   color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .hero-stats span {
