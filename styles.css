@@ -3419,10 +3419,17 @@ textarea {
     padding: 8px 10px;
     margin-bottom: 8px;
     gap: 6px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 12px 22px rgba(255, 122, 26, 0.22);
   }
   .topbar-left span {
     font-size: 11px;
     letter-spacing: 0.4px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 10px;
+    border-radius: 999px;
+    display: inline-flex;
   }
   .topbar-right {
     width: 100%;
@@ -3434,6 +3441,14 @@ textarea {
   }
   .topbar-right::-webkit-scrollbar {
     display: none;
+  }
+  .topbar-right .topbar-link,
+  .topbar-right .topbar-icon {
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 6px 10px;
+    border-radius: 999px;
+    box-shadow: 0 8px 16px rgba(255, 122, 26, 0.18);
   }
   /* Sadece WhatsApp, Ara ve Admin kalsın */
   .topbar-right a:nth-child(n + 4) {
@@ -3447,10 +3462,48 @@ textarea {
     margin-bottom: 12px;
   }
   .mobile-quicklinks a {
-    text-align: center;
-    padding: 8px 10px;
-    border-radius: 12px;
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: 14px;
     font-size: 12px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(255, 122, 26, 0.2);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: 0 10px 18px rgba(20, 30, 60, 0.08);
+  }
+  .mobile-quicklinks a::before {
+    content: "";
+    width: 26px;
+    height: 26px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    background: rgba(255, 122, 26, 0.12);
+  }
+  .mobile-quicklinks a:nth-child(1)::before {
+    content: "💬";
+    background: rgba(37, 211, 102, 0.18);
+  }
+  .mobile-quicklinks a:nth-child(2)::before {
+    content: "📞";
+    background: rgba(255, 122, 26, 0.18);
+  }
+  .mobile-quicklinks a:nth-child(3)::before {
+    content: "❤️";
+  }
+  .mobile-quicklinks a:nth-child(4)::before {
+    content: "📦";
+  }
+  .mobile-quicklinks a:nth-child(5)::before {
+    content: "✅";
+  }
+  .mobile-quicklinks a:nth-child(6)::before {
+    content: "🛠️";
   }
 
   .nav {
