@@ -1912,6 +1912,18 @@ h4 {
   display: block;
 }
 
+.login-card.signup-active #loginBtn {
+  display: none;
+}
+
+.login-card:not(.signup-active) #signupBtn {
+  display: none;
+}
+
+.login-card.signup-active.code-sent #signupBtn {
+  display: none;
+}
+
 .signup-gender {
   display: grid;
   gap: 8px;
