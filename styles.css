@@ -903,6 +903,23 @@ h4 {
   line-height: 1.5;
 }
 
+.card-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.card-highlights span {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary-deep);
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(27, 111, 106, 0.12);
+  border: 1px solid rgba(27, 111, 106, 0.18);
+}
+
 .service-price {
   display: inline-flex;
   align-items: center;
