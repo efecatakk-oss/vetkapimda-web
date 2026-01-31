@@ -1881,12 +1881,35 @@ h4 {
   display: none;
 }
 
+.login-card.signup-active .login-code,
+.login-card.signup-active .otp-actions {
+  display: none;
+}
+
+.login-card.signup-active.code-sent .login-code {
+  display: block;
+}
+
+.login-card.signup-active.code-sent .otp-actions {
+  display: flex;
+}
+
 .signup-only {
   display: none;
 }
 
 .login-card.signup-active .signup-only {
   display: flex;
+}
+
+.otp-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.login-card.signup-active .otp-hint {
+  display: block;
 }
 
 .signup-gender {

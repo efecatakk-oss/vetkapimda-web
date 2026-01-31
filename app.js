@@ -675,8 +675,9 @@ function handleSendCode() {
       lastCodeSentAt = now;
       localStorage.setItem("otpLastSentAt", String(now));
       updateCooldownUI();
+      setCodeStage(true);
       setLoginStatus(
-        "Onay kodu gonderildi. Spam klasorunu kontrol edin.",
+        "Onay kodu gonderildi. Kodu girip onaylayin.",
         false
       );
       loginCode.focus();
@@ -783,11 +784,25 @@ function handleConfirmCode() {
 function showLoginGate() {
   loginGate.classList.add("show");
   loginGate.setAttribute("aria-hidden", "false");
+  setCodeStage(false);
 }
 
 function hideLoginGate() {
   loginGate.classList.remove("show");
   loginGate.setAttribute("aria-hidden", "true");
+  setCodeStage(false);
+}
+
+function setCodeStage(active) {
+  if (!loginCard) return;
+  loginCard.classList.toggle("code-sent", Boolean(active));
+  if (loginCode) {
+    loginCode.disabled = !active;
+    if (!active) loginCode.value = "";
+  }
+  if (confirmCodeBtn) {
+    confirmCodeBtn.disabled = !active;
+  }
 }
 
 function switchLoginTab(tab) {
@@ -796,9 +811,11 @@ function switchLoginTab(tab) {
   if (loginCard) {
     loginCard.classList.toggle("signup-active", tab.dataset.tab === "signup");
   }
+  pendingToken = null;
+  setCodeStage(false);
   if (tab.dataset.tab === "signup") {
     pendingAction = "signup";
-    setLoginStatus("Uye olmak icin e-posta/sifre girin.", false);
+    setLoginStatus("Uye olmak icin e-posta/sifre girin, kodu gonderin.", false);
   } else {
     pendingAction = "login";
     setLoginStatus("", false);
