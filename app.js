@@ -122,6 +122,10 @@ let pendingProfile = null;
 let lastCodeSentAt = Number(localStorage.getItem("otpLastSentAt") || "0");
 const CODE_SEND_COOLDOWN_MS = 60000;
 const defaultSendCodeLabel = sendCodeBtn ? sendCodeBtn.textContent : "Kod Gonder";
+let serviceItemsUnsub = null;
+let shopProductsUnsub = null;
+let anonAuthInProgress = false;
+let anonAuthDone = false;
 
 const fallbackServices = [
   {
@@ -486,19 +490,40 @@ function stopHeroPlaceholder() {
 
 function watchAuth() {
   auth.onAuthStateChanged((user) => {
-    isLoggedIn = Boolean(user);
-    if (user && !isEmailVerified(user.email)) {
+    const isRealUser = Boolean(user && !user.isAnonymous);
+    isLoggedIn = isRealUser;
+    if (user && isRealUser && !isEmailVerified(user.email)) {
       markEmailVerified(user.email);
     }
-    isVerified = Boolean(user && isEmailVerified(user.email));
+    isVerified = Boolean(user && isRealUser && isEmailVerified(user.email));
     if (userEmailHidden) {
       userEmailHidden.value = user?.email || "";
     }
-    if (user) {
+    if (user && isRealUser) {
       ensureUserProfile(user);
     }
-    updateLoginUI(user);
+    if (!user) {
+      ensureAnonymousAuth();
+    }
+    updateLoginUI(isRealUser ? user : null);
   });
+}
+
+function ensureAnonymousAuth() {
+  if (anonAuthDone || anonAuthInProgress) return Promise.resolve();
+  anonAuthInProgress = true;
+  return auth
+    .signInAnonymously()
+    .then(() => {
+      anonAuthDone = true;
+    })
+    .catch((error) => {
+      console.warn("anonymous auth failed", error);
+      anonAuthDone = false;
+    })
+    .finally(() => {
+      anonAuthInProgress = false;
+    });
 }
 
 function handleLogin() {
@@ -924,7 +949,10 @@ function renderCatalog() {
 
 function loadServiceItems() {
   const categories = new Map();
-  db.collection("serviceItems")
+  if (serviceItemsUnsub) {
+    serviceItemsUnsub();
+  }
+  serviceItemsUnsub = db.collection("serviceItems")
     .orderBy("order")
     .onSnapshot(
       (snapshot) => {
@@ -953,6 +981,14 @@ function loadServiceItems() {
       },
       (error) => {
         console.error("serviceItems snapshot error:", error);
+        if (error?.code === "permission-denied") {
+          ensureAnonymousAuth().then(() => {
+            if (auth.currentUser && auth.currentUser.isAnonymous) {
+              loadServiceItems();
+            }
+          });
+          return;
+        }
         services.splice(0, services.length, ...fallbackServices);
         renderCatalog();
       }
@@ -961,7 +997,10 @@ function loadServiceItems() {
 
 function loadShopProducts() {
   if (!shopGrid) return;
-  db.collection("shopProducts")
+  if (shopProductsUnsub) {
+    shopProductsUnsub();
+  }
+  shopProductsUnsub = db.collection("shopProducts")
     .where("active", "==", true)
     .orderBy("order")
     .onSnapshot(
