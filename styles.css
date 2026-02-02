@@ -1912,6 +1912,50 @@ h4 {
   display: block;
 }
 
+.signup-stepper {
+  display: none;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  background: #f1f5ff;
+  border-radius: 999px;
+  padding: 6px;
+  border: 1px solid rgba(27, 111, 106, 0.12);
+}
+
+.signup-stepper .step {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.login-card.signup-active .signup-stepper {
+  display: flex;
+}
+
+.login-card.signup-active .signup-stepper .step[data-step="1"] {
+  background: #fff;
+  color: var(--primary-deep);
+  box-shadow: 0 8px 16px rgba(23, 20, 42, 0.12);
+}
+
+.login-card.signup-active.code-sent .signup-stepper .step[data-step="1"] {
+  background: rgba(27, 111, 106, 0.12);
+  color: var(--primary-deep);
+  box-shadow: none;
+}
+
+.login-card.signup-active.code-sent .signup-stepper .step[data-step="2"] {
+  background: #fff;
+  color: var(--primary-deep);
+  box-shadow: 0 8px 16px rgba(23, 20, 42, 0.12);
+}
+
 .login-card.signup-active #loginBtn {
   display: none;
 }
