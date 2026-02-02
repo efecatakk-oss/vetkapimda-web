@@ -1912,6 +1912,11 @@ h4 {
   display: block;
 }
 
+.edit-info-btn {
+  align-self: flex-start;
+  padding: 0;
+}
+
 .signup-stepper {
   display: none;
   gap: 8px;
@@ -1965,6 +1970,16 @@ h4 {
 }
 
 .login-card.signup-active.code-sent #signupBtn {
+  display: none;
+}
+
+.login-card.signup-active.code-sent .login-fields #loginEmail,
+.login-card.signup-active.code-sent .login-fields #loginPassword,
+.login-card.signup-active.code-sent .login-fields #loginPasswordConfirm {
+  display: none;
+}
+
+.login-card.signup-active.code-sent .signup-fields {
   display: none;
 }
 

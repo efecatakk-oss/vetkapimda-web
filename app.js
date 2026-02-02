@@ -38,6 +38,7 @@ const loginStatus = document.getElementById("loginStatus");
 const userEmailHidden = document.getElementById("userEmail");
 const rememberMe = document.getElementById("rememberMe");
 const acceptTerms = document.getElementById("acceptTerms");
+const editInfoBtn = document.querySelector(".edit-info-btn");
 const loginTriggers = document.querySelectorAll(".login-trigger");
 const loginTabs = document.querySelectorAll(".login-tabs .tab-btn");
 const loginCard = document.querySelector(".login-card");
@@ -345,6 +346,11 @@ function bindLoginGate() {
   confirmCodeBtn.addEventListener("click", handleConfirmCode);
   forgotPasswordBtn.addEventListener("click", handleForgotPassword);
   logoutBtn.addEventListener("click", handleLogout);
+  editInfoBtn?.addEventListener("click", () => {
+    setCodeStage(false);
+    setLoginStatus("Bilgileri duzenleyebilirsiniz.", false);
+    loginEmail?.focus();
+  });
 
   document.querySelectorAll('a[href*="wa.me"]').forEach((link) => {
     link.addEventListener("click", () => trackEvent("whatsapp_click"));
@@ -817,6 +823,9 @@ function hideLoginGate() {
 function setCodeStage(active) {
   if (!loginCard) return;
   loginCard.classList.toggle("code-sent", Boolean(active));
+  if (loginEmail) loginEmail.readOnly = Boolean(active);
+  if (loginPassword) loginPassword.readOnly = Boolean(active);
+  if (loginPasswordConfirm) loginPasswordConfirm.readOnly = Boolean(active);
   if (loginCode) {
     loginCode.disabled = !active;
     if (!active) loginCode.value = "";
