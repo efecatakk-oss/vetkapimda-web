@@ -1667,7 +1667,7 @@ h4 {
   background: linear-gradient(180deg, #ffffff 0%, #f6fbff 100%);
   border-radius: 18px;
   padding: 24px;
-  max-width: 380px;
+  max-width: 420px;
   width: 100%;
   box-shadow: var(--shadow);
   display: grid;
@@ -1698,8 +1698,8 @@ h4 {
 @media (max-width: 720px) {
   .login-card {
     margin: 0;
-    max-height: 88vh;
-    padding: 16px;
+    max-height: 90vh;
+    padding: 18px;
   }
   .login-fields input,
   .signup-fields input {
