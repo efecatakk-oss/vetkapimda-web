@@ -985,7 +985,10 @@ function loadServiceItems() {
           ensureAnonymousAuth().then(() => {
             if (auth.currentUser && auth.currentUser.isAnonymous) {
               loadServiceItems();
+              return;
             }
+            services.splice(0, services.length, ...fallbackServices);
+            renderCatalog();
           });
           return;
         }
@@ -1020,7 +1023,18 @@ function loadShopProducts() {
         renderShopProducts(filtered);
         renderProductSlider(filtered);
       },
-      () => {
+      (error) => {
+        if (error?.code === "permission-denied") {
+          ensureAnonymousAuth().then(() => {
+            if (auth.currentUser && auth.currentUser.isAnonymous) {
+              loadShopProducts();
+              return;
+            }
+            renderShopProducts(fallbackProducts);
+            renderProductSlider(fallbackProducts);
+          });
+          return;
+        }
         renderShopProducts(fallbackProducts);
         renderProductSlider(fallbackProducts);
       }
