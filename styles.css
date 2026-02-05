@@ -1964,8 +1964,15 @@ h4 {
   display: none;
 }
 
-.login-card.signup-active .remember-row,
+.login-card.signup-active .remember-row {
+  display: none;
+}
+
 .login-card.signup-active .terms-row {
+  display: flex;
+}
+
+.login-card.signup-active.code-sent .terms-row {
   display: none;
 }
 

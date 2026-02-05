@@ -586,6 +586,10 @@ function handleSignup() {
     setLoginStatus("Telefon zorunlu.", true);
     return;
   }
+  if (acceptTerms && !acceptTerms.checked) {
+    setLoginStatus("KVKK ve Hizmet Sartlari'ni kabul etmeniz gerekir.", true);
+    return;
+  }
   pendingAction = "signup";
   pendingProfile = { name, surname, phone, gender, birthdate };
   setLoginStatus("Onay kodu gonderiyoruz...", false);
