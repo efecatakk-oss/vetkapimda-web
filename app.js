@@ -569,7 +569,7 @@ function handleSignup() {
   const surname = signupSurname.value.trim();
   const phone = signupPhone.value.trim();
   const gender = document.querySelector('input[name="gender"]:checked')?.value || "";
-  const birthdate = signupBirthdate.value;
+  const birthdate = signupBirthdate ? signupBirthdate.value : "";
   if (!email || !password) {
     setLoginStatus("E-posta ve sifre girin.", true);
     return;
@@ -580,6 +580,10 @@ function handleSignup() {
   }
   if (!name || !surname) {
     setLoginStatus("Ad ve soyad zorunlu.", true);
+    return;
+  }
+  if (!phone) {
+    setLoginStatus("Telefon zorunlu.", true);
     return;
   }
   pendingAction = "signup";
