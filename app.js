@@ -22,6 +22,7 @@ const navCartCount = document.getElementById("navCartCount");
 const slides = document.querySelectorAll(".slider-track .slide");
 const dots = document.querySelectorAll(".slider-dots .dot");
 const shopGrid = document.getElementById("shopGrid");
+const shopTabs = document.querySelectorAll(".shop-tabs .tab");
 const loginGate = document.getElementById("loginGate");
 const loginEmail = document.getElementById("loginEmail");
 const loginPassword = document.getElementById("loginPassword");
@@ -39,6 +40,7 @@ const userEmailHidden = document.getElementById("userEmail");
 const rememberMe = document.getElementById("rememberMe");
 const acceptTerms = document.getElementById("acceptTerms");
 const editInfoBtn = document.querySelector(".edit-info-btn");
+const toastEl = document.getElementById("toast");
 const loginTriggers = document.querySelectorAll(".login-trigger");
 const loginTabs = document.querySelectorAll(".login-tabs .tab-btn");
 const loginCard = document.querySelector(".login-card");
@@ -50,6 +52,7 @@ let productToggleInit = false;
 let heroPlaceholderTimer = null;
 let heroPlaceholderIndex = 0;
 let productSliderTimer = null;
+let toastTimer = null;
 const heroPlaceholderPhrases = [
   "Evde aşı randevusu",
   "Kedi tırnak kesimi",
@@ -185,6 +188,7 @@ const fallbackProducts = [
 const services = [];
 const shopProducts = [];
 let shopItemsCache = [];
+let activeShopFilter = "all";
 const BOOKING_RATE_LIMIT_MS = 45000;
 
 const selectedItems = new Map();
@@ -197,6 +201,7 @@ bindLoginGate();
 watchAuth();
 startCooldownTicker();
 loadShopProducts();
+bindShopTabs();
 bindShopSearch();
 bindHeroSearch();
 compactBookingForm();
@@ -597,8 +602,11 @@ function handleSignup() {
 }
 
 function setLoginStatus(message, isError) {
-  loginStatus.textContent = message;
-  loginStatus.classList.toggle("error", isError);
+  if (loginStatus) {
+    loginStatus.textContent = message;
+    loginStatus.classList.toggle("error", isError);
+  }
+  showToast(message, isError);
 }
 
 function startCooldownTicker() {
@@ -905,9 +913,25 @@ function isValidPhone(value) {
   return digits.length >= 12;
 }
 
+function showToast(message, isError = false) {
+  if (!toastEl || !message) return;
+  toastEl.textContent = message;
+  toastEl.classList.toggle("error", isError);
+  toastEl.classList.add("show");
+  if (toastTimer) {
+    clearTimeout(toastTimer);
+  }
+  toastTimer = setTimeout(() => {
+    toastEl.classList.remove("show");
+  }, 3200);
+}
+
 function showStatus(message, isError = false) {
-  statusEl.textContent = message;
-  statusEl.classList.toggle("error", isError);
+  if (statusEl) {
+    statusEl.textContent = message;
+    statusEl.classList.toggle("error", isError);
+  }
+  showToast(message, isError);
 }
 
 function trackEvent(name, params = {}) {
@@ -1040,9 +1064,7 @@ function loadShopProducts() {
           });
         }
         shopItemsCache = items;
-        const filtered = applyShopFilter(items);
-        renderShopProducts(filtered);
-        renderProductSlider(filtered);
+        refreshShopView();
       },
       (error) => {
         if (error?.code === "permission-denied") {
@@ -1051,13 +1073,13 @@ function loadShopProducts() {
               loadShopProducts();
               return;
             }
-            renderShopProducts(fallbackProducts);
-            renderProductSlider(fallbackProducts);
+            shopItemsCache = fallbackProducts;
+            refreshShopView();
           });
           return;
         }
-        renderShopProducts(fallbackProducts);
-        renderProductSlider(fallbackProducts);
+        shopItemsCache = fallbackProducts;
+        refreshShopView();
       }
     );
 }
@@ -1240,6 +1262,83 @@ function renderProductSlider(items) {
   }
 }
 
+function normalizeShopText(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/ı/g, "i")
+    .replace(/ş/g, "s")
+    .replace(/ğ/g, "g")
+    .replace(/ü/g, "u")
+    .replace(/ö/g, "o")
+    .replace(/ç/g, "c")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function matchesShopFilter(item, filter) {
+  if (!filter || filter === "all") return true;
+  const text = normalizeShopText(
+    `${item.category || ""} ${item.tag || ""} ${item.title || ""}`
+  );
+  if (filter === "kedi") return text.includes("kedi") || text.includes("cat");
+  if (filter === "kopek") return text.includes("kopek") || text.includes("dog");
+  if (filter === "kus") return text.includes("kus") || text.includes("bird");
+  if (filter === "cok-satanlar") {
+    return (
+      text.includes("cok satan") ||
+      text.includes("bestseller") ||
+      text.includes("populer") ||
+      text.includes("popular") ||
+      text.includes("best")
+    );
+  }
+  if (filter === "firsatlar") {
+    return (
+      text.includes("firsat") ||
+      text.includes("indirim") ||
+      text.includes("kampanya") ||
+      text.includes("deal")
+    );
+  }
+  return text.includes(filter);
+}
+
+function refreshShopView() {
+  if (!shopGrid) return;
+  const filtered = applyShopFilter(shopItemsCache);
+  if (!filtered.length && shopItemsCache.length && activeShopFilter !== "all") {
+    const fallbackTab =
+      Array.from(shopTabs).find((tab) => tab.dataset.filter === "kedi") ||
+      shopTabs[0];
+    if (fallbackTab && fallbackTab.dataset.filter !== activeShopFilter) {
+      setActiveShopTab(fallbackTab);
+      return;
+    }
+  }
+  renderShopProducts(filtered);
+  renderProductSlider(filtered);
+}
+
+function setActiveShopTab(tab, silent = false) {
+  if (!tab) return;
+  shopTabs.forEach((item) => item.classList.toggle("active", item === tab));
+  activeShopFilter = tab.dataset.filter || normalizeShopText(tab.textContent);
+  if (!silent) {
+    refreshShopView();
+  }
+}
+
+function bindShopTabs() {
+  if (!shopTabs.length) return;
+  const defaultTab =
+    Array.from(shopTabs).find((tab) => tab.dataset.default === "true") ||
+    shopTabs[0];
+  setActiveShopTab(defaultTab, true);
+  shopTabs.forEach((tab) => {
+    tab.addEventListener("click", () => setActiveShopTab(tab));
+  });
+}
+
 function bindShopSearch() {
   const shopSearch = document.querySelector(".shop-search input");
   if (!shopSearch) return;
@@ -1250,12 +1349,12 @@ function bindShopSearch() {
   shopSearch.addEventListener("focus", () => {
     if (!shopSearch.dataset.userModified && shopSearch.value.includes("@")) {
       shopSearch.value = "";
-      renderShopProducts(applyShopFilter(shopItemsCache));
+      refreshShopView();
     }
   });
   shopSearch.addEventListener("input", () => {
     shopSearch.dataset.userModified = "true";
-    renderShopProducts(applyShopFilter(shopItemsCache));
+    refreshShopView();
   });
 }
 
@@ -1293,8 +1392,12 @@ function bindHeroSearch() {
 function applyShopFilter(items) {
   const shopSearch = document.querySelector(".shop-search input");
   const query = shopSearch ? shopSearch.value.trim().toLowerCase() : "";
-  if (!query) return items;
-  return items.filter((item) => {
+  let filtered = items;
+  if (activeShopFilter && activeShopFilter !== "all") {
+    filtered = items.filter((item) => matchesShopFilter(item, activeShopFilter));
+  }
+  if (!query) return filtered;
+  return filtered.filter((item) => {
     return (
       (item.title || "").toLowerCase().includes(query) ||
       (item.description || "").toLowerCase().includes(query)
@@ -1513,10 +1616,19 @@ function updateBookingSummary(total, count) {
   const el = document.getElementById("bookingSummary");
   if (!el) return;
   if (!count) {
-    el.textContent = "Sepetiniz boş.";
+    el.classList.add("is-empty");
+    el.innerHTML = `
+      <span class="summary-text">Sepetiniz boş.</span>
+      <a class="btn ghost summary-action" href="#serviceCatalog">Hizmet Seç</a>
+    `;
     return;
   }
-  el.textContent = `${count} kalem · ${total} TL`;
+  el.classList.remove("is-empty");
+  el.innerHTML = `
+    <span class="summary-text">${count} kalem</span>
+    <span class="summary-pill">${total} TL</span>
+    <a class="btn ghost summary-action" href="#serviceCatalog">Hizmet Ekle</a>
+  `;
 }
 
 function bindServiceCards() {

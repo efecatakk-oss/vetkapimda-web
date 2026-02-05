@@ -578,6 +578,42 @@ h4 {
 
 .sticky-cta.visible { display: flex; pointer-events: auto; }
 
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translate(-50%, 16px);
+  background: #1e2a2e;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 120;
+  max-width: min(90vw, 420px);
+  text-align: center;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.toast.error {
+  background: #b42318;
+}
+
+@media (max-width: 720px) {
+  .toast {
+    bottom: 96px;
+  }
+}
+
 .pill-row {
   display: flex;
   flex-wrap: wrap;
@@ -2124,9 +2160,34 @@ h4 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
   font-weight: 700;
   color: var(--primary-deep);
   box-shadow: var(--shadow);
+}
+
+.booking-summary.is-empty {
+  background: #fff5ec;
+  border-color: #ffd9b5;
+  color: #c25f1f;
+}
+
+.booking-summary .summary-text {
+  font-weight: 700;
+}
+
+.booking-summary .summary-pill {
+  background: #f1f7ff;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--primary-deep);
+}
+
+.booking-summary .summary-action {
+  margin-left: auto;
 }
 
 .hp-field {

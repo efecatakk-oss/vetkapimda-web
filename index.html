@@ -379,11 +379,13 @@
           </form>
         </div>
         <div class="shop-tabs">
-          <button class="tab active">Kedi</button>
-          <button class="tab">Kopek</button>
-          <button class="tab">Kus</button>
-          <button class="tab">Cok Satanlar</button>
-          <button class="tab">Firsatlar</button>
+          <button class="tab" type="button" data-filter="kedi">Kedi</button>
+          <button class="tab" type="button" data-filter="kopek">Kopek</button>
+          <button class="tab" type="button" data-filter="kus">Kus</button>
+          <button class="tab active" type="button" data-filter="cok-satanlar" data-default="true">
+            Cok Satanlar
+          </button>
+          <button class="tab" type="button" data-filter="firsatlar">Firsatlar</button>
         </div>
 
         <div class="product-slider-wrap">
@@ -872,6 +874,8 @@
     <a class="whatsapp-float" href="https://wa.me/905360340920" aria-label="WhatsApp ile yazış">
       💬 WhatsApp
     </a>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script src="app.js?v=20260131"></script>
   </body>
