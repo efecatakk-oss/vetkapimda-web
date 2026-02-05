@@ -653,11 +653,11 @@
               />
             </div>
             <div class="signup-fields">
+              <input id="signupName" type="text" placeholder="Adi" />
+              <input id="signupSurname" type="text" placeholder="Soyadi" />
               <details class="signup-extra">
                 <summary>Ek bilgiler (isteğe bağlı)</summary>
                 <div class="signup-extra-body">
-                  <input id="signupName" type="text" placeholder="Adi" />
-                  <input id="signupSurname" type="text" placeholder="Soyadi" />
                   <input id="signupPhone" type="tel" placeholder="Cep Telefonu" />
                   <div class="signup-gender">
                     <span>Cinsiyet</span>
@@ -688,11 +688,14 @@
                 Giris Yap
               </button>
               <button class="btn ghost" id="signupBtn" type="button">
-                Kod Gonder
+                Uyeligini Tamamla
               </button>
             </div>
-            <p class="otp-hint signup-only">
-              Uye olmak icin once kod gonderin, sonra kodu onaylayin.
+            <p class="otp-hint signup-only pre-code">
+              Uye olmak icin bilgileri doldurup devam edin.
+            </p>
+            <p class="otp-hint signup-only post-code">
+              E-postaniza gelen kodu girip uyeliginizi aktiflestirin.
             </p>
             <button class="link-button signup-only edit-info-btn" type="button">
               Bilgileri Duzenle
@@ -702,7 +705,7 @@
                 Tekrar Gonder
               </button>
               <button class="btn ghost" id="confirmCodeBtn" type="button">
-                Uyeligini Tamamla
+                Kodu Onayla
               </button>
             </div>
             <div class="login-meta">

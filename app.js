@@ -578,6 +578,10 @@ function handleSignup() {
     setLoginStatus("Sifreler eslesmiyor.", true);
     return;
   }
+  if (!name || !surname) {
+    setLoginStatus("Ad ve soyad zorunlu.", true);
+    return;
+  }
   pendingAction = "signup";
   pendingProfile = { name, surname, phone, gender, birthdate };
   setLoginStatus("Onay kodu gonderiyoruz...", false);

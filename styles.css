@@ -1923,7 +1923,7 @@ h4 {
 }
 
 .login-card.signup-active .signup-only {
-  display: flex;
+  display: none;
 }
 
 .otp-hint {
@@ -1933,6 +1933,14 @@ h4 {
 }
 
 .login-card.signup-active .otp-hint {
+  display: none;
+}
+
+.login-card.signup-active:not(.code-sent) .otp-hint.pre-code {
+  display: block;
+}
+
+.login-card.signup-active.code-sent .otp-hint.post-code {
   display: block;
 }
 
@@ -1993,18 +2001,30 @@ h4 {
   display: none;
 }
 
+.login-card.signup-active .remember-row,
+.login-card.signup-active .terms-row {
+  display: none;
+}
+
 .login-card.signup-active.code-sent #signupBtn {
+  display: none;
+}
+
+.login-card.signup-active:not(.code-sent) .edit-info-btn {
   display: none;
 }
 
 .login-card.signup-active.code-sent .login-fields #loginEmail,
 .login-card.signup-active.code-sent .login-fields #loginPassword,
-.login-card.signup-active.code-sent .login-fields #loginPasswordConfirm {
+.login-card.signup-active.code-sent .login-fields #loginPasswordConfirm,
+.login-card.signup-active.code-sent .signup-fields,
+.login-card.signup-active.code-sent .remember-row,
+.login-card.signup-active.code-sent .terms-row {
   display: none;
 }
 
-.login-card.signup-active.code-sent .signup-fields {
-  display: none;
+.login-card.signup-active.code-sent .signup-only {
+  display: flex;
 }
 
 .signup-gender {
