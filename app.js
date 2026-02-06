@@ -57,6 +57,10 @@ const userMenuSubtitle = document.getElementById("userMenuSubtitle");
 const userMenuEmail = document.getElementById("userMenuEmail");
 const userMenuLoginBtn = document.getElementById("userMenuLoginBtn");
 const userMenuLogoutBtn = document.getElementById("userMenuLogoutBtn");
+const userMenuFullName = document.getElementById("userMenuFullName");
+const userMenuEmailText = document.getElementById("userMenuEmailText");
+const userMenuPhone = document.getElementById("userMenuPhone");
+const userMenuAddress = document.getElementById("userMenuAddress");
 let productToggleInit = false;
 let heroPlaceholderTimer = null;
 let heroPlaceholderIndex = 0;
@@ -464,6 +468,16 @@ function bindUserMenu() {
   userMenuLogoutBtn?.addEventListener("click", () => {
     handleLogout();
     hide();
+  });
+
+  userMenu.querySelectorAll(".menu-item").forEach((item) => {
+    item.addEventListener("click", () => {
+      const targetId = item.dataset.target;
+      if (!targetId) return;
+      userMenu.querySelectorAll(".menu-panel").forEach((panel) => {
+        panel.classList.toggle("active", panel.id === targetId);
+      });
+    });
   });
 }
 
@@ -1043,6 +1057,15 @@ function updateUserMenuUI(user) {
   if (userMenuEmail) {
     userMenuEmail.textContent = loggedIn ? user.email : "";
   }
+  if (userMenuEmailText) {
+    userMenuEmailText.textContent = loggedIn ? user.email : "-";
+  }
+  if (userMenuPhone) {
+    userMenuPhone.textContent = "-";
+  }
+  if (userMenuAddress) {
+    userMenuAddress.textContent = "Adres kaydı bulunamadı.";
+  }
   if (userMenuLoginBtn) {
     userMenuLoginBtn.style.display = loggedIn ? "none" : "inline-flex";
   }
@@ -1059,6 +1082,15 @@ function updateUserMenuUI(user) {
         const fullName = [data.name, data.surname].filter(Boolean).join(" ").trim();
         if (userMenuSubtitle) {
           userMenuSubtitle.textContent = fullName ? `Sn. ${fullName}` : user.email;
+        }
+        if (userMenuFullName) {
+          userMenuFullName.textContent = fullName || "-";
+        }
+        if (userMenuPhone) {
+          userMenuPhone.textContent = data.phone || "-";
+        }
+        if (userMenuAddress) {
+          userMenuAddress.textContent = data.address || "Adres kaydı bulunamadı.";
         }
       })
       .catch(() => {});

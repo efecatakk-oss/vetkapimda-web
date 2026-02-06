@@ -773,12 +773,62 @@
               </div>
             </div>
             <div class="user-menu-list">
-              <a href="#randevu"><span class="menu-icon">👤</span>Hesap Bilgileri</a>
-              <a href="#shop"><span class="menu-icon">📦</span>Siparişlerim</a>
-              <a href="#randevu"><span class="menu-icon">💸</span>Havale Bildirimi</a>
-              <a href="#randevu"><span class="menu-icon">📝</span>Üye Bilgisi Güncelleme</a>
-              <a href="#shop"><span class="menu-icon">🎁</span>Hediye Çekleri &amp; Puan</a>
-              <a href="#shop"><span class="menu-icon">❤️</span>Favori Ürünleri Listele</a>
+              <button class="menu-item" type="button" data-target="menuAccount">
+                <span class="menu-icon">👤</span>Hesap Bilgileri
+              </button>
+              <button class="menu-item" type="button" data-target="menuAddress">
+                <span class="menu-icon">📍</span>Adreslerim
+              </button>
+              <button class="menu-item" type="button" data-target="menuOrders">
+                <span class="menu-icon">📦</span>Siparişlerim
+              </button>
+              <button class="menu-item" type="button" data-target="menuTransfer">
+                <span class="menu-icon">💸</span>Havale Bildirimi
+              </button>
+              <button class="menu-item" type="button" data-target="menuProfile">
+                <span class="menu-icon">📝</span>Üye Bilgisi Güncelleme
+              </button>
+              <button class="menu-item" type="button" data-target="menuRewards">
+                <span class="menu-icon">🎁</span>Hediye Çekleri &amp; Puan
+              </button>
+              <button class="menu-item" type="button" data-target="menuFavorites">
+                <span class="menu-icon">❤️</span>Favori Ürünleri Listele
+              </button>
+            </div>
+            <div class="user-menu-panels">
+              <div class="menu-panel" id="menuAccount">
+                <h4>Hesap Bilgileri</h4>
+                <p><strong>Ad Soyad:</strong> <span id="userMenuFullName">-</span></p>
+                <p><strong>E-posta:</strong> <span id="userMenuEmailText">-</span></p>
+                <p><strong>Telefon:</strong> <span id="userMenuPhone">-</span></p>
+              </div>
+              <div class="menu-panel" id="menuAddress">
+                <h4>Adreslerim</h4>
+                <p id="userMenuAddress">Adres kaydı bulunamadı.</p>
+              </div>
+              <div class="menu-panel" id="menuOrders">
+                <h4>Siparişlerim</h4>
+                <p>Online shop yakında aktif olacak. Şimdilik randevu notuna ekliyoruz.</p>
+                <a class="btn ghost" href="#shop">Shop’a Git</a>
+              </div>
+              <div class="menu-panel" id="menuTransfer">
+                <h4>Havale Bildirimi</h4>
+                <p>Havale ile ödeme yapılmadığından bu bölüm şimdilik kapalıdır.</p>
+              </div>
+              <div class="menu-panel" id="menuProfile">
+                <h4>Üye Bilgisi Güncelleme</h4>
+                <p>Bilgilerinizi güncellemek için bizimle iletişime geçebilirsiniz.</p>
+                <a class="btn ghost" href="https://wa.me/905360340920">WhatsApp</a>
+              </div>
+              <div class="menu-panel" id="menuRewards">
+                <h4>Hediye Çekleri &amp; Puan</h4>
+                <p>Bu özellik yakında aktif olacak.</p>
+              </div>
+              <div class="menu-panel" id="menuFavorites">
+                <h4>Favori Ürünler</h4>
+                <p>Favorilerinizi Shop kısmından oluşturabilirsiniz.</p>
+                <a class="btn ghost" href="#shop">Shop’a Git</a>
+              </div>
             </div>
             <div class="user-menu-footer">
               <button class="btn primary" id="userMenuLoginBtn" type="button">Giriş Yap / Üye Ol</button>
