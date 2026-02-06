@@ -930,12 +930,14 @@ function renderBookings(items) {
       : item.services || "-";
 
     const totalText = item.total ? `${item.total} TL` : "-";
+    const paymentText = item.paymentMethod || "-";
 
     info.innerHTML = `
       <strong>${item.name || "Isim yok"}</strong>
       <span>${item.email || "-"}</span>
       <span>${item.phone || "-"}</span>
       <span>${item.datetime || "-"}</span>
+      <span>Ödeme: ${paymentText}</span>
       <span>${services}</span>
       <span>${totalText}</span>
       <span class="booking-status ${item.status || "new"}">${

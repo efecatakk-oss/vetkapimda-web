@@ -600,6 +600,20 @@
 
           <div class="booking-step" data-step="3">
             <div class="step-title">Onay</div>
+            <div class="field full">
+              <label>Ödeme Yöntemi</label>
+              <div class="payment-options">
+                <label class="payment-option">
+                  <input type="radio" name="paymentMethod" value="Kapıda Kredi Kartı" required />
+                  Kapıda Kredi Kartı
+                </label>
+                <label class="payment-option">
+                  <input type="radio" name="paymentMethod" value="Nakit" />
+                  Nakit
+                </label>
+              </div>
+              <small class="field-help">Sadece kapıda ödeme alınır.</small>
+            </div>
             <div class="field full checkbox">
               <input id="robotCheck" type="checkbox" required />
               <label for="robotCheck" class="keep-visible">Robot değilim</label>

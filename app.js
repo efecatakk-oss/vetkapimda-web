@@ -224,6 +224,8 @@ form.addEventListener("submit", (event) => {
   const address = document.getElementById("address").value.trim();
   const datetime = document.getElementById("datetime").value.trim();
   const notes = document.getElementById("notes").value.trim();
+  const paymentMethod =
+    document.querySelector('input[name="paymentMethod"]:checked')?.value || "";
   const phone = normalizePhone(rawPhone);
   const items = Array.from(selectedItems.values());
   const total = items.reduce((sum, item) => sum + item.price, 0);
@@ -258,6 +260,11 @@ form.addEventListener("submit", (event) => {
 
   if (!isValidPhone(phone)) {
     showStatus("Telefon numarasini +90 formatinda girin.", true);
+    return;
+  }
+
+  if (!paymentMethod) {
+    showStatus("Lutfen odeme yontemi secin.", true);
     return;
   }
 
@@ -299,6 +306,7 @@ form.addEventListener("submit", (event) => {
           address,
           datetime,
           notes,
+          paymentMethod,
           email: auth.currentUser?.email || "",
           services: items.map((item) => ({
             id: item.id,

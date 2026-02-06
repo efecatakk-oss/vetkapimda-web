@@ -50,6 +50,7 @@ export async function onRequest(context) {
   const address = data.get("address") || "";
   const datetime = data.get("datetime") || "";
   const notes = data.get("notes") || "";
+  const paymentMethod = data.get("paymentMethod") || "";
   const services = data.get("selectedServices") || "";
   const total = data.get("totalPrice") || "";
   const serviceNote = data.get("serviceNote") || "";
@@ -63,6 +64,7 @@ export async function onRequest(context) {
       <p><strong>E-posta:</strong> ${escapeHtml(userEmail)}</p>
       <p><strong>Adres:</strong> ${escapeHtml(address)}</p>
       <p><strong>Tarih/Saat:</strong> ${escapeHtml(datetime)}</p>
+      <p><strong>Ödeme:</strong> ${escapeHtml(paymentMethod)}</p>
       <p><strong>Hizmetler:</strong> ${escapeHtml(services)}</p>
       <p><strong>Toplam:</strong> ${escapeHtml(total)}</p>
       <p><strong>Not:</strong> ${escapeHtml(notes)}</p>
@@ -98,6 +100,7 @@ export async function onRequest(context) {
         <p><strong>Telefon:</strong> ${escapeHtml(phone)}</p>
         <p><strong>Adres:</strong> ${escapeHtml(address)}</p>
         <p><strong>Tarih/Saat:</strong> ${escapeHtml(datetime)}</p>
+        <p><strong>Ödeme:</strong> ${escapeHtml(paymentMethod)}</p>
         <p><strong>Hizmetler:</strong> ${escapeHtml(services)}</p>
         <p><strong>Toplam:</strong> ${escapeHtml(total)}</p>
         <p><strong>Not:</strong> ${escapeHtml(notes)}</p>
