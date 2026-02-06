@@ -798,13 +798,30 @@
             <div class="user-menu-panels">
               <div class="menu-panel" id="menuAccount">
                 <h4>Hesap Bilgileri</h4>
-                <p><strong>Ad Soyad:</strong> <span id="userMenuFullName">-</span></p>
-                <p><strong>E-posta:</strong> <span id="userMenuEmailText">-</span></p>
-                <p><strong>Telefon:</strong> <span id="userMenuPhone">-</span></p>
+                <form class="menu-form" id="userMenuAccountForm">
+                  <label>Ad Soyad
+                    <input id="userMenuNameInput" type="text" placeholder="Ad Soyad" />
+                  </label>
+                  <label>E-posta
+                    <input id="userMenuEmailInput" type="email" placeholder="E-posta" disabled />
+                  </label>
+                  <label>Telefon
+                    <input id="userMenuPhoneInput" type="tel" placeholder="Telefon" />
+                  </label>
+                  <button class="btn primary" type="submit">Bilgileri Kaydet</button>
+                  <p id="userMenuAccountStatus" class="form-status" role="status"></p>
+                </form>
               </div>
               <div class="menu-panel" id="menuAddress">
                 <h4>Adreslerim</h4>
-                <p id="userMenuAddress">Adres kaydı bulunamadı.</p>
+                <form class="menu-form" id="userMenuAddressForm">
+                  <label>Adres
+                    <textarea id="userMenuAddressInput" rows="3" placeholder="Adresinizi yazın"></textarea>
+                  </label>
+                  <button class="btn primary" type="submit">Adres Kaydet</button>
+                  <p id="userMenuAddressStatus" class="form-status" role="status"></p>
+                </form>
+                <p class="menu-hint">Adres kaydı yoksa burada oluşturabilirsiniz.</p>
               </div>
               <div class="menu-panel" id="menuOrders">
                 <h4>Siparişlerim</h4>

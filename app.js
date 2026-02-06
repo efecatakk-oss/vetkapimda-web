@@ -61,6 +61,14 @@ const userMenuFullName = document.getElementById("userMenuFullName");
 const userMenuEmailText = document.getElementById("userMenuEmailText");
 const userMenuPhone = document.getElementById("userMenuPhone");
 const userMenuAddress = document.getElementById("userMenuAddress");
+const userMenuNameInput = document.getElementById("userMenuNameInput");
+const userMenuEmailInput = document.getElementById("userMenuEmailInput");
+const userMenuPhoneInput = document.getElementById("userMenuPhoneInput");
+const userMenuAddressInput = document.getElementById("userMenuAddressInput");
+const userMenuAccountForm = document.getElementById("userMenuAccountForm");
+const userMenuAddressForm = document.getElementById("userMenuAddressForm");
+const userMenuAccountStatus = document.getElementById("userMenuAccountStatus");
+const userMenuAddressStatus = document.getElementById("userMenuAddressStatus");
 let productToggleInit = false;
 let heroPlaceholderTimer = null;
 let heroPlaceholderIndex = 0;
@@ -479,6 +487,63 @@ function bindUserMenu() {
       });
     });
   });
+
+  userMenuAccountForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!auth.currentUser) return;
+    const fullName = (userMenuNameInput?.value || "").trim();
+    const parts = fullName.split(" ").filter(Boolean);
+    const name = parts.shift() || "";
+    const surname = parts.join(" ");
+    const phone = (userMenuPhoneInput?.value || "").trim();
+
+    userMenuAccountStatus.textContent = "Kaydediliyor...";
+    db.collection("users")
+      .doc(auth.currentUser.uid)
+      .set(
+        {
+          name,
+          surname,
+          phone,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      )
+      .then(() => {
+        userMenuAccountStatus.textContent = "Bilgiler güncellendi.";
+        updateUserMenuUI(auth.currentUser);
+      })
+      .catch(() => {
+        userMenuAccountStatus.textContent = "Kaydedilemedi.";
+      });
+  });
+
+  userMenuAddressForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!auth.currentUser) return;
+    const address = (userMenuAddressInput?.value || "").trim();
+    if (!address) {
+      userMenuAddressStatus.textContent = "Adres boş olamaz.";
+      return;
+    }
+    userMenuAddressStatus.textContent = "Kaydediliyor...";
+    db.collection("users")
+      .doc(auth.currentUser.uid)
+      .set(
+        {
+          address,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      )
+      .then(() => {
+        userMenuAddressStatus.textContent = "Adres kaydedildi.";
+        updateUserMenuUI(auth.currentUser);
+      })
+      .catch(() => {
+        userMenuAddressStatus.textContent = "Kaydedilemedi.";
+      });
+  });
 }
 
 function initBookingStepper() {
@@ -753,6 +818,9 @@ function updateLoginUI(user) {
   loginCode.disabled = loggedIn;
   forgotPasswordBtn.style.display = loggedIn ? "none" : "inline-flex";
   logoutBtn.style.display = loggedIn ? "inline-flex" : "none";
+  if (loggedIn && userMenuSubtitle) {
+    userMenuSubtitle.textContent = "Yükleniyor...";
+  }
   updateUserMenuUI(user);
 }
 
@@ -1066,6 +1134,18 @@ function updateUserMenuUI(user) {
   if (userMenuAddress) {
     userMenuAddress.textContent = "Adres kaydı bulunamadı.";
   }
+  if (userMenuNameInput) {
+    userMenuNameInput.value = "";
+  }
+  if (userMenuEmailInput) {
+    userMenuEmailInput.value = loggedIn ? user.email : "";
+  }
+  if (userMenuPhoneInput) {
+    userMenuPhoneInput.value = "";
+  }
+  if (userMenuAddressInput) {
+    userMenuAddressInput.value = "";
+  }
   if (userMenuLoginBtn) {
     userMenuLoginBtn.style.display = loggedIn ? "none" : "inline-flex";
   }
@@ -1091,6 +1171,15 @@ function updateUserMenuUI(user) {
         }
         if (userMenuAddress) {
           userMenuAddress.textContent = data.address || "Adres kaydı bulunamadı.";
+        }
+        if (userMenuNameInput) {
+          userMenuNameInput.value = fullName || "";
+        }
+        if (userMenuPhoneInput) {
+          userMenuPhoneInput.value = data.phone || "";
+        }
+        if (userMenuAddressInput) {
+          userMenuAddressInput.value = data.address || "";
         }
       })
       .catch(() => {});

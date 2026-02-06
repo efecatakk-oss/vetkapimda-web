@@ -401,6 +401,39 @@ a {
   font-size: 13px;
 }
 
+.menu-form {
+  display: grid;
+  gap: 10px;
+}
+
+.menu-form label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary-deep);
+  display: grid;
+  gap: 6px;
+}
+
+.menu-form input,
+.menu-form textarea {
+  border: 1px solid #e6eef9;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  background: #f7fbff;
+}
+
+.menu-form textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.menu-hint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
 .menu-icon {
   width: 30px;
   height: 30px;
