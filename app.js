@@ -221,6 +221,14 @@ startHeroPlaceholder();
 bindTestimonialsToggle();
 bindUserMenu();
 
+(() => {
+  const params = new URLSearchParams(window.location.search);
+  const authParam = params.get("auth");
+  if (authParam === "signup" || authParam === "login") {
+    showLoginGate(authParam);
+  }
+})();
+
 form.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -359,7 +367,9 @@ function bindLoginGate() {
     }
   });
   loginTriggers.forEach((trigger) =>
-    trigger.addEventListener("click", () => showLoginGate())
+    trigger.addEventListener("click", () =>
+      showLoginGate(trigger.dataset.tab || "login")
+    )
   );
   loginTabs.forEach((tab) =>
     tab.addEventListener("click", () => switchLoginTab(tab))
@@ -899,10 +909,16 @@ function handleConfirmCode() {
     });
 }
 
-function showLoginGate() {
+function showLoginGate(tabName) {
   loginGate.classList.add("show");
   loginGate.setAttribute("aria-hidden", "false");
   setCodeStage(false);
+  if (tabName) {
+    const target = Array.from(loginTabs).find((tab) => tab.dataset.tab === tabName);
+    if (target) {
+      switchLoginTab(target);
+    }
+  }
 }
 
 function hideLoginGate() {

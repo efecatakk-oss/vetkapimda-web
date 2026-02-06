@@ -13,64 +13,18 @@
   </head>
   <body class="signup-page">
     <main class="signup-wrap">
-      <a class="btn ghost signup-back" href="index.html">Ana Sayfaya Don</a>
       <section class="signup-card">
         <div class="section-title">
-          <h2>Yeni Uyelik</h2>
-          <p>Hizli ve guvenli uyelik icin bilgileri doldurun.</p>
+          <h2>Üyelik Ekranı Güncellendi</h2>
+          <p>Kayıt artık ana sayfadaki doğrulama akışıyla yapılır.</p>
         </div>
-        <form id="signupForm" class="signup-form">
-          <div class="form-row">
-            <label for="signupNameFull">Ad</label>
-            <input id="signupNameFull" type="text" required />
-          </div>
-          <div class="form-row">
-            <label for="signupSurnameFull">Soyad</label>
-            <input id="signupSurnameFull" type="text" required />
-          </div>
-          <div class="form-row">
-            <label for="signupEmailFull">E-posta</label>
-            <input id="signupEmailFull" type="email" required />
-          </div>
-          <div class="form-row">
-            <label for="signupPasswordFull">Sifre</label>
-            <input id="signupPasswordFull" type="password" required />
-          </div>
-          <div class="form-row">
-            <label for="signupPasswordRepeat">Sifre Tekrar</label>
-            <input id="signupPasswordRepeat" type="password" required />
-          </div>
-          <div class="form-row">
-            <label for="signupPhoneFull">Cep Telefonu</label>
-            <input id="signupPhoneFull" type="tel" required />
-          </div>
-          <div class="form-row">
-            <span>Cinsiyet</span>
-            <div class="gender-row">
-              <label><input type="radio" name="genderFull" value="erkek" /> Erkek</label>
-              <label><input type="radio" name="genderFull" value="kadin" /> Kadin</label>
-              <label>
-                <input type="radio" name="genderFull" value="belirtmek_istemiyorum" />
-                Belirtmek istemiyorum
-              </label>
-            </div>
-          </div>
-          <div class="form-row">
-            <label for="signupBirthdateFull">Dogum Tarihi</label>
-            <input id="signupBirthdateFull" type="date" />
-          </div>
-          <div class="form-row">
-            <label class="remember-row terms-row">
-              <input id="signupAcceptTerms" type="checkbox" />
-              KVKK ve Hizmet Sartlari'ni kabul ediyorum
-            </label>
-          </div>
-          <button class="btn primary full" type="submit">Uye Ol</button>
-          <p id="signupStatus" class="form-status" role="status"></p>
-        </form>
+        <a class="btn primary full" href="index.html?auth=signup">Üye Olmaya Git</a>
       </section>
     </main>
-
-    <script src="signup.js"></script>
+    <script>
+      setTimeout(() => {
+        window.location.href = "index.html?auth=signup";
+      }, 1200);
+    </script>
   </body>
 </html>
