@@ -1778,10 +1778,23 @@ h4 {
     margin: 0;
     max-height: 90vh;
     padding: 18px;
+    width: min(92vw, 440px);
   }
   .login-fields input,
   .signup-fields input {
-    font-size: 14px;
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+  .login-actions {
+    flex-direction: column;
+  }
+  .login-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .login-meta {
+    flex-direction: column;
+    align-items: flex-start;
   }
   .social-login {
     display: none;
@@ -3016,7 +3029,7 @@ textarea {
   font-size: 14px;
 }
 
-.service-card span {
+.service-card .service-price {
   color: #0f3f3b;
   font-size: 12px;
   font-weight: 700;
@@ -3027,6 +3040,32 @@ textarea {
   display: inline-flex;
   align-items: center;
   width: fit-content;
+}
+
+.service-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.service-badge.badge-home {
+  background: linear-gradient(135deg, #1a8f85 0%, #0f6b64 100%);
+}
+
+.service-badge.badge-vaccine {
+  background: linear-gradient(135deg, #ff7a1a 0%, #ffb14a 100%);
+}
+
+.service-badge.badge-video {
+  background: linear-gradient(135deg, #6a5a92 0%, #4a3b78 100%);
 }
 
 .service-card button {
@@ -4830,6 +4869,22 @@ textarea {
 /* Stepper line + icons */
 .booking-stepper {
   position: relative;
+}
+
+.booking-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: #efe7f4;
+  overflow: hidden;
+  margin: 8px 0 14px;
+}
+
+.booking-progress-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(120deg, #ff7a1a 0%, #ffb14a 100%);
+  transition: width 0.25s ease;
 }
 
 .booking-stepper::before {

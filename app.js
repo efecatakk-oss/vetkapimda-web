@@ -390,6 +390,7 @@ function initBookingStepper() {
   const formEl = document.getElementById("bookingForm");
   const steps = Array.from(document.querySelectorAll(".booking-step"));
   const dots = Array.from(document.querySelectorAll(".booking-stepper .step-dot"));
+  const progressFill = document.getElementById("bookingProgressFill");
   if (!formEl || steps.length === 0) return;
 
   const mql = window.matchMedia("(max-width: 720px)");
@@ -421,6 +422,11 @@ function initBookingStepper() {
     dots.forEach((dot, idx) => {
       dot.classList.toggle("active", idx + 1 === current);
     });
+    if (progressFill) {
+      const total = Math.max(1, steps.length - 1);
+      const pct = Math.round(((current - 1) / total) * 100);
+      progressFill.style.width = `${pct}%`;
+    }
     setRequired(current);
   };
 
@@ -963,13 +969,29 @@ function renderCatalog() {
     grid.className = "service-grid";
 
     category.items.forEach((item) => {
+      const title = (item.title || "").toLowerCase();
+      let badgeLabel = "Evde";
+      let badgeClass = "badge-home";
+      if (title.includes("video")) {
+        badgeLabel = "Video";
+        badgeClass = "badge-video";
+      } else if (category.slug === "vaccines") {
+        badgeLabel = "Aşı";
+        badgeClass = "badge-vaccine";
+      }
+
       const card = document.createElement("div");
       card.className = "service-card";
+
+      const badge = document.createElement("span");
+      badge.className = `service-badge ${badgeClass}`;
+      badge.textContent = badgeLabel;
 
       const name = document.createElement("h5");
       name.textContent = item.title;
 
       const price = document.createElement("span");
+      price.className = "service-price";
       price.textContent = `${item.price} TL`;
 
       const button = document.createElement("button");
@@ -981,6 +1003,7 @@ function renderCatalog() {
       }
       button.addEventListener("click", () => toggleItem(item));
 
+      card.appendChild(badge);
       card.appendChild(name);
       card.appendChild(price);
       card.appendChild(button);
