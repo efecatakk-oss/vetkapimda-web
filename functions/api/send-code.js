@@ -68,7 +68,7 @@ export async function onRequest(context) {
     return jsonResponse(400, { ok: false, error: "Invalid JSON" });
   }
 
-  const email = String(payload.email || "").trim();
+  const email = String(payload.email || "").trim().toLowerCase();
   if (!email) {
     return jsonResponse(400, { ok: false, error: "Email required" });
   }

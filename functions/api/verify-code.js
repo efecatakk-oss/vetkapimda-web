@@ -64,7 +64,7 @@ export async function onRequest(context) {
     return jsonResponse(400, { ok: false, error: "Invalid JSON" });
   }
 
-  const email = String(payload.email || "").trim();
+  const email = String(payload.email || "").trim().toLowerCase();
   const code = String(payload.code || "").trim();
   const token = String(payload.token || "").trim();
   if (!email || !code || !token) {
@@ -85,7 +85,7 @@ export async function onRequest(context) {
 
   const [tokenEmail, expRaw] = data.split("|");
   const exp = Number(expRaw || 0);
-  if (tokenEmail !== email) {
+  if ((tokenEmail || "").toLowerCase() !== email) {
     return jsonResponse(400, { ok: false, error: "Email mismatch" });
   }
   if (!exp || Date.now() > exp) {

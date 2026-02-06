@@ -618,7 +618,10 @@ function ensureAnonymousAuth() {
 }
 
 function handleLogin() {
-  const email = loginEmail.value.trim();
+  const email = loginEmail.value.trim().toLowerCase();
+  if (loginEmail.value !== email) {
+    loginEmail.value = email;
+  }
   const password = loginPassword.value.trim();
   if (!email || !password) {
     setLoginStatus("E-posta ve sifre girin.", true);
@@ -647,7 +650,10 @@ function handleLogin() {
 }
 
 function handleSignup() {
-  const email = loginEmail.value.trim();
+  const email = loginEmail.value.trim().toLowerCase();
+  if (loginEmail.value !== email) {
+    loginEmail.value = email;
+  }
   const password = loginPassword.value.trim();
   const passwordConfirm = loginPasswordConfirm.value.trim();
   const name = signupName.value.trim();
@@ -778,7 +784,10 @@ function handleSendCode() {
     setLoginStatus("Kod yalnizca uyelik icin gonderilir.", true);
     return;
   }
-  const email = loginEmail.value.trim();
+  const email = loginEmail.value.trim().toLowerCase();
+  if (loginEmail.value !== email) {
+    loginEmail.value = email;
+  }
   if (!email) {
     setLoginStatus("E-posta adresinizi girin.", true);
     return;
@@ -816,7 +825,10 @@ function handleSendCode() {
 }
 
 function handleConfirmCode() {
-  const email = loginEmail.value.trim();
+  const email = loginEmail.value.trim().toLowerCase();
+  if (loginEmail.value !== email) {
+    loginEmail.value = email;
+  }
   const password = loginPassword.value.trim();
   const code = loginCode.value.trim();
   if (!email || !code || !pendingToken) {
