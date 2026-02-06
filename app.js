@@ -421,6 +421,12 @@ function bindPaymentSummary() {
   if (!summaryEl || radios.length === 0) return;
 
   const update = () => {
+    radios.forEach((radio) => {
+      const label = radio.closest(".payment-option");
+      if (label) {
+        label.classList.toggle("active", radio.checked);
+      }
+    });
     const selected = radios.find((radio) => radio.checked)?.value;
     summaryEl.textContent = `Ödeme: ${selected || "Seçilmedi"}`;
   };
