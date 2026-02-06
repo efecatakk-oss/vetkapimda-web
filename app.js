@@ -207,6 +207,7 @@ bindHeroSearch();
 compactBookingForm();
 initBookingStepper();
 bindPhoneMask();
+bindPaymentSummary();
 bindTestimonialsToggle();
 startHeroPlaceholder();
 bindTestimonialsToggle();
@@ -323,6 +324,7 @@ form.addEventListener("submit", (event) => {
       selectedItems.clear();
       renderCatalog();
       renderCart();
+      bindPaymentSummary();
       localStorage.setItem("bookingLastSubmitAt", String(now));
       showStatus("Talebiniz alindi. Size en kisa surede donus yapacagiz.");
       trackEvent("booking_submit");
@@ -392,6 +394,23 @@ function bindPhoneMask() {
       } ${match[5]}`;
     }
   });
+}
+
+function bindPaymentSummary() {
+  const summaryEl = document.getElementById("paymentSummary");
+  const radios = Array.from(document.querySelectorAll('input[name="paymentMethod"]'));
+  if (!summaryEl || radios.length === 0) return;
+
+  const update = () => {
+    const selected = radios.find((radio) => radio.checked)?.value;
+    summaryEl.textContent = `Ödeme: ${selected || "Seçilmedi"}`;
+  };
+
+  radios.forEach((radio) => {
+    radio.addEventListener("change", update);
+  });
+
+  update();
 }
 
 function initBookingStepper() {
