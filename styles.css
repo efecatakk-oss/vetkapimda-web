@@ -30,6 +30,10 @@ body {
   overflow-x: hidden;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 img {
   max-width: 100%;
   height: auto;
@@ -321,6 +325,10 @@ a {
   gap: 14px;
   position: relative;
   animation: slideInRight 0.35s ease forwards;
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .user-menu-header {
@@ -487,6 +495,7 @@ a {
 @media (max-width: 720px) {
   .user-menu {
     justify-content: center;
+    align-items: flex-start;
   }
   .user-menu-card {
     width: min(92vw, 420px);
@@ -5269,4 +5278,13 @@ textarea {
 
 .booking-stepper .step-dot.active::after {
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+.user-menu-card .user-menu-close {
+  position: sticky;
+  top: 12px;
+  right: auto;
+  justify-self: end;
+  align-self: start;
+  margin-left: auto;
+  z-index: 2;
 }

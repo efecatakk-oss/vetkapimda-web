@@ -456,10 +456,12 @@ function bindUserMenu() {
   const show = () => {
     userMenu.classList.add("show");
     userMenu.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
   };
   const hide = () => {
     userMenu.classList.remove("show");
     userMenu.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
   };
 
   userMenuTrigger.addEventListener("click", show);
