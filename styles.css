@@ -257,6 +257,128 @@ a {
   align-items: center;
 }
 
+.nav-icons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid rgba(255, 122, 26, 0.35);
+  color: var(--primary-deep);
+  box-shadow: 0 8px 18px rgba(23, 20, 42, 0.08);
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
+}
+
+.icon-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--accent);
+  color: #fff;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-menu {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: flex-end;
+  background: rgba(17, 16, 37, 0.4);
+  z-index: 98;
+  padding: 16px;
+}
+
+.user-menu.show {
+  display: flex;
+}
+
+.user-menu-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 22px;
+  width: min(360px, 100%);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 14px;
+  position: relative;
+  animation: slideIn 0.35s ease forwards;
+}
+
+.user-menu-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fff1e1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.user-menu-header span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.user-menu-list {
+  display: grid;
+  gap: 8px;
+}
+
+.user-menu-list a {
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f7fbff;
+  border: 1px solid #e6eef9;
+  color: var(--primary-deep);
+  font-weight: 600;
+}
+
+.user-menu-footer {
+  display: grid;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .nav-utils .nav-pill {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .user-menu {
+    justify-content: center;
+  }
+  .user-menu-card {
+    width: min(92vw, 420px);
+  }
+}
 .nav-pill {
   background: #fff;
   border: 1px solid rgba(255, 122, 26, 0.35);

@@ -65,6 +65,15 @@
           <a class="nav-link" href="#randevu">Randevu</a>
           <a class="btn nav-cta" href="#randevu">Randevu Al</a>
           <div class="nav-utils">
+            <div class="nav-icons">
+              <a class="icon-btn cart-icon" href="#randevu" aria-label="Sepet">
+                🛒
+                <span class="icon-badge" id="navCartCountIcon">0</span>
+              </a>
+              <button class="icon-btn user-menu-trigger" type="button" aria-label="Kullanıcı menüsü">
+                👤
+              </button>
+            </div>
             <a class="nav-pill" href="#shop">Favoriler</a>
             <a class="nav-pill" href="#shop">Sipariş Takip</a>
             <a class="nav-pill nav-cart" href="#randevu">
@@ -748,6 +757,28 @@
             <p id="loginInfo" class="login-info" role="status"></p>
             <p id="loginStatus" class="form-status" role="status"></p>
             <button class="close-gate" type="button">Kapat</button>
+          </div>
+        </div>
+        <div class="user-menu" id="userMenu" aria-hidden="true">
+          <div class="user-menu-card">
+            <button class="drawer-close user-menu-close" type="button" aria-label="Kapat">✕</button>
+            <div class="user-menu-header">
+              <div class="user-avatar">👤</div>
+              <div>
+                <strong id="userMenuName">Hoş Geldiniz</strong>
+                <span id="userMenuEmail">Giriş yapın / Üye olun</span>
+              </div>
+            </div>
+            <div class="user-menu-list">
+              <a href="#randevu">Randevularım</a>
+              <a href="#shop">Favoriler</a>
+              <a href="#shop">Sipariş Takip</a>
+              <a href="#randevu">Sepetim</a>
+            </div>
+            <div class="user-menu-footer">
+              <button class="btn primary" id="userMenuLoginBtn" type="button">Giriş Yap / Üye Ol</button>
+              <button class="btn ghost" id="userMenuLogoutBtn" type="button">Çıkış Yap</button>
+            </div>
           </div>
         </div>
       </section>

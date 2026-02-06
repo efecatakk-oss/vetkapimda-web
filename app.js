@@ -19,6 +19,7 @@ const cartEl = document.getElementById("cartSummary");
 const cartTotalEl = document.getElementById("cartTotal");
 const cartTotalStickyEl = document.getElementById("cartTotalSticky");
 const navCartCount = document.getElementById("navCartCount");
+const navCartCountIcon = document.getElementById("navCartCountIcon");
 const slides = document.querySelectorAll(".slider-track .slide");
 const dots = document.querySelectorAll(".slider-dots .dot");
 const shopGrid = document.getElementById("shopGrid");
@@ -48,6 +49,13 @@ const signupName = document.getElementById("signupName");
 const signupSurname = document.getElementById("signupSurname");
 const signupPhone = document.getElementById("signupPhone");
 const signupBirthdate = document.getElementById("signupBirthdate");
+const userMenu = document.getElementById("userMenu");
+const userMenuTrigger = document.querySelector(".user-menu-trigger");
+const userMenuClose = document.querySelector(".user-menu-close");
+const userMenuName = document.getElementById("userMenuName");
+const userMenuEmail = document.getElementById("userMenuEmail");
+const userMenuLoginBtn = document.getElementById("userMenuLoginBtn");
+const userMenuLogoutBtn = document.getElementById("userMenuLogoutBtn");
 let productToggleInit = false;
 let heroPlaceholderTimer = null;
 let heroPlaceholderIndex = 0;
@@ -211,6 +219,7 @@ bindPaymentSummary();
 bindTestimonialsToggle();
 startHeroPlaceholder();
 bindTestimonialsToggle();
+bindUserMenu();
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -411,6 +420,34 @@ function bindPaymentSummary() {
   });
 
   update();
+}
+
+function bindUserMenu() {
+  if (!userMenu || !userMenuTrigger) return;
+  const show = () => {
+    userMenu.classList.add("show");
+    userMenu.setAttribute("aria-hidden", "false");
+  };
+  const hide = () => {
+    userMenu.classList.remove("show");
+    userMenu.setAttribute("aria-hidden", "true");
+  };
+
+  userMenuTrigger.addEventListener("click", show);
+  userMenu.addEventListener("click", (event) => {
+    if (event.target === userMenu) {
+      hide();
+    }
+  });
+  userMenuClose?.addEventListener("click", hide);
+  userMenuLoginBtn?.addEventListener("click", () => {
+    hide();
+    showLoginGate();
+  });
+  userMenuLogoutBtn?.addEventListener("click", () => {
+    handleLogout();
+    hide();
+  });
 }
 
 function initBookingStepper() {
@@ -679,6 +716,7 @@ function updateLoginUI(user) {
   loginCode.disabled = loggedIn;
   forgotPasswordBtn.style.display = loggedIn ? "none" : "inline-flex";
   logoutBtn.style.display = loggedIn ? "inline-flex" : "none";
+  updateUserMenuUI(user);
 }
 
 function handleForgotPassword() {
@@ -957,6 +995,22 @@ function showToast(message, isError = false) {
   toastTimer = setTimeout(() => {
     toastEl.classList.remove("show");
   }, 3200);
+}
+
+function updateUserMenuUI(user) {
+  const loggedIn = Boolean(user);
+  if (userMenuName) {
+    userMenuName.textContent = "Hoş Geldiniz";
+  }
+  if (userMenuEmail) {
+    userMenuEmail.textContent = loggedIn ? user.email : "Giriş yapın / Üye olun";
+  }
+  if (userMenuLoginBtn) {
+    userMenuLoginBtn.style.display = loggedIn ? "none" : "inline-flex";
+  }
+  if (userMenuLogoutBtn) {
+    userMenuLogoutBtn.style.display = loggedIn ? "inline-flex" : "none";
+  }
 }
 
 function showStatus(message, isError = false) {
@@ -1582,6 +1636,9 @@ function renderCart() {
     if (navCartCount) {
       navCartCount.textContent = "0";
     }
+    if (navCartCountIcon) {
+      navCartCountIcon.textContent = "0";
+    }
     updateShopButtons();
     return;
   }
@@ -1614,6 +1671,9 @@ function renderCart() {
   }
   if (navCartCount) {
     navCartCount.textContent = String(selectedItems.size);
+  }
+  if (navCartCountIcon) {
+    navCartCountIcon.textContent = String(selectedItems.size);
   }
   updateShopButtons();
 }
