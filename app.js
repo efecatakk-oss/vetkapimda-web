@@ -53,6 +53,7 @@ const userMenu = document.getElementById("userMenu");
 const userMenuTrigger = document.querySelector(".user-menu-trigger");
 const userMenuClose = document.querySelector(".user-menu-close");
 const userMenuName = document.getElementById("userMenuName");
+const userMenuSubtitle = document.getElementById("userMenuSubtitle");
 const userMenuEmail = document.getElementById("userMenuEmail");
 const userMenuLoginBtn = document.getElementById("userMenuLoginBtn");
 const userMenuLogoutBtn = document.getElementById("userMenuLogoutBtn");
@@ -1036,14 +1037,31 @@ function updateUserMenuUI(user) {
   if (userMenuName) {
     userMenuName.textContent = "Hoş Geldiniz";
   }
+  if (userMenuSubtitle) {
+    userMenuSubtitle.textContent = loggedIn ? "Yükleniyor..." : "Giriş yapın / Üye olun";
+  }
   if (userMenuEmail) {
-    userMenuEmail.textContent = loggedIn ? user.email : "Giriş yapın / Üye olun";
+    userMenuEmail.textContent = loggedIn ? user.email : "";
   }
   if (userMenuLoginBtn) {
     userMenuLoginBtn.style.display = loggedIn ? "none" : "inline-flex";
   }
   if (userMenuLogoutBtn) {
     userMenuLogoutBtn.style.display = loggedIn ? "inline-flex" : "none";
+  }
+  if (loggedIn && user?.uid && db) {
+    db.collection("users")
+      .doc(user.uid)
+      .get()
+      .then((doc) => {
+        if (!doc.exists) return;
+        const data = doc.data() || {};
+        const fullName = [data.name, data.surname].filter(Boolean).join(" ").trim();
+        if (userMenuSubtitle) {
+          userMenuSubtitle.textContent = fullName ? `Sn. ${fullName}` : user.email;
+        }
+      })
+      .catch(() => {});
   }
 }
 
