@@ -57,6 +57,7 @@ const userMenuSubtitle = document.getElementById("userMenuSubtitle");
 const userMenuEmail = document.getElementById("userMenuEmail");
 const userMenuLoginBtn = document.getElementById("userMenuLoginBtn");
 const userMenuLogoutBtn = document.getElementById("userMenuLogoutBtn");
+const userMenuActiveLabel = document.getElementById("userMenuActiveLabel");
 const userMenuFullName = document.getElementById("userMenuFullName");
 const userMenuEmailText = document.getElementById("userMenuEmailText");
 const userMenuPhone = document.getElementById("userMenuPhone");
@@ -466,6 +467,12 @@ function bindUserMenu() {
     menuItems.forEach((item) => {
       item.classList.toggle("active", item.dataset.target === targetId);
     });
+    if (userMenuActiveLabel) {
+      const activeItem = menuItems.find((item) => item.dataset.target === targetId);
+      userMenuActiveLabel.textContent = activeItem
+        ? activeItem.textContent.trim()
+        : "Hesap Bilgileri";
+    }
     const activePanel = userMenu.querySelector(`#${targetId}`);
     if (activePanel) {
       activePanel.scrollIntoView({ block: "nearest", behavior: "smooth" });

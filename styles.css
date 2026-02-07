@@ -355,6 +355,28 @@ a {
   color: var(--muted);
 }
 
+.user-menu-active {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fff8ee;
+  border: 1px solid rgba(255, 122, 26, 0.2);
+  color: #8a3f00;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.user-menu-active .tag {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #ffe2c2;
+  color: #9d4b00;
+}
+
 .user-menu-list {
   display: grid;
   gap: 8px;
