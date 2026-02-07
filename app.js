@@ -94,6 +94,9 @@ const heroPlaceholderPhrases = [
 ];
 let cachedAddressBook = [];
 let editingAddressIndex = null;
+const bookingNameInput = document.getElementById("name");
+const bookingPhoneInput = document.getElementById("phone");
+const bookingAddressInput = document.getElementById("address");
 
 function buildAddressText(entry) {
   if (!entry) return "";
@@ -106,6 +109,11 @@ function buildAddressText(entry) {
     parts.push(cityLine);
   }
   return parts.join(" - ");
+}
+
+function getDefaultAddressEntry(list = []) {
+  if (!Array.isArray(list) || !list.length) return null;
+  return list.find((entry) => entry.isDefault) || list[0];
 }
 
 function renderAddressList(data = {}) {
@@ -129,6 +137,7 @@ function renderAddressList(data = {}) {
     userAddressList.appendChild(empty);
     return;
   }
+  const defaultEntry = getDefaultAddressEntry(list);
   list.forEach((entry, index) => {
     const card = document.createElement("div");
     card.className = "address-card";
@@ -137,6 +146,12 @@ function renderAddressList(data = {}) {
     const addressLine = document.createElement("span");
     addressLine.textContent = buildAddressText(entry) || "Adres bilgisi yok.";
     card.appendChild(title);
+    if (entry.isDefault) {
+      const badge = document.createElement("span");
+      badge.className = "address-badge";
+      badge.textContent = "Varsayılan";
+      card.appendChild(badge);
+    }
     if (entry.name || entry.surname) {
       const nameLine = document.createElement("span");
       nameLine.textContent = `${entry.name || ""} ${entry.surname || ""}`.trim();
@@ -160,11 +175,30 @@ function renderAddressList(data = {}) {
     deleteBtn.className = "btn ghost";
     deleteBtn.textContent = "Sil";
     deleteBtn.addEventListener("click", () => deleteAddress(index));
+    const defaultBtn = document.createElement("button");
+    defaultBtn.type = "button";
+    defaultBtn.className = "btn ghost";
+    defaultBtn.textContent = entry.isDefault ? "Varsayılan" : "Varsayılan Yap";
+    defaultBtn.disabled = entry.isDefault;
+    defaultBtn.addEventListener("click", () => setDefaultAddress(index));
     actions.appendChild(editBtn);
     actions.appendChild(deleteBtn);
+    actions.appendChild(defaultBtn);
     card.appendChild(actions);
     userAddressList.appendChild(card);
   });
+
+  if (defaultEntry) {
+    if (userMenuAddress) {
+      userMenuAddress.textContent = buildAddressText(defaultEntry);
+    }
+    if (bookingAddressInput && !bookingAddressInput.value) {
+      bookingAddressInput.value = buildAddressText(defaultEntry);
+    }
+    if (bookingPhoneInput && !bookingPhoneInput.value && defaultEntry.phone) {
+      bookingPhoneInput.value = defaultEntry.phone;
+    }
+  }
 }
 
 function fillAddressForm(entry) {
@@ -235,8 +269,14 @@ function deleteAddress(index) {
   if (!auth.currentUser || !db) return;
   if (!Number.isInteger(index)) return;
   if (!window.confirm("Adresi silmek istiyor musunuz?")) return;
-  const updatedBook = cachedAddressBook.filter((_, i) => i !== index);
-  const primary = updatedBook[0];
+  let updatedBook = cachedAddressBook.filter((_, i) => i !== index);
+  if (updatedBook.length && !updatedBook.some((entry) => entry.isDefault)) {
+    updatedBook = updatedBook.map((entry, idx) => ({
+      ...entry,
+      isDefault: idx === 0,
+    }));
+  }
+  const primary = getDefaultAddressEntry(updatedBook);
   db.collection("users")
     .doc(auth.currentUser.uid)
     .set(
@@ -257,6 +297,38 @@ function deleteAddress(index) {
     .catch(() => {
       if (userMenuAddressStatus) {
         userMenuAddressStatus.textContent = "Adres silinemedi.";
+      }
+    });
+}
+
+function setDefaultAddress(index) {
+  if (!auth.currentUser || !db) return;
+  if (!Number.isInteger(index)) return;
+  const updatedBook = cachedAddressBook.map((entry, idx) => ({
+    ...entry,
+    isDefault: idx === index,
+  }));
+  const primary = getDefaultAddressEntry(updatedBook);
+  db.collection("users")
+    .doc(auth.currentUser.uid)
+    .set(
+      {
+        addressBook: updatedBook,
+        address: primary ? buildAddressText(primary) : "",
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
+    .then(() => {
+      renderAddressList({ addressBook: updatedBook });
+      if (userMenuAddressStatus) {
+        userMenuAddressStatus.textContent = "Varsayılan adres güncellendi.";
+      }
+      updateUserMenuUI(auth.currentUser);
+    })
+    .catch(() => {
+      if (userMenuAddressStatus) {
+        userMenuAddressStatus.textContent = "Varsayılan güncellenemedi.";
       }
     });
 }
@@ -790,9 +862,13 @@ userMenuAddressForm?.addEventListener("submit", (event) => {
         updatedBook = [...book];
         updatedBook[editingAddressIndex] = updated;
       } else {
-        updatedBook = [addressEntry, ...book].slice(0, 5);
+        const hasDefault = book.some((entry) => entry.isDefault);
+        updatedBook = [
+          { ...addressEntry, isDefault: !hasDefault },
+          ...book,
+        ].slice(0, 5);
       }
-      const primary = updatedBook[0];
+      const primary = getDefaultAddressEntry(updatedBook);
       return docRef.set(
         {
           address: primary ? buildAddressText(primary) : "",
@@ -1465,6 +1541,12 @@ function updateUserMenuUI(user) {
           userMenuPhoneInput.value = data.phone || "";
         }
         renderAddressList(data);
+        if (bookingNameInput && !bookingNameInput.value) {
+          bookingNameInput.value = fullName || "";
+        }
+        if (bookingPhoneInput && !bookingPhoneInput.value && data.phone) {
+          bookingPhoneInput.value = data.phone;
+        }
       })
       .catch(() => {
         if (userMenuSubtitle) {

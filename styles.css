@@ -556,6 +556,16 @@ a {
   color: var(--muted);
 }
 
+.address-badge {
+  align-self: flex-start;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #ffe2c2;
+  color: #9d4b00;
+}
+
 .address-actions {
   display: flex;
   gap: 8px;
