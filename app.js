@@ -51,7 +51,7 @@ const signupPhone = document.getElementById("signupPhone");
 const signupBirthdate = document.getElementById("signupBirthdate");
 const userMenu = document.getElementById("userMenu");
 const userMenuTrigger = document.querySelector(".user-menu-trigger");
-const userMenuClose = document.querySelector(".user-menu-close");
+const userMenuCloseButtons = document.querySelectorAll(".user-menu-close");
 const userMenuName = document.getElementById("userMenuName");
 const userMenuSubtitle = document.getElementById("userMenuSubtitle");
 const userMenuEmail = document.getElementById("userMenuEmail");
@@ -470,7 +470,7 @@ function bindUserMenu() {
       hide();
     }
   });
-  userMenuClose?.addEventListener("click", hide);
+  userMenuCloseButtons?.forEach((btn) => btn.addEventListener("click", hide));
   userMenuLoginBtn?.addEventListener("click", () => {
     hide();
     showLoginGate();
@@ -1159,7 +1159,15 @@ function updateUserMenuUI(user) {
       .doc(user.uid)
       .get()
       .then((doc) => {
-        if (!doc.exists) return;
+        if (!doc.exists) {
+          if (userMenuSubtitle) {
+            userMenuSubtitle.textContent = user.email;
+          }
+          if (userMenuFullName) {
+            userMenuFullName.textContent = "-";
+          }
+          return;
+        }
         const data = doc.data() || {};
         const fullName = [data.name, data.surname].filter(Boolean).join(" ").trim();
         if (userMenuSubtitle) {
@@ -1184,7 +1192,11 @@ function updateUserMenuUI(user) {
           userMenuAddressInput.value = data.address || "";
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        if (userMenuSubtitle) {
+          userMenuSubtitle.textContent = user.email;
+        }
+      });
   }
 }
 
