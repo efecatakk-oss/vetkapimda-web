@@ -451,12 +451,33 @@ function bindPaymentSummary() {
   update();
 }
 
+let lastUserMenuTarget = "menuAccount";
+
 function bindUserMenu() {
   if (!userMenu || !userMenuTrigger) return;
+  const menuItems = Array.from(userMenu.querySelectorAll(".menu-item"));
+  const menuPanels = Array.from(userMenu.querySelectorAll(".menu-panel"));
+  const setActivePanel = (targetId) => {
+    if (!targetId) return;
+    lastUserMenuTarget = targetId;
+    menuPanels.forEach((panel) => {
+      panel.classList.toggle("active", panel.id === targetId);
+    });
+    menuItems.forEach((item) => {
+      item.classList.toggle("active", item.dataset.target === targetId);
+    });
+    const activePanel = userMenu.querySelector(`#${targetId}`);
+    if (activePanel) {
+      activePanel.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  };
   const show = () => {
     userMenu.classList.add("show");
     userMenu.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
+    if (menuItems.length) {
+      setActivePanel(lastUserMenuTarget || menuItems[0].dataset.target);
+    }
   };
   const hide = () => {
     userMenu.classList.remove("show");
@@ -480,13 +501,9 @@ function bindUserMenu() {
     hide();
   });
 
-  userMenu.querySelectorAll(".menu-item").forEach((item) => {
+  menuItems.forEach((item) => {
     item.addEventListener("click", () => {
-      const targetId = item.dataset.target;
-      if (!targetId) return;
-      userMenu.querySelectorAll(".menu-panel").forEach((panel) => {
-        panel.classList.toggle("active", panel.id === targetId);
-      });
+      setActivePanel(item.dataset.target);
     });
   });
 

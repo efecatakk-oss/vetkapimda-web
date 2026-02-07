@@ -380,6 +380,16 @@ a {
   transform: translateY(-1px);
 }
 
+.user-menu-list .menu-item.active {
+  background: linear-gradient(135deg, #fff5ea 0%, #fff 100%);
+  border-color: rgba(255, 122, 26, 0.35);
+  box-shadow: 0 12px 22px rgba(255, 122, 26, 0.18);
+}
+
+.user-menu-list .menu-item.active .menu-icon {
+  background: #ffe5c7;
+}
+
 .user-menu-panels {
   display: grid;
   gap: 10px;
