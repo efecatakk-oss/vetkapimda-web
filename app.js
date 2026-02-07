@@ -80,6 +80,7 @@ const addressDistrictInput = document.getElementById("addressDistrictInput");
 const addressPhoneInput = document.getElementById("addressPhoneInput");
 const addressTextInput = document.getElementById("addressTextInput");
 const addressCancelBtn = document.getElementById("addressCancelBtn");
+const addressIndexInput = document.getElementById("addressIndexInput");
 let productToggleInit = false;
 let heroPlaceholderTimer = null;
 let heroPlaceholderIndex = 0;
@@ -92,6 +93,7 @@ const heroPlaceholderPhrases = [
   "Acil veteriner sorusu",
 ];
 let cachedAddressBook = [];
+let editingAddressIndex = null;
 
 function buildAddressText(entry) {
   if (!entry) return "";
@@ -146,8 +148,44 @@ function renderAddressList(data = {}) {
       phoneLine.textContent = `Telefon: ${entry.phone}`;
       card.appendChild(phoneLine);
     }
+    const actions = document.createElement("div");
+    actions.className = "address-actions";
+    const editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.className = "btn ghost";
+    editBtn.textContent = "Düzenle";
+    editBtn.addEventListener("click", () => openAddressModal(index));
+    const deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.className = "btn ghost";
+    deleteBtn.textContent = "Sil";
+    deleteBtn.addEventListener("click", () => deleteAddress(index));
+    actions.appendChild(editBtn);
+    actions.appendChild(deleteBtn);
+    card.appendChild(actions);
     userAddressList.appendChild(card);
   });
+}
+
+function fillAddressForm(entry) {
+  if (!entry) return;
+  if (addressTitleInput) addressTitleInput.value = entry.title || "";
+  if (addressNameInput) addressNameInput.value = entry.name || "";
+  if (addressSurnameInput) addressSurnameInput.value = entry.surname || "";
+  if (addressCityInput) addressCityInput.value = entry.city || "";
+  if (addressDistrictInput) addressDistrictInput.value = entry.district || "";
+  if (addressPhoneInput) addressPhoneInput.value = entry.phone || "";
+  if (addressTextInput) addressTextInput.value = entry.address || "";
+}
+
+function clearAddressForm() {
+  if (addressTitleInput) addressTitleInput.value = "";
+  if (addressNameInput) addressNameInput.value = "";
+  if (addressSurnameInput) addressSurnameInput.value = "";
+  if (addressCityInput) addressCityInput.value = "";
+  if (addressDistrictInput) addressDistrictInput.value = "";
+  if (addressPhoneInput) addressPhoneInput.value = "";
+  if (addressTextInput) addressTextInput.value = "";
 }
 
 function showAddressModal() {
@@ -158,17 +196,6 @@ function showAddressModal() {
   if (userMenuAddressStatus) {
     userMenuAddressStatus.textContent = "";
   }
-  const fullName = (userMenuNameInput?.value || "").trim();
-  if (fullName && addressNameInput && addressSurnameInput) {
-    if (!addressNameInput.value && !addressSurnameInput.value) {
-      const parts = fullName.split(" ").filter(Boolean);
-      addressNameInput.value = parts.shift() || "";
-      addressSurnameInput.value = parts.join(" ");
-    }
-  }
-  if (addressPhoneInput && userMenuPhoneInput && !addressPhoneInput.value) {
-    addressPhoneInput.value = userMenuPhoneInput.value || "";
-  }
 }
 
 function hideAddressModal() {
@@ -178,6 +205,60 @@ function hideAddressModal() {
   if (!userMenu?.classList.contains("show")) {
     document.body.classList.remove("modal-open");
   }
+  editingAddressIndex = null;
+  if (addressIndexInput) addressIndexInput.value = "";
+}
+
+function openAddressModal(index = null) {
+  editingAddressIndex = Number.isInteger(index) ? index : null;
+  if (addressIndexInput) {
+    addressIndexInput.value = editingAddressIndex !== null ? String(editingAddressIndex) : "";
+  }
+  clearAddressForm();
+  if (editingAddressIndex !== null) {
+    fillAddressForm(cachedAddressBook[editingAddressIndex]);
+  } else {
+    const fullName = (userMenuNameInput?.value || "").trim();
+    if (fullName && addressNameInput && addressSurnameInput) {
+      const parts = fullName.split(" ").filter(Boolean);
+      addressNameInput.value = parts.shift() || "";
+      addressSurnameInput.value = parts.join(" ");
+    }
+    if (addressPhoneInput && userMenuPhoneInput) {
+      addressPhoneInput.value = userMenuPhoneInput.value || "";
+    }
+  }
+  showAddressModal();
+}
+
+function deleteAddress(index) {
+  if (!auth.currentUser || !db) return;
+  if (!Number.isInteger(index)) return;
+  if (!window.confirm("Adresi silmek istiyor musunuz?")) return;
+  const updatedBook = cachedAddressBook.filter((_, i) => i !== index);
+  const primary = updatedBook[0];
+  db.collection("users")
+    .doc(auth.currentUser.uid)
+    .set(
+      {
+        addressBook: updatedBook,
+        address: primary ? buildAddressText(primary) : "",
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
+    .then(() => {
+      renderAddressList({ addressBook: updatedBook, address: primary?.address || "" });
+      if (userMenuAddressStatus) {
+        userMenuAddressStatus.textContent = "Adres silindi.";
+      }
+      updateUserMenuUI(auth.currentUser);
+    })
+    .catch(() => {
+      if (userMenuAddressStatus) {
+        userMenuAddressStatus.textContent = "Adres silinemedi.";
+      }
+    });
 }
 
 // Mobile-first UX: show booking section above shop on small screens, keep desktop sÄ±rayÄ± koru.
@@ -613,7 +694,7 @@ function bindUserMenu() {
       showLoginGate();
       return;
     }
-    showAddressModal();
+    openAddressModal(null);
   });
 
   userAddressModal?.addEventListener("click", (event) => {
@@ -687,7 +768,7 @@ userMenuAddressForm?.addEventListener("submit", (event) => {
     district,
     phone: phone ? normalizePhone(phone) : "",
     address,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    createdAt: Date.now(),
   };
 
   userMenuAddressStatus.textContent = "Kaydediliyor...";
@@ -697,10 +778,24 @@ userMenuAddressForm?.addEventListener("submit", (event) => {
     .then((doc) => {
       const data = doc.exists ? doc.data() || {} : {};
       const book = Array.isArray(data.addressBook) ? data.addressBook : [];
-      const updatedBook = [addressEntry, ...book].slice(0, 5);
+      let updatedBook = [];
+      if (editingAddressIndex !== null && book[editingAddressIndex]) {
+        const existing = book[editingAddressIndex];
+        const updated = {
+          ...existing,
+          ...addressEntry,
+          createdAt: existing.createdAt || addressEntry.createdAt,
+          updatedAt: Date.now(),
+        };
+        updatedBook = [...book];
+        updatedBook[editingAddressIndex] = updated;
+      } else {
+        updatedBook = [addressEntry, ...book].slice(0, 5);
+      }
+      const primary = updatedBook[0];
       return docRef.set(
         {
-          address: buildAddressText(addressEntry),
+          address: primary ? buildAddressText(primary) : "",
           addressBook: updatedBook,
           phone: data.phone || addressEntry.phone || "",
           updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -715,6 +810,7 @@ userMenuAddressForm?.addEventListener("submit", (event) => {
       if (userMenuAddressForm) {
         userMenuAddressForm.reset();
       }
+      editingAddressIndex = null;
     })
     .catch(() => {
       userMenuAddressStatus.textContent = "Kaydedilemedi.";

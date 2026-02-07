@@ -556,6 +556,17 @@ a {
   color: var(--muted);
 }
 
+.address-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.address-actions .btn {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
 .address-empty {
   padding: 12px;
   border-radius: 12px;
