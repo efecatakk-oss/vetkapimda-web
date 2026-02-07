@@ -65,11 +65,21 @@ const userMenuAddress = document.getElementById("userMenuAddress");
 const userMenuNameInput = document.getElementById("userMenuNameInput");
 const userMenuEmailInput = document.getElementById("userMenuEmailInput");
 const userMenuPhoneInput = document.getElementById("userMenuPhoneInput");
-const userMenuAddressInput = document.getElementById("userMenuAddressInput");
 const userMenuAccountForm = document.getElementById("userMenuAccountForm");
 const userMenuAddressForm = document.getElementById("userMenuAddressForm");
 const userMenuAccountStatus = document.getElementById("userMenuAccountStatus");
 const userMenuAddressStatus = document.getElementById("userMenuAddressStatus");
+const userAddressList = document.getElementById("userAddressList");
+const addressAddBtn = document.querySelector(".address-add-btn");
+const userAddressModal = document.getElementById("userAddressModal");
+const addressTitleInput = document.getElementById("addressTitleInput");
+const addressNameInput = document.getElementById("addressNameInput");
+const addressSurnameInput = document.getElementById("addressSurnameInput");
+const addressCityInput = document.getElementById("addressCityInput");
+const addressDistrictInput = document.getElementById("addressDistrictInput");
+const addressPhoneInput = document.getElementById("addressPhoneInput");
+const addressTextInput = document.getElementById("addressTextInput");
+const addressCancelBtn = document.getElementById("addressCancelBtn");
 let productToggleInit = false;
 let heroPlaceholderTimer = null;
 let heroPlaceholderIndex = 0;
@@ -81,6 +91,94 @@ const heroPlaceholderPhrases = [
   "Canlı video danışmanlık",
   "Acil veteriner sorusu",
 ];
+let cachedAddressBook = [];
+
+function buildAddressText(entry) {
+  if (!entry) return "";
+  const parts = [];
+  if (entry.address) {
+    parts.push(entry.address);
+  }
+  const cityLine = [entry.district, entry.city].filter(Boolean).join(" / ");
+  if (cityLine) {
+    parts.push(cityLine);
+  }
+  return parts.join(" - ");
+}
+
+function renderAddressList(data = {}) {
+  if (!userAddressList) return;
+  let list = Array.isArray(data.addressBook) ? data.addressBook : [];
+  if (list.length === 0 && data.address) {
+    list = [
+      {
+        title: "Adres",
+        address: data.address,
+        phone: data.phone || "",
+      },
+    ];
+  }
+  cachedAddressBook = list;
+  userAddressList.innerHTML = "";
+  if (!list.length) {
+    const empty = document.createElement("div");
+    empty.className = "address-empty";
+    empty.textContent = "Henüz kayıtlı adres yok.";
+    userAddressList.appendChild(empty);
+    return;
+  }
+  list.forEach((entry, index) => {
+    const card = document.createElement("div");
+    card.className = "address-card";
+    const title = document.createElement("strong");
+    title.textContent = entry.title || `Adres ${index + 1}`;
+    const addressLine = document.createElement("span");
+    addressLine.textContent = buildAddressText(entry) || "Adres bilgisi yok.";
+    card.appendChild(title);
+    if (entry.name || entry.surname) {
+      const nameLine = document.createElement("span");
+      nameLine.textContent = `${entry.name || ""} ${entry.surname || ""}`.trim();
+      card.appendChild(nameLine);
+    }
+    card.appendChild(addressLine);
+    if (entry.phone) {
+      const phoneLine = document.createElement("span");
+      phoneLine.textContent = `Telefon: ${entry.phone}`;
+      card.appendChild(phoneLine);
+    }
+    userAddressList.appendChild(card);
+  });
+}
+
+function showAddressModal() {
+  if (!userAddressModal) return;
+  userAddressModal.classList.add("show");
+  userAddressModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  if (userMenuAddressStatus) {
+    userMenuAddressStatus.textContent = "";
+  }
+  const fullName = (userMenuNameInput?.value || "").trim();
+  if (fullName && addressNameInput && addressSurnameInput) {
+    if (!addressNameInput.value && !addressSurnameInput.value) {
+      const parts = fullName.split(" ").filter(Boolean);
+      addressNameInput.value = parts.shift() || "";
+      addressSurnameInput.value = parts.join(" ");
+    }
+  }
+  if (addressPhoneInput && userMenuPhoneInput && !addressPhoneInput.value) {
+    addressPhoneInput.value = userMenuPhoneInput.value || "";
+  }
+}
+
+function hideAddressModal() {
+  if (!userAddressModal) return;
+  userAddressModal.classList.remove("show");
+  userAddressModal.setAttribute("aria-hidden", "true");
+  if (!userMenu?.classList.contains("show")) {
+    document.body.classList.remove("modal-open");
+  }
+}
 
 // Mobile-first UX: show booking section above shop on small screens, keep desktop sÄ±rayÄ± koru.
 (() => {
@@ -490,6 +588,7 @@ function bindUserMenu() {
     userMenu.classList.remove("show");
     userMenu.setAttribute("aria-hidden", "true");
     document.body.classList.remove("modal-open");
+    hideAddressModal();
   };
 
   userMenuTrigger.addEventListener("click", show);
@@ -507,6 +606,26 @@ function bindUserMenu() {
     handleLogout();
     hide();
   });
+
+  addressAddBtn?.addEventListener("click", () => {
+    if (!auth.currentUser) {
+      hide();
+      showLoginGate();
+      return;
+    }
+    showAddressModal();
+  });
+
+  userAddressModal?.addEventListener("click", (event) => {
+    if (event.target === userAddressModal) {
+      hideAddressModal();
+    }
+  });
+
+  addressCancelBtn?.addEventListener("click", hideAddressModal);
+  userAddressModal
+    ?.querySelectorAll(".address-close")
+    .forEach((btn) => btn.addEventListener("click", hideAddressModal));
 
   menuItems.forEach((item) => {
     item.addEventListener("click", () => {
@@ -544,32 +663,63 @@ function bindUserMenu() {
       });
   });
 
-  userMenuAddressForm?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    if (!auth.currentUser) return;
-    const address = (userMenuAddressInput?.value || "").trim();
-    if (!address) {
-      userMenuAddressStatus.textContent = "Adres boş olamaz.";
-      return;
-    }
-    userMenuAddressStatus.textContent = "Kaydediliyor...";
-    db.collection("users")
-      .doc(auth.currentUser.uid)
-      .set(
+userMenuAddressForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (!auth.currentUser) return;
+  const title = (addressTitleInput?.value || "").trim();
+  const name = (addressNameInput?.value || "").trim();
+  const surname = (addressSurnameInput?.value || "").trim();
+  const city = (addressCityInput?.value || "").trim();
+  const district = (addressDistrictInput?.value || "").trim();
+  const phone = (addressPhoneInput?.value || "").trim();
+  const address = (addressTextInput?.value || "").trim();
+
+  if (!address) {
+    userMenuAddressStatus.textContent = "Adres boş olamaz.";
+    return;
+  }
+
+  const addressEntry = {
+    title: title || "Adres",
+    name,
+    surname,
+    city,
+    district,
+    phone: phone ? normalizePhone(phone) : "",
+    address,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+  };
+
+  userMenuAddressStatus.textContent = "Kaydediliyor...";
+  const docRef = db.collection("users").doc(auth.currentUser.uid);
+  docRef
+    .get()
+    .then((doc) => {
+      const data = doc.exists ? doc.data() || {} : {};
+      const book = Array.isArray(data.addressBook) ? data.addressBook : [];
+      const updatedBook = [addressEntry, ...book].slice(0, 5);
+      return docRef.set(
         {
-          address,
+          address: buildAddressText(addressEntry),
+          addressBook: updatedBook,
+          phone: data.phone || addressEntry.phone || "",
           updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         },
         { merge: true }
-      )
-      .then(() => {
-        userMenuAddressStatus.textContent = "Adres kaydedildi.";
-        updateUserMenuUI(auth.currentUser);
-      })
-      .catch(() => {
-        userMenuAddressStatus.textContent = "Kaydedilemedi.";
-      });
-  });
+      );
+    })
+    .then(() => {
+      userMenuAddressStatus.textContent = "Adres kaydedildi.";
+      updateUserMenuUI(auth.currentUser);
+      hideAddressModal();
+      if (userMenuAddressForm) {
+        userMenuAddressForm.reset();
+      }
+    })
+    .catch(() => {
+      userMenuAddressStatus.textContent = "Kaydedilemedi.";
+    });
+});
 }
 
 function initBookingStepper() {
@@ -1169,9 +1319,14 @@ function updateUserMenuUI(user) {
   if (userMenuPhoneInput) {
     userMenuPhoneInput.value = "";
   }
-  if (userMenuAddressInput) {
-    userMenuAddressInput.value = "";
-  }
+  if (addressTitleInput) addressTitleInput.value = "";
+  if (addressNameInput) addressNameInput.value = "";
+  if (addressSurnameInput) addressSurnameInput.value = "";
+  if (addressCityInput) addressCityInput.value = "";
+  if (addressDistrictInput) addressDistrictInput.value = "";
+  if (addressPhoneInput) addressPhoneInput.value = "";
+  if (addressTextInput) addressTextInput.value = "";
+  renderAddressList({});
   if (userMenuLoginBtn) {
     userMenuLoginBtn.style.display = loggedIn ? "none" : "inline-flex";
   }
@@ -1190,6 +1345,7 @@ function updateUserMenuUI(user) {
           if (userMenuFullName) {
             userMenuFullName.textContent = "-";
           }
+          renderAddressList({});
           return;
         }
         const data = doc.data() || {};
@@ -1212,14 +1368,13 @@ function updateUserMenuUI(user) {
         if (userMenuPhoneInput) {
           userMenuPhoneInput.value = data.phone || "";
         }
-        if (userMenuAddressInput) {
-          userMenuAddressInput.value = data.address || "";
-        }
+        renderAddressList(data);
       })
       .catch(() => {
         if (userMenuSubtitle) {
           userMenuSubtitle.textContent = user.email;
         }
+        renderAddressList({});
       });
   }
 }

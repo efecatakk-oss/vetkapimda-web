@@ -819,15 +819,12 @@
                 </form>
               </div>
               <div class="menu-panel" id="menuAddress">
-                <h4>Adreslerim</h4>
-                <form class="menu-form" id="userMenuAddressForm">
-                  <label>Adres
-                    <textarea id="userMenuAddressInput" rows="3" placeholder="Adresinizi yazın"></textarea>
-                  </label>
-                  <button class="btn primary" type="submit">Adres Kaydet</button>
-                  <p id="userMenuAddressStatus" class="form-status" role="status"></p>
-                </form>
-                <p class="menu-hint">Adres kaydı yoksa burada oluşturabilirsiniz.</p>
+                <div class="panel-head">
+                  <h4>Adres Defteri</h4>
+                  <button class="btn ghost address-add-btn" type="button">+ Yeni Adres Ekle</button>
+                </div>
+                <div id="userAddressList" class="address-list"></div>
+                <p class="menu-hint">Adres kaydı yoksa Yeni Adres Ekle ile oluşturabilirsiniz.</p>
               </div>
               <div class="menu-panel" id="menuOrders">
                 <h4>Siparişlerim</h4>
@@ -857,6 +854,44 @@
               <button class="btn primary" id="userMenuLoginBtn" type="button">Giriş Yap / Üye Ol</button>
               <button class="btn ghost" id="userMenuLogoutBtn" type="button">Çıkış Yap</button>
               <button class="btn ghost user-menu-close" type="button">Kapat</button>
+            </div>
+            <div class="user-address-modal" id="userAddressModal" aria-hidden="true">
+              <div class="user-address-card">
+                <button class="drawer-close address-close" type="button" aria-label="Kapat">✕</button>
+                <h4>Adres Ekle</h4>
+                <form class="menu-form" id="userMenuAddressForm">
+                  <label>Adres İsmi
+                    <input id="addressTitleInput" type="text" placeholder="Örn: Ev, İş" />
+                  </label>
+                  <div class="menu-form-row">
+                    <label>Ad
+                      <input id="addressNameInput" type="text" placeholder="Adınız" />
+                    </label>
+                    <label>Soyad
+                      <input id="addressSurnameInput" type="text" placeholder="Soyadınız" />
+                    </label>
+                  </div>
+                  <div class="menu-form-row">
+                    <label>Şehir
+                      <input id="addressCityInput" type="text" placeholder="Şehir" />
+                    </label>
+                    <label>İlçe
+                      <input id="addressDistrictInput" type="text" placeholder="İlçe" />
+                    </label>
+                  </div>
+                  <label>Telefon
+                    <input id="addressPhoneInput" type="tel" placeholder="(5xx) xxx xx xx" />
+                  </label>
+                  <label>Adres
+                    <textarea id="addressTextInput" rows="3" placeholder="Açık adres"></textarea>
+                  </label>
+                  <div class="menu-form-row">
+                    <button class="btn ghost address-close" id="addressCancelBtn" type="button">İptal</button>
+                    <button class="btn primary" type="submit">Kaydet</button>
+                  </div>
+                  <p id="userMenuAddressStatus" class="form-status" role="status"></p>
+                </form>
+              </div>
             </div>
           </div>
         </div>
