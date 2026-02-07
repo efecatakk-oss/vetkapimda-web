@@ -5354,6 +5354,29 @@ textarea {
   font-size: 13px;
 }
 
+.address-picker {
+  margin-bottom: 10px;
+  display: none;
+}
+
+.address-picker label {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--primary-deep);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.address-picker select {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--primary-deep);
+  outline: none;
+  padding: 6px 0;
+}
+
 @media (max-width: 720px) {
   .step-title {
     font-size: 13px;

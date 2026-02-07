@@ -99,6 +99,8 @@ const bookingPhoneInput = document.getElementById("phone");
 const bookingAddressInput = document.getElementById("address");
 const defaultAddressCard = document.getElementById("defaultAddressCard");
 const defaultAddressText = document.getElementById("defaultAddressText");
+const addressSelect = document.getElementById("addressSelect");
+const addressPicker = document.getElementById("addressPicker");
 
 function buildAddressText(entry) {
   if (!entry) return "";
@@ -131,6 +133,10 @@ function renderAddressList(data = {}) {
     ];
   }
   cachedAddressBook = list;
+  if (addressPicker && addressSelect) {
+    addressPicker.style.display = "none";
+    addressSelect.innerHTML = '<option value="">Adres seç</option>';
+  }
   userAddressList.innerHTML = "";
   if (!list.length) {
     const empty = document.createElement("div");
@@ -138,6 +144,10 @@ function renderAddressList(data = {}) {
     empty.textContent = "Henüz kayıtlı adres yok.";
     userAddressList.appendChild(empty);
     return;
+  }
+  if (addressPicker && addressSelect) {
+    addressPicker.style.display = "block";
+    addressSelect.innerHTML = '<option value="">Adres seç</option>';
   }
   const defaultEntry = getDefaultAddressEntry(list);
   list.forEach((entry, index) => {
@@ -188,6 +198,17 @@ function renderAddressList(data = {}) {
     actions.appendChild(defaultBtn);
     card.appendChild(actions);
     userAddressList.appendChild(card);
+
+    if (addressSelect) {
+      const option = document.createElement("option");
+      option.value = String(index);
+      const label = entry.title || `Adres ${index + 1}`;
+      option.textContent = `${label} - ${buildAddressText(entry) || ""}`.trim();
+      if (entry.isDefault) {
+        option.selected = true;
+      }
+      addressSelect.appendChild(option);
+    }
   });
 
   if (defaultEntry) {
@@ -207,6 +228,24 @@ function renderAddressList(data = {}) {
   } else if (defaultAddressCard && defaultAddressText) {
     defaultAddressCard.style.display = "none";
     defaultAddressText.textContent = "Adres seçilmedi.";
+  }
+
+  if (addressSelect) {
+    addressSelect.onchange = () => {
+      const idx = Number(addressSelect.value);
+      if (!Number.isInteger(idx) || !cachedAddressBook[idx]) return;
+      const selected = cachedAddressBook[idx];
+      if (bookingAddressInput) {
+        bookingAddressInput.value = buildAddressText(selected);
+      }
+      if (bookingPhoneInput && selected.phone) {
+        bookingPhoneInput.value = selected.phone;
+      }
+      if (defaultAddressCard && defaultAddressText) {
+        defaultAddressCard.style.display = "block";
+        defaultAddressText.textContent = buildAddressText(selected);
+      }
+    };
   }
 }
 
