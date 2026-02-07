@@ -97,6 +97,8 @@ let editingAddressIndex = null;
 const bookingNameInput = document.getElementById("name");
 const bookingPhoneInput = document.getElementById("phone");
 const bookingAddressInput = document.getElementById("address");
+const defaultAddressCard = document.getElementById("defaultAddressCard");
+const defaultAddressText = document.getElementById("defaultAddressText");
 
 function buildAddressText(entry) {
   if (!entry) return "";
@@ -192,12 +194,19 @@ function renderAddressList(data = {}) {
     if (userMenuAddress) {
       userMenuAddress.textContent = buildAddressText(defaultEntry);
     }
+    if (defaultAddressCard && defaultAddressText) {
+      defaultAddressCard.style.display = "block";
+      defaultAddressText.textContent = buildAddressText(defaultEntry);
+    }
     if (bookingAddressInput && !bookingAddressInput.value) {
       bookingAddressInput.value = buildAddressText(defaultEntry);
     }
     if (bookingPhoneInput && !bookingPhoneInput.value && defaultEntry.phone) {
       bookingPhoneInput.value = defaultEntry.phone;
     }
+  } else if (defaultAddressCard && defaultAddressText) {
+    defaultAddressCard.style.display = "none";
+    defaultAddressText.textContent = "Adres seçilmedi.";
   }
 }
 
