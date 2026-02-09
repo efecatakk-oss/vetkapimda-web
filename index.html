@@ -38,8 +38,8 @@
           <span>7/24 Destek • Hızlı Randevu Onayı</span>
         </div>
         <div class="topbar-right">
-          <a href="#" class="topbar-icon" aria-label="Facebook">ⓕ</a>
-          <a href="#" class="topbar-icon" aria-label="Instagram">◎</a>
+          <a href="https://www.facebook.com/" class="topbar-icon" aria-label="Facebook" target="_blank" rel="noopener noreferrer">ⓕ</a>
+          <a href="https://www.instagram.com/vetkapiimda/" class="topbar-icon" aria-label="Instagram" target="_blank" rel="noopener noreferrer">◎</a>
           <a href="https://wa.me/905360340920" class="topbar-link">🟢 WhatsApp</a>
           <a href="tel:05360340920" class="topbar-link">📞 0536 034 09 20</a>
           <a href="#kvkk" class="topbar-link">Yetki Belgeleri</a>
@@ -67,11 +67,13 @@
           <div class="nav-utils">
             <div class="nav-icons">
               <a class="icon-btn cart-icon" href="#randevu" aria-label="Sepet">
-                🛒
+                <span class="icon-glyph" aria-hidden="true">🛒</span>
+                <span class="icon-text">Sepet</span>
                 <span class="icon-badge" id="navCartCountIcon">0</span>
               </a>
               <button class="icon-btn user-menu-trigger" type="button" aria-label="Kullanıcı menüsü">
-                👤
+                <span class="icon-glyph" aria-hidden="true">👤</span>
+                <span class="icon-text">Hesabım</span>
               </button>
             </div>
             <a class="nav-pill hide-mobile" href="#shop">Favoriler</a>
@@ -79,10 +81,10 @@
             <a class="nav-pill nav-cart hide-mobile" href="#randevu">
               Sepet <span id="navCartCount">0</span>
             </a>
-            <button class="nav-pill login-trigger" data-tab="login" type="button">
+            <button class="nav-pill auth-pill login-trigger" data-tab="login" type="button">
               Giris Yap
             </button>
-            <button class="nav-pill login-trigger" data-tab="signup" type="button">
+            <button class="nav-pill auth-pill login-trigger" data-tab="signup" type="button">
               Uye Ol
             </button>
           </div>
