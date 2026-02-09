@@ -4994,17 +4994,19 @@ textarea {
 .cta-card .cta-ill {
   position: absolute;
   z-index: 0;
-  right: -28px;
-  top: -18px;
-  width: 150px;
-  height: 150px;
-  border-radius: 44px;
+  right: -14px;
+  top: -12px;
+  width: 172px;
+  height: 172px;
+  border-radius: 56px;
   background-size: cover;
   background-position: center;
-  opacity: 0.2;
-  filter: saturate(1.15) contrast(1.05);
-  transform: rotate(10deg);
-  mix-blend-mode: soft-light;
+  opacity: 0.34;
+  filter: saturate(1.2) contrast(1.08);
+  transform: rotate(8deg);
+  mix-blend-mode: normal;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.18);
   pointer-events: none;
 }
 
@@ -5101,6 +5103,15 @@ textarea {
   background: radial-gradient(circle, rgba(255, 255, 255, 0.35) 0%, transparent 65%);
   filter: blur(4px);
   opacity: 0.5;
+}
+
+.cta-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 42px rgba(22, 30, 56, 0.18);
+}
+
+.cta-card:active {
+  transform: translateY(0);
 }
 
 .cta-card .cta-icon {
@@ -5283,6 +5294,10 @@ textarea {
     opacity: 1;
     transform: none;
     animation: none;
+  }
+  .cta-card:hover,
+  .cta-card:active {
+    transform: none;
   }
 }
 
