@@ -113,6 +113,33 @@ const reviewTotalEl = document.getElementById("reviewTotal");
 const reviewPaymentEl = document.getElementById("reviewPayment");
 let serviceVersion = localStorage.getItem("serviceItemsVersion") || "";
 let serviceSnapshotInitialized = false;
+const PROFILE_CACHE_KEY = "vk_profile_cache_v1";
+let userProfileUnsub = null;
+let userProfileUid = "";
+let userProfileLoadTimer = null;
+
+function getProfileCacheMap() {
+  try {
+    return JSON.parse(localStorage.getItem(PROFILE_CACHE_KEY) || "{}");
+  } catch (_) {
+    return {};
+  }
+}
+
+function getProfileCache(uid) {
+  if (!uid) return null;
+  const map = getProfileCacheMap();
+  const value = map[uid];
+  return value && typeof value === "object" ? value : null;
+}
+
+function setProfileCache(uid, patch = {}) {
+  if (!uid) return;
+  const map = getProfileCacheMap();
+  const prev = map[uid] && typeof map[uid] === "object" ? map[uid] : {};
+  map[uid] = { ...prev, ...patch, cachedAt: Date.now() };
+  localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(map));
+}
 
 function buildAddressText(entry) {
   if (!entry) return "";
@@ -1016,8 +1043,14 @@ function bindUserMenu() {
         { merge: true }
       )
       .then(() => {
+        setProfileCache(auth.currentUser.uid, {
+          email: auth.currentUser.email || "",
+          name,
+          surname,
+          phone,
+        });
         userMenuAccountStatus.textContent = "Bilgiler güncellendi.";
-        updateUserMenuUI(auth.currentUser);
+        applyCachedUserProfile(auth.currentUser.uid, auth.currentUser.email || "");
       })
       .catch(() => {
         userMenuAccountStatus.textContent = "Kaydedilemedi.";
@@ -1053,43 +1086,46 @@ userMenuAddressForm?.addEventListener("submit", (event) => {
 
   userMenuAddressStatus.textContent = "Kaydediliyor...";
   const docRef = db.collection("users").doc(auth.currentUser.uid);
+  const book = Array.isArray(cachedAddressBook) ? cachedAddressBook : [];
+  let updatedBook = [];
+  if (editingAddressIndex !== null && book[editingAddressIndex]) {
+    const existing = book[editingAddressIndex];
+    const updated = {
+      ...existing,
+      ...addressEntry,
+      createdAt: existing.createdAt || addressEntry.createdAt,
+      updatedAt: Date.now(),
+    };
+    updatedBook = [...book];
+    updatedBook[editingAddressIndex] = updated;
+  } else {
+    const hasDefault = book.some((entry) => entry.isDefault);
+    updatedBook = [{ ...addressEntry, isDefault: !hasDefault }, ...book].slice(0, 5);
+  }
+  const primary = getDefaultAddressEntry(updatedBook);
+  const primaryText = primary ? buildAddressText(primary) : "";
+  const fallbackPhone = (userMenuPhoneInput?.value || "").trim() || addressEntry.phone || "";
+
   docRef
-    .get()
-    .then((doc) => {
-      const data = doc.exists ? doc.data() || {} : {};
-      const book = Array.isArray(data.addressBook) ? data.addressBook : [];
-      let updatedBook = [];
-      if (editingAddressIndex !== null && book[editingAddressIndex]) {
-        const existing = book[editingAddressIndex];
-        const updated = {
-          ...existing,
-          ...addressEntry,
-          createdAt: existing.createdAt || addressEntry.createdAt,
-          updatedAt: Date.now(),
-        };
-        updatedBook = [...book];
-        updatedBook[editingAddressIndex] = updated;
-      } else {
-        const hasDefault = book.some((entry) => entry.isDefault);
-        updatedBook = [
-          { ...addressEntry, isDefault: !hasDefault },
-          ...book,
-        ].slice(0, 5);
-      }
-      const primary = getDefaultAddressEntry(updatedBook);
-      return docRef.set(
-        {
-          address: primary ? buildAddressText(primary) : "",
-          addressBook: updatedBook,
-          phone: data.phone || addressEntry.phone || "",
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        },
-        { merge: true }
-      );
-    })
+    .set(
+      {
+        address: primaryText,
+        addressBook: updatedBook,
+        phone: fallbackPhone,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
     .then(() => {
+      cachedAddressBook = updatedBook;
+      setProfileCache(auth.currentUser.uid, {
+        email: auth.currentUser.email || "",
+        address: primaryText,
+        addressBook: updatedBook,
+        phone: fallbackPhone,
+      });
+      renderAddressList({ addressBook: updatedBook, address: primaryText, phone: fallbackPhone });
       userMenuAddressStatus.textContent = "Adres kaydedildi.";
-      updateUserMenuUI(auth.currentUser);
       hideAddressModal();
       if (userMenuAddressForm) {
         userMenuAddressForm.reset();
@@ -1742,6 +1778,124 @@ function showToast(message, isError = false) {
   }, 3200);
 }
 
+function stopUserProfileListener() {
+  if (userProfileUnsub) {
+    userProfileUnsub();
+    userProfileUnsub = null;
+  }
+  userProfileUid = "";
+  if (userProfileLoadTimer) {
+    clearTimeout(userProfileLoadTimer);
+    userProfileLoadTimer = null;
+  }
+}
+
+function applyUserProfileData(user, data = {}) {
+  const fullName = [data.name, data.surname].filter(Boolean).join(" ").trim();
+  if (userMenuSubtitle) {
+    userMenuSubtitle.textContent = fullName ? `Sn. ${fullName}` : user.email;
+  }
+  if (userMenuFullName) {
+    userMenuFullName.textContent = fullName || "-";
+  }
+  if (userMenuPhone) {
+    userMenuPhone.textContent = data.phone || "-";
+  }
+  if (userMenuAddress) {
+    userMenuAddress.textContent = data.address || "Adres kaydı bulunamadı.";
+  }
+  if (userMenuNameInput) {
+    userMenuNameInput.value = fullName || "";
+  }
+  if (userMenuPhoneInput) {
+    userMenuPhoneInput.value = data.phone || "";
+  }
+  renderAddressList(data);
+  if (bookingNameInput && !bookingNameInput.value) {
+    bookingNameInput.value = fullName || "";
+  }
+  if (bookingPhoneInput && !bookingPhoneInput.value && data.phone) {
+    bookingPhoneInput.value = data.phone;
+  }
+}
+
+function applyCachedUserProfile(uid, fallbackEmail = "") {
+  const cached = getProfileCache(uid);
+  if (!cached) return;
+  applyUserProfileData({ uid, email: fallbackEmail || cached.email || "" }, cached);
+}
+
+function startUserProfileListener(user) {
+  if (!user?.uid || !db) return;
+  if (userProfileUid === user.uid && userProfileUnsub) return;
+
+  stopUserProfileListener();
+  userProfileUid = user.uid;
+
+  if (userMenuSubtitle) {
+    userMenuSubtitle.textContent = "Yükleniyor...";
+  }
+
+  // Avoid "stuck loading" UX: fall back to cached data quickly if Firestore read stalls/denies.
+  userProfileLoadTimer = setTimeout(() => {
+    if (userMenuSubtitle && userMenuSubtitle.textContent === "Yükleniyor...") {
+      userMenuSubtitle.textContent = user.email;
+      if (userMenuAccountStatus) {
+        userMenuAccountStatus.textContent =
+          "Bilgiler yüklenemedi. Son kayitli bilgiler gosteriliyor.";
+      }
+      applyCachedUserProfile(user.uid, user.email || "");
+    }
+  }, 1500);
+
+  const docRef = db.collection("users").doc(user.uid);
+  userProfileUnsub = docRef.onSnapshot(
+    (doc) => {
+      if (userProfileLoadTimer) {
+        clearTimeout(userProfileLoadTimer);
+        userProfileLoadTimer = null;
+      }
+      if (!doc.exists) {
+        // Document might be created slightly after auth; try creating and fall back to cache.
+        ensureUserProfile(user);
+        if (userMenuSubtitle) {
+          userMenuSubtitle.textContent = user.email;
+        }
+        applyCachedUserProfile(user.uid, user.email || "");
+        return;
+      }
+      const data = doc.data() || {};
+      setProfileCache(user.uid, {
+        email: user.email || data.email || "",
+        name: data.name || "",
+        surname: data.surname || "",
+        phone: data.phone || "",
+        address: data.address || "",
+        addressBook: Array.isArray(data.addressBook) ? data.addressBook : [],
+      });
+      if (userMenuAccountStatus) {
+        userMenuAccountStatus.textContent = "";
+      }
+      applyUserProfileData(user, data);
+    },
+    (error) => {
+      if (userProfileLoadTimer) {
+        clearTimeout(userProfileLoadTimer);
+        userProfileLoadTimer = null;
+      }
+      console.warn("user profile load failed", error);
+      if (userMenuSubtitle) {
+        userMenuSubtitle.textContent = user.email;
+      }
+      if (userMenuAccountStatus) {
+        userMenuAccountStatus.textContent =
+          "Bilgiler yüklenemedi. (Izin / baglanti problemi)";
+      }
+      applyCachedUserProfile(user.uid, user.email || "");
+    }
+  );
+}
+
 function updateUserMenuUI(user) {
   const loggedIn = Boolean(user);
   if (userMenuName) {
@@ -1786,54 +1940,9 @@ function updateUserMenuUI(user) {
     userMenuLogoutBtn.style.display = loggedIn ? "inline-flex" : "none";
   }
   if (loggedIn && user?.uid && db) {
-    db.collection("users")
-      .doc(user.uid)
-      .get()
-      .then((doc) => {
-        if (!doc.exists) {
-          if (userMenuSubtitle) {
-            userMenuSubtitle.textContent = user.email;
-          }
-          if (userMenuFullName) {
-            userMenuFullName.textContent = "-";
-          }
-          renderAddressList({});
-          return;
-        }
-        const data = doc.data() || {};
-        const fullName = [data.name, data.surname].filter(Boolean).join(" ").trim();
-        if (userMenuSubtitle) {
-          userMenuSubtitle.textContent = fullName ? `Sn. ${fullName}` : user.email;
-        }
-        if (userMenuFullName) {
-          userMenuFullName.textContent = fullName || "-";
-        }
-        if (userMenuPhone) {
-          userMenuPhone.textContent = data.phone || "-";
-        }
-        if (userMenuAddress) {
-          userMenuAddress.textContent = data.address || "Adres kaydı bulunamadı.";
-        }
-        if (userMenuNameInput) {
-          userMenuNameInput.value = fullName || "";
-        }
-        if (userMenuPhoneInput) {
-          userMenuPhoneInput.value = data.phone || "";
-        }
-        renderAddressList(data);
-        if (bookingNameInput && !bookingNameInput.value) {
-          bookingNameInput.value = fullName || "";
-        }
-        if (bookingPhoneInput && !bookingPhoneInput.value && data.phone) {
-          bookingPhoneInput.value = data.phone;
-        }
-      })
-      .catch(() => {
-        if (userMenuSubtitle) {
-          userMenuSubtitle.textContent = user.email;
-        }
-        renderAddressList({});
-      });
+    startUserProfileListener(user);
+  } else {
+    stopUserProfileListener();
   }
 }
 
@@ -2437,21 +2546,48 @@ function compactBookingForm() {
 
 function ensureUserProfile(user) {
   const docRef = db.collection("users").doc(user.uid);
+  setProfileCache(user.uid, { email: user.email || "" });
   docRef
     .get()
     .then((doc) => {
-      if (doc.exists) return;
+      if (doc.exists) {
+        return docRef.set(
+          {
+            email: user.email || "",
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          },
+          { merge: true }
+        );
+      }
       return docRef.set({
         email: user.email || "",
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
     })
-    .catch(() => {});
+    .catch(() => {
+      // If reads are not allowed by rules, still try a merge write so admin can see the user later.
+      docRef
+        .set(
+          {
+            email: user.email || "",
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          },
+          { merge: true }
+        )
+        .catch(() => {});
+    });
 }
 
 function upsertUserProfile({ uid, email, name, surname, phone, address, gender, birthdate }) {
   if (!uid) return;
+  setProfileCache(uid, {
+    email: email || "",
+    name: name || "",
+    surname: surname || "",
+    phone: phone || "",
+    address: address || "",
+  });
   db.collection("users")
     .doc(uid)
     .set(
