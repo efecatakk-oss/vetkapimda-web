@@ -584,14 +584,11 @@ if (serviceVersion) {
   updateServiceLastUpdated(Number(serviceVersion));
 }
 
-loadServiceItems();
 renderCart();
 bindServiceCards();
 initSlider();
 bindLoginGate();
-watchAuth();
 startCooldownTicker();
-loadShopProducts();
 bindShopTabs();
 bindShopSearch();
 bindHeroSearch();
@@ -605,6 +602,22 @@ bindTestimonialsToggle();
 bindUserMenu();
 bindServiceRefresh();
 bindBookingSectionView();
+
+let firestoreBootstrapped = false;
+function bootstrapFirestoreData(user) {
+  if (firestoreBootstrapped) return;
+  if (!user) return;
+  firestoreBootstrapped = true;
+
+  // Avoid empty/blank state while Firestore warms up.
+  if (catalogEl && services.length === 0) {
+    catalogEl.innerHTML = '<div class="cart-item">Fiyatlar yukleniyor...</div>';
+  }
+  loadServiceItems();
+  loadShopProducts();
+}
+
+watchAuth();
 
 (() => {
   const params = new URLSearchParams(window.location.search);
@@ -1288,6 +1301,10 @@ function watchAuth() {
       ensureAnonymousAuth();
     }
     updateLoginUI(isRealUser ? user : null);
+    // Load Firestore-backed content only after auth is ready (real or anonymous).
+    if (user) {
+      bootstrapFirestoreData(user);
+    }
   });
 }
 
@@ -2034,56 +2051,92 @@ function loadServiceItems() {
   if (serviceItemsUnsub) {
     serviceItemsUnsub();
   }
-  serviceItemsUnsub = db.collection("serviceItems")
+
+  const applySnapshot = (snapshot, metaSource = "snapshot") => {
+    let newestUpdatedMs = 0;
+    if (!snapshot || snapshot.empty) {
+      services.splice(0, services.length, ...fallbackServices);
+      renderCatalog();
+      updateServiceLastUpdated(0);
+      return;
+    }
+
+    categories.clear();
+    snapshot.forEach((doc) => {
+      const item = doc.data();
+      newestUpdatedMs = Math.max(
+        newestUpdatedMs,
+        toMillisSafe(item.updatedAt),
+        toMillisSafe(item.createdAt)
+      );
+      if (item.active === false) return;
+      const slug = item.category || "procedures";
+      if (!categories.has(slug)) {
+        const title = slug === "vaccines" ? "Evde Kopek Asilari" : "Evde Islemler";
+        categories.set(slug, { title, slug, items: [] });
+      }
+      categories.get(slug).items.push({
+        id: doc.id,
+        title: item.title,
+        price: Number(item.price || 0),
+      });
+    });
+
+    // If we already have a newer server version, avoid regressing UI with stale cache.
+    const fromCache = Boolean(snapshot.metadata && snapshot.metadata.fromCache);
+    const cachedMs = newestUpdatedMs || 0;
+    const knownMs = Number(serviceVersion || "0") || 0;
+    if (fromCache && knownMs && cachedMs && cachedMs < knownMs) {
+      updateServiceLastUpdated(knownMs);
+      return;
+    }
+
+    services.splice(0, services.length, ...Array.from(categories.values()));
+    renderCatalog();
+    updateServiceLastUpdated(newestUpdatedMs);
+    const nextVersion = newestUpdatedMs ? String(newestUpdatedMs) : "";
+    if (
+      serviceSnapshotInitialized &&
+      serviceVersion &&
+      nextVersion &&
+      serviceVersion !== nextVersion &&
+      !fromCache
+    ) {
+      showToast("Hizmet fiyatlari guncellendi.");
+      trackEvent("service_prices_updated", { source: metaSource });
+    }
+    serviceVersion = nextVersion || serviceVersion;
+    if (serviceVersion) {
+      localStorage.setItem("serviceItemsVersion", serviceVersion);
+    }
+    serviceSnapshotInitialized = true;
+  };
+
+  const fetchServerOnce = (retried = false) => {
+    return db
+      .collection("serviceItems")
+      .orderBy("order")
+      .get({ source: "server" })
+      .then((snapshot) => {
+        applySnapshot(snapshot, "server_get");
+      })
+      .catch((error) => {
+        if (error?.code === "permission-denied" && !retried) {
+          return ensureAnonymousAuth().then(() => fetchServerOnce(true));
+        }
+        // If server fetch fails, we still keep listener to recover later.
+        console.warn("serviceItems server fetch failed", error);
+      });
+  };
+
+  // Server-first: reduce browser-to-browser drift caused by stale cache/fallback.
+  fetchServerOnce();
+
+  serviceItemsUnsub = db
+    .collection("serviceItems")
     .orderBy("order")
     .onSnapshot(
-      (snapshot) => {
-        let newestUpdatedMs = 0;
-        if (snapshot.empty) {
-          services.splice(0, services.length, ...fallbackServices);
-          renderCatalog();
-          updateServiceLastUpdated(0);
-          return;
-        }
-        categories.clear();
-        snapshot.forEach((doc) => {
-          const item = doc.data();
-          newestUpdatedMs = Math.max(
-            newestUpdatedMs,
-            toMillisSafe(item.updatedAt),
-            toMillisSafe(item.createdAt)
-          );
-          if (item.active === false) return;
-          const slug = item.category || "procedures";
-          if (!categories.has(slug)) {
-            const title = slug === "vaccines" ? "Evde Kopek Asilari" : "Evde Islemler";
-            categories.set(slug, { title, slug, items: [] });
-          }
-          categories.get(slug).items.push({
-            id: doc.id,
-            title: item.title,
-            price: Number(item.price || 0),
-          });
-        });
-        services.splice(0, services.length, ...Array.from(categories.values()));
-        renderCatalog();
-        updateServiceLastUpdated(newestUpdatedMs);
-        const nextVersion = newestUpdatedMs ? String(newestUpdatedMs) : "";
-        if (
-          serviceSnapshotInitialized &&
-          serviceVersion &&
-          nextVersion &&
-          serviceVersion !== nextVersion
-        ) {
-          showToast("Hizmet fiyatlari guncellendi.");
-          trackEvent("service_prices_updated", { source: "snapshot" });
-        }
-        serviceVersion = nextVersion || serviceVersion;
-        if (serviceVersion) {
-          localStorage.setItem("serviceItemsVersion", serviceVersion);
-        }
-        serviceSnapshotInitialized = true;
-      },
+      (snapshot) => applySnapshot(snapshot, "snapshot"),
       (error) => {
         console.error("serviceItems snapshot error:", error);
         if (error?.code === "permission-denied") {
@@ -2110,24 +2163,44 @@ function loadShopProducts() {
   if (shopProductsUnsub) {
     shopProductsUnsub();
   }
-  shopProductsUnsub = db.collection("shopProducts")
+  const applySnapshot = (snapshot) => {
+    const items = [];
+    if (!snapshot || snapshot.empty) {
+      items.push(...fallbackProducts);
+    } else {
+      snapshot.forEach((doc) => {
+        const item = doc.data();
+        if (item.active === false) return;
+        items.push({ id: doc.id, ...item });
+      });
+    }
+    shopItemsCache = items;
+    refreshShopView();
+  };
+
+  const fetchServerOnce = (retried = false) => {
+    return db
+      .collection("shopProducts")
+      .where("active", "==", true)
+      .orderBy("order")
+      .get({ source: "server" })
+      .then(applySnapshot)
+      .catch((error) => {
+        if (error?.code === "permission-denied" && !retried) {
+          return ensureAnonymousAuth().then(() => fetchServerOnce(true));
+        }
+        console.warn("shopProducts server fetch failed", error);
+      });
+  };
+
+  fetchServerOnce();
+
+  shopProductsUnsub = db
+    .collection("shopProducts")
     .where("active", "==", true)
     .orderBy("order")
     .onSnapshot(
-      (snapshot) => {
-        const items = [];
-        if (snapshot.empty) {
-          items.push(...fallbackProducts);
-        } else {
-          snapshot.forEach((doc) => {
-            const item = doc.data();
-            if (item.active === false) return;
-            items.push({ id: doc.id, ...item });
-          });
-        }
-        shopItemsCache = items;
-        refreshShopView();
-      },
+      applySnapshot,
       (error) => {
         if (error?.code === "permission-denied") {
           ensureAnonymousAuth().then(() => {
