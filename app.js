@@ -101,6 +101,10 @@ const defaultAddressCard = document.getElementById("defaultAddressCard");
 const defaultAddressText = document.getElementById("defaultAddressText");
 const addressSelect = document.getElementById("addressSelect");
 const addressPicker = document.getElementById("addressPicker");
+const serviceLastUpdatedEl = document.getElementById("serviceLastUpdated");
+const refreshServiceBtn = document.getElementById("refreshServiceBtn");
+let serviceVersion = localStorage.getItem("serviceItemsVersion") || "";
+let serviceSnapshotInitialized = false;
 
 function buildAddressText(entry) {
   if (!entry) return "";
@@ -118,6 +122,33 @@ function buildAddressText(entry) {
 function getDefaultAddressEntry(list = []) {
   if (!Array.isArray(list) || !list.length) return null;
   return list.find((entry) => entry.isDefault) || list[0];
+}
+
+function toMillisSafe(value) {
+  if (!value) return 0;
+  if (typeof value.toMillis === "function") return value.toMillis();
+  if (typeof value.toDate === "function") return value.toDate().getTime();
+  if (typeof value === "number") return value;
+  if (value.seconds) return Number(value.seconds) * 1000;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+}
+
+function formatUpdateTime(ms) {
+  if (!ms) return "-";
+  const date = new Date(ms);
+  if (Number.isNaN(date.getTime())) return "-";
+  return new Intl.DateTimeFormat("tr-TR", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function updateServiceLastUpdated(ms) {
+  if (!serviceLastUpdatedEl) return;
+  serviceLastUpdatedEl.textContent = `Son guncelleme: ${formatUpdateTime(ms)}`;
 }
 
 function renderAddressList(data = {}) {
@@ -514,6 +545,10 @@ const BOOKING_RATE_LIMIT_MS = 45000;
 
 const selectedItems = new Map();
 
+if (serviceVersion) {
+  updateServiceLastUpdated(Number(serviceVersion));
+}
+
 loadServiceItems();
 renderCart();
 bindServiceCards();
@@ -533,6 +568,8 @@ bindTestimonialsToggle();
 startHeroPlaceholder();
 bindTestimonialsToggle();
 bindUserMenu();
+bindServiceRefresh();
+bindBookingSectionView();
 
 (() => {
   const params = new URLSearchParams(window.location.search);
@@ -657,7 +694,11 @@ form.addEventListener("submit", (event) => {
       bindPaymentSummary();
       localStorage.setItem("bookingLastSubmitAt", String(now));
       showStatus("Talebiniz alindi. Size en kisa surede donus yapacagiz.");
-      trackEvent("booking_submit");
+      trackEvent("booking_submit", {
+        item_count: items.length,
+        total_price: total,
+        payment_method: paymentMethod,
+      });
     })
     .catch((error) => {
       showStatus(error.message || "Bir hata olustu. Lutfen tekrar deneyin.", true);
@@ -732,6 +773,7 @@ function bindPaymentSummary() {
   const summaryEl = document.getElementById("paymentSummary");
   const radios = Array.from(document.querySelectorAll('input[name="paymentMethod"]'));
   if (!summaryEl || radios.length === 0) return;
+  let lastSelected = radios.find((radio) => radio.checked)?.value || "";
 
   const update = () => {
     radios.forEach((radio) => {
@@ -742,6 +784,10 @@ function bindPaymentSummary() {
     });
     const selected = radios.find((radio) => radio.checked)?.value;
     summaryEl.textContent = `Ödeme: ${selected || "Seçilmedi"}`;
+    if (selected && selected !== lastSelected) {
+      trackEvent("booking_payment_selected", { method: selected });
+      lastSelected = selected;
+    }
   };
 
   radios.forEach((radio) => {
@@ -749,6 +795,56 @@ function bindPaymentSummary() {
   });
 
   update();
+}
+
+function bindServiceRefresh() {
+  if (!refreshServiceBtn) return;
+  refreshServiceBtn.addEventListener("click", () => {
+    refreshServiceBtn.disabled = true;
+    refreshServiceBtn.textContent = "Yenileniyor...";
+    trackEvent("service_prices_manual_refresh");
+    db.collection("serviceItems")
+      .get({ source: "server" })
+      .then((snapshot) => {
+        let newestUpdatedMs = 0;
+        snapshot.forEach((doc) => {
+          const item = doc.data() || {};
+          newestUpdatedMs = Math.max(
+            newestUpdatedMs,
+            toMillisSafe(item.updatedAt),
+            toMillisSafe(item.createdAt)
+          );
+        });
+        updateServiceLastUpdated(newestUpdatedMs);
+        showToast("Fiyatlar yenilendi.");
+      })
+      .catch(() => {
+        showToast("Yenileme basarisiz. Tekrar deneyin.", true);
+      })
+      .finally(() => {
+        refreshServiceBtn.disabled = false;
+        refreshServiceBtn.textContent = "Fiyatlari Yenile";
+      });
+  });
+}
+
+function bindBookingSectionView() {
+  const section = document.getElementById("randevu");
+  if (!section || typeof IntersectionObserver === "undefined") return;
+  let sent = false;
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!sent && entry.isIntersecting) {
+          sent = true;
+          trackEvent("booking_section_view");
+          observer.disconnect();
+        }
+      });
+    },
+    { threshold: 0.25 }
+  );
+  observer.observe(section);
 }
 
 let lastUserMenuTarget = "menuAccount";
@@ -951,6 +1047,7 @@ function initBookingStepper() {
 
   const mql = window.matchMedia("(max-width: 720px)");
   let current = 1;
+  let lastTrackedStep = 0;
 
   const setRequired = (stepIndex) => {
     steps.forEach((step, idx) => {
@@ -984,6 +1081,10 @@ function initBookingStepper() {
       progressFill.style.width = `${pct}%`;
     }
     setRequired(current);
+    if (current !== lastTrackedStep) {
+      trackEvent("booking_step_view", { step: current });
+      lastTrackedStep = current;
+    }
   };
 
   formEl.addEventListener("click", (event) => {
@@ -994,13 +1095,21 @@ function initBookingStepper() {
       const inputs = Array.from(activeStep.querySelectorAll("input, textarea, select"));
       const invalid = inputs.find((el) => el.required && !el.checkValidity());
       if (invalid) {
+        trackEvent("booking_step_validation_error", {
+          step: current,
+          field: invalid.name || invalid.id || "unknown",
+        });
         invalid.reportValidity();
         return;
       }
+      const nextStep = Math.min(current + 1, steps.length);
+      trackEvent("booking_step_next", { from: current, to: nextStep });
       current = Math.min(current + 1, steps.length);
       update();
     }
     if (prev) {
+      const prevStep = Math.max(current - 1, 1);
+      trackEvent("booking_step_back", { from: current, to: prevStep });
       current = Math.max(current - 1, 1);
       update();
     }
@@ -1697,14 +1806,21 @@ function loadServiceItems() {
     .orderBy("order")
     .onSnapshot(
       (snapshot) => {
+        let newestUpdatedMs = 0;
         if (snapshot.empty) {
           services.splice(0, services.length, ...fallbackServices);
           renderCatalog();
+          updateServiceLastUpdated(0);
           return;
         }
         categories.clear();
         snapshot.forEach((doc) => {
           const item = doc.data();
+          newestUpdatedMs = Math.max(
+            newestUpdatedMs,
+            toMillisSafe(item.updatedAt),
+            toMillisSafe(item.createdAt)
+          );
           if (item.active === false) return;
           const slug = item.category || "procedures";
           if (!categories.has(slug)) {
@@ -1719,6 +1835,22 @@ function loadServiceItems() {
         });
         services.splice(0, services.length, ...Array.from(categories.values()));
         renderCatalog();
+        updateServiceLastUpdated(newestUpdatedMs);
+        const nextVersion = newestUpdatedMs ? String(newestUpdatedMs) : "";
+        if (
+          serviceSnapshotInitialized &&
+          serviceVersion &&
+          nextVersion &&
+          serviceVersion !== nextVersion
+        ) {
+          showToast("Hizmet fiyatlari guncellendi.");
+          trackEvent("service_prices_updated", { source: "snapshot" });
+        }
+        serviceVersion = nextVersion || serviceVersion;
+        if (serviceVersion) {
+          localStorage.setItem("serviceItemsVersion", serviceVersion);
+        }
+        serviceSnapshotInitialized = true;
       },
       (error) => {
         console.error("serviceItems snapshot error:", error);
@@ -1730,11 +1862,13 @@ function loadServiceItems() {
             }
             services.splice(0, services.length, ...fallbackServices);
             renderCatalog();
+            updateServiceLastUpdated(0);
           });
           return;
         }
         services.splice(0, services.length, ...fallbackServices);
         renderCatalog();
+        updateServiceLastUpdated(0);
       }
     );
 }
@@ -2273,12 +2407,15 @@ function renderCart() {
 function toggleItem(item) {
   if (!isLoggedIn || !isVerified) {
     showLoginGate();
+    trackEvent("booking_requires_login");
     return;
   }
   if (selectedItems.has(item.id)) {
     selectedItems.delete(item.id);
+    trackEvent("booking_service_removed", { service_id: item.id, price: item.price });
   } else {
     selectedItems.set(item.id, item);
+    trackEvent("booking_service_added", { service_id: item.id, price: item.price });
   }
   renderCatalog();
   renderCart();
