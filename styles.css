@@ -2449,12 +2449,39 @@ h4 {
   gap: 10px;
 }
 
+.auth-field {
+  display: grid;
+  gap: 6px;
+}
+
+.field-inline-error {
+  min-height: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #b42318;
+  display: none;
+}
+
+.field-inline-error.show {
+  display: block;
+}
+
+.terms-error {
+  margin-top: -4px;
+}
+
 .login-fields input {
   border: 1px solid #e0e0eb;
   border-radius: 12px;
   padding: 10px 12px;
   font-size: 14px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-fields input.is-invalid,
+.signup-fields input.is-invalid {
+  border-color: rgba(180, 35, 24, 0.65);
+  box-shadow: 0 0 0 4px rgba(180, 35, 24, 0.12);
 }
 
 .login-code {

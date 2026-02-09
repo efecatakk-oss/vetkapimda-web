@@ -49,6 +49,9 @@ const signupName = document.getElementById("signupName");
 const signupSurname = document.getElementById("signupSurname");
 const signupPhone = document.getElementById("signupPhone");
 const signupBirthdate = document.getElementById("signupBirthdate");
+const authInlineErrors = Array.from(
+  document.querySelectorAll(".field-inline-error[data-error-for]")
+);
 const userMenu = document.getElementById("userMenu");
 const userMenuTrigger = document.querySelector(".user-menu-trigger");
 const userMenuCloseButtons = document.querySelectorAll(".user-menu-close");
@@ -1209,12 +1212,15 @@ function ensureAnonymousAuth() {
 }
 
 function handleLogin() {
+  clearAuthFieldErrors();
   const email = loginEmail.value.trim().toLowerCase();
   if (loginEmail.value !== email) {
     loginEmail.value = email;
   }
   const password = loginPassword.value.trim();
   if (!email || !password) {
+    if (!email) setAuthFieldError("email", "E-posta gerekli.");
+    if (!password) setAuthFieldError("password", "Sifre gerekli.");
     setLoginStatus("E-posta ve sifre girin.", true);
     return;
   }
@@ -1241,6 +1247,7 @@ function handleLogin() {
 }
 
 function handleSignup() {
+  clearAuthFieldErrors();
   const email = loginEmail.value.trim().toLowerCase();
   if (loginEmail.value !== email) {
     loginEmail.value = email;
@@ -1253,22 +1260,29 @@ function handleSignup() {
   const gender = document.querySelector('input[name="gender"]:checked')?.value || "";
   const birthdate = signupBirthdate ? signupBirthdate.value : "";
   if (!email || !password) {
+    if (!email) setAuthFieldError("email", "E-posta gerekli.");
+    if (!password) setAuthFieldError("password", "Sifre gerekli.");
     setLoginStatus("E-posta ve sifre girin.", true);
     return;
   }
   if (passwordConfirm && password !== passwordConfirm) {
+    setAuthFieldError("passwordConfirm", "Sifreler eslesmiyor.");
     setLoginStatus("Sifreler eslesmiyor.", true);
     return;
   }
   if (!name || !surname) {
+    if (!name) setAuthFieldError("name", "Ad gerekli.");
+    if (!surname) setAuthFieldError("surname", "Soyad gerekli.");
     setLoginStatus("Ad ve soyad zorunlu.", true);
     return;
   }
   if (!phone) {
+    setAuthFieldError("phone", "Telefon gerekli.");
     setLoginStatus("Telefon zorunlu.", true);
     return;
   }
   if (acceptTerms && !acceptTerms.checked) {
+    setAuthFieldError("terms", "Devam etmek icin KVKK ve Hizmet Sartlari'ni kabul edin.");
     setLoginStatus("KVKK ve Hizmet Sartlari'ni kabul etmeniz gerekir.", true);
     return;
   }
@@ -1284,6 +1298,43 @@ function setLoginStatus(message, isError) {
     loginStatus.classList.toggle("error", isError);
   }
   showToast(message, isError);
+}
+
+function clearAuthFieldErrors() {
+  authInlineErrors.forEach((el) => el.classList.remove("show"));
+  authInlineErrors.forEach((el) => (el.textContent = ""));
+  [
+    loginEmail,
+    loginPassword,
+    loginPasswordConfirm,
+    loginCode,
+    signupName,
+    signupSurname,
+    signupPhone,
+  ]
+    .filter(Boolean)
+    .forEach((input) => input.classList.remove("is-invalid"));
+}
+
+function setAuthFieldError(key, message) {
+  const errorEl = authInlineErrors.find((el) => el.dataset.errorFor === key);
+  if (errorEl) {
+    errorEl.textContent = message;
+    errorEl.classList.add("show");
+  }
+  const inputMap = {
+    email: loginEmail,
+    password: loginPassword,
+    passwordConfirm: loginPasswordConfirm,
+    code: loginCode,
+    name: signupName,
+    surname: signupSurname,
+    phone: signupPhone,
+  };
+  const input = inputMap[key];
+  if (input) {
+    input.classList.add("is-invalid");
+  }
 }
 
 function startCooldownTicker() {
@@ -1374,6 +1425,7 @@ function handleLogout() {
 }
 
 function handleSendCode() {
+  clearAuthFieldErrors();
   if (pendingAction !== "signup") {
     setLoginStatus("Kod yalnizca uyelik icin gonderilir.", true);
     return;
@@ -1383,6 +1435,7 @@ function handleSendCode() {
     loginEmail.value = email;
   }
   if (!email) {
+    setAuthFieldError("email", "E-posta gerekli.");
     setLoginStatus("E-posta adresinizi girin.", true);
     return;
   }
@@ -1419,6 +1472,7 @@ function handleSendCode() {
 }
 
 function handleConfirmCode() {
+  clearAuthFieldErrors();
   const email = loginEmail.value.trim().toLowerCase();
   if (loginEmail.value !== email) {
     loginEmail.value = email;
@@ -1426,14 +1480,18 @@ function handleConfirmCode() {
   const password = loginPassword.value.trim();
   const code = loginCode.value.trim();
   if (!email || !code || !pendingToken) {
+    if (!email) setAuthFieldError("email", "E-posta gerekli.");
+    if (!code) setAuthFieldError("code", "Kod gerekli.");
     setLoginStatus("E-posta, kod ve gecerli token gerekli.", true);
     return;
   }
   if (!password) {
+    setAuthFieldError("password", "Sifre gerekli.");
     setLoginStatus("Sifre girin.", true);
     return;
   }
   if (pendingAction === "signup" && acceptTerms && !acceptTerms.checked) {
+    setAuthFieldError("terms", "Devam etmek icin KVKK ve Hizmet Sartlari'ni kabul edin.");
     setLoginStatus(
       "Kayit icin KVKK ve Hizmet Sartlari'ni kabul etmeniz gerekir.",
       true
@@ -1546,6 +1604,9 @@ function setCodeStage(active) {
   if (confirmCodeBtn) {
     confirmCodeBtn.disabled = !active;
   }
+  if (signupBtn) {
+    signupBtn.textContent = active ? "Uyeligini Tamamla" : "Kodu Gonder";
+  }
 }
 
 function switchLoginTab(tab) {
@@ -1555,6 +1616,7 @@ function switchLoginTab(tab) {
     loginCard.classList.toggle("signup-active", tab.dataset.tab === "signup");
   }
   pendingToken = null;
+  clearAuthFieldErrors();
   setCodeStage(false);
   if (tab.dataset.tab === "signup") {
     pendingAction = "signup";
