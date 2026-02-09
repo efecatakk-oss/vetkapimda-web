@@ -468,6 +468,11 @@ a {
   box-shadow: 0 8px 16px rgba(23, 20, 42, 0.08);
   cursor: pointer;
   text-align: left;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
 }
 
 .user-menu-list .menu-item:hover {
@@ -478,6 +483,7 @@ a {
   background: linear-gradient(135deg, #fff5ea 0%, #fff 100%);
   border-color: rgba(255, 122, 26, 0.35);
   box-shadow: 0 12px 22px rgba(255, 122, 26, 0.18);
+  transform: translateY(-1px);
 }
 
 .user-menu-list .menu-item.active .menu-icon {
@@ -500,6 +506,7 @@ a {
 
 .menu-panel.active {
   display: block;
+  animation: userPanelIn 0.22s ease;
 }
 
 .menu-panel h4 {
@@ -748,6 +755,25 @@ a {
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+@keyframes userPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .user-menu-list .menu-item,
+  .menu-panel.active {
+    transition: none;
+    animation: none;
   }
 }
 .nav-pill {
