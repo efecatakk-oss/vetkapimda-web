@@ -1225,20 +1225,41 @@ h4 {
 
 .logo-strip {
   display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
+  gap: 10px;
   align-items: center;
-  justify-content: center;
-  background: #fff;
+  justify-content: flex-start;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fcff 100%);
   border-radius: 16px;
-  padding: 14px 18px;
-  border: 1px solid rgba(27, 111, 106, 0.08);
-  box-shadow: var(--shadow);
-  font-weight: 700;
+  padding: 12px;
+  border: 1px solid rgba(27, 111, 106, 0.12);
+  box-shadow: 0 12px 24px rgba(23, 20, 42, 0.08);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.logo-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.logo-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid #e2ebf6;
+  background: #fff;
   color: var(--primary-deep);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  font-weight: 800;
   font-size: 12px;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+  box-shadow: 0 8px 18px rgba(23, 20, 42, 0.08);
+}
+
+.logo-chip i {
+  font-style: normal;
+  font-size: 14px;
 }
 
 .faq {
@@ -4586,6 +4607,24 @@ textarea {
   color: rgba(255, 255, 255, 0.9);
 }
 
+.cta-card .cta-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cta-card .meta-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .cta-card .light {
   color: #fff;
 }
@@ -4698,6 +4737,12 @@ textarea {
 
 .cta-card.sun .cta-icon {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.16));
+}
+
+.cta-card.sun .btn.primary {
+  background: linear-gradient(135deg, #0f6f6a 0%, #0c4d49 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 .cta-card.night {
