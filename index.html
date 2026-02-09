@@ -661,6 +661,29 @@
 
           <div class="booking-step" data-step="3">
             <div class="step-title">Onay</div>
+            <div class="booking-review" id="bookingReview" aria-live="polite">
+              <div class="review-head">
+                <strong>Randevu Özeti</strong>
+                <span class="review-badge">🚗 Yol ücreti yok</span>
+              </div>
+              <div class="review-body">
+                <div class="review-row">
+                  <span>Seçilen hizmet</span>
+                  <strong id="reviewItemCount">0</strong>
+                </div>
+                <ul class="review-items" id="reviewItems"></ul>
+                <div class="review-footer">
+                  <div class="review-kv">
+                    <span>Toplam</span>
+                    <strong id="reviewTotal">0 TL</strong>
+                  </div>
+                  <div class="review-kv">
+                    <span>Ödeme</span>
+                    <strong id="reviewPayment">-</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="field full">
               <label>Ödeme Yöntemi</label>
               <div class="payment-options">

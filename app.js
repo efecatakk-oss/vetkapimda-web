@@ -106,6 +106,11 @@ const addressSelect = document.getElementById("addressSelect");
 const addressPicker = document.getElementById("addressPicker");
 const serviceLastUpdatedEl = document.getElementById("serviceLastUpdated");
 const refreshServiceBtn = document.getElementById("refreshServiceBtn");
+const bookingReviewEl = document.getElementById("bookingReview");
+const reviewItemCountEl = document.getElementById("reviewItemCount");
+const reviewItemsEl = document.getElementById("reviewItems");
+const reviewTotalEl = document.getElementById("reviewTotal");
+const reviewPaymentEl = document.getElementById("reviewPayment");
 let serviceVersion = localStorage.getItem("serviceItemsVersion") || "";
 let serviceSnapshotInitialized = false;
 
@@ -776,6 +781,11 @@ function bindPaymentSummary() {
   const summaryEl = document.getElementById("paymentSummary");
   const radios = Array.from(document.querySelectorAll('input[name="paymentMethod"]'));
   if (!summaryEl || radios.length === 0) return;
+  // Defensive default: if markup changes or browser restores state without a checked radio,
+  // pick the first option so validation + UI stay consistent.
+  if (!radios.some((radio) => radio.checked)) {
+    radios[0].checked = true;
+  }
   let lastSelected = radios.find((radio) => radio.checked)?.value || "";
 
   const update = () => {
@@ -787,6 +797,7 @@ function bindPaymentSummary() {
     });
     const selected = radios.find((radio) => radio.checked)?.value;
     summaryEl.textContent = `Ödeme: ${selected || "Seçilmedi"}`;
+    updateBookingReview();
     if (selected && selected !== lastSelected) {
       trackEvent("booking_payment_selected", { method: selected });
       lastSelected = selected;
@@ -798,6 +809,56 @@ function bindPaymentSummary() {
   });
 
   update();
+}
+
+function updateBookingReview(totalOverride) {
+  if (!bookingReviewEl) return;
+  const items = Array.from(selectedItems.values());
+  const total =
+    typeof totalOverride === "number"
+      ? totalOverride
+      : items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+  const paymentMethod =
+    document.querySelector('input[name="paymentMethod"]:checked')?.value || "-";
+
+  if (reviewItemCountEl) {
+    reviewItemCountEl.textContent = String(items.length);
+  }
+  if (reviewTotalEl) {
+    reviewTotalEl.textContent = `${total} TL`;
+  }
+  if (reviewPaymentEl) {
+    reviewPaymentEl.textContent = paymentMethod;
+  }
+  if (!reviewItemsEl) return;
+
+  reviewItemsEl.innerHTML = "";
+  if (items.length === 0) {
+    const li = document.createElement("li");
+    li.className = "more";
+    li.textContent = "Henüz hizmet seçilmedi.";
+    reviewItemsEl.appendChild(li);
+    return;
+  }
+
+  const maxItems = 4;
+  items.slice(0, maxItems).forEach((item) => {
+    const li = document.createElement("li");
+    const name = document.createElement("span");
+    name.textContent = item.title || "Hizmet";
+    const price = document.createElement("span");
+    price.className = "price";
+    price.textContent = `${item.price} TL`;
+    li.appendChild(name);
+    li.appendChild(price);
+    reviewItemsEl.appendChild(li);
+  });
+  if (items.length > maxItems) {
+    const more = document.createElement("li");
+    more.className = "more";
+    more.textContent = `+${items.length - maxItems} diger hizmet`;
+    reviewItemsEl.appendChild(more);
+  }
 }
 
 function bindServiceRefresh() {
@@ -2428,6 +2489,7 @@ function renderCart() {
       navCartCountIcon.textContent = "0";
     }
     updateShopButtons();
+    updateBookingReview(0);
     return;
   }
 
@@ -2453,6 +2515,7 @@ function renderCart() {
     total += item.price;
   });
   updateBookingSummary(total, selectedItems.size);
+  updateBookingReview(total);
   cartTotalEl.textContent = `${total} TL`;
   if (cartTotalStickyEl) {
     cartTotalStickyEl.textContent = `${total} TL`;
