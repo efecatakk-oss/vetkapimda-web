@@ -325,8 +325,8 @@ a {
 }
 
 .user-menu-card {
-  background: #fff;
-  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #fffaf3 100%);
+  border-radius: 20px;
   padding: 22px;
   width: min(360px, 100%);
   box-shadow: var(--shadow);
@@ -338,30 +338,87 @@ a {
   overflow: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+  border: 1px solid rgba(255, 122, 26, 0.18);
 }
 
 .user-menu-header {
   display: flex;
   gap: 12px;
-  align-items: center;
+  align-items: flex-start;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 122, 26, 0.24);
+  background: linear-gradient(135deg, #fff6ec 0%, #ffffff 65%, #f5fbff 100%);
+  box-shadow: 0 12px 20px rgba(255, 122, 26, 0.12);
 }
 
 .user-avatar {
-  width: 42px;
-  height: 42px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  background: #fff1e1;
+  background: linear-gradient(135deg, #fff7ea 0%, #ffe7cb 100%);
   border: 2px solid #ffb14a;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
+  box-shadow: 0 10px 16px rgba(255, 122, 26, 0.2);
+}
+
+.user-menu-identity {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.user-menu-kicker {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ff7a1a;
 }
 
 .user-menu-header span {
   display: block;
   font-size: 12px;
   color: var(--muted);
+}
+
+.user-menu-header strong {
+  font-size: 22px;
+  line-height: 1.1;
+  color: #16243a;
+  margin-top: 2px;
+}
+
+.user-menu-header #userMenuSubtitle {
+  font-weight: 700;
+  color: var(--primary-deep);
+}
+
+.user-menu-header #userMenuEmail {
+  word-break: break-word;
+}
+
+.user-menu-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.user-menu-badges .badge-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(27, 111, 106, 0.22);
+  background: rgba(27, 111, 106, 0.08);
+  color: var(--primary-deep);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
 .user-menu-active {
@@ -384,6 +441,12 @@ a {
   font-weight: 700;
   background: #ffe2c2;
   color: #9d4b00;
+}
+
+.user-menu-active .active-dot {
+  font-size: 10px;
+  color: #ff7a1a;
+  text-shadow: 0 0 10px rgba(255, 122, 26, 0.45);
 }
 
 .user-menu-list {
@@ -649,6 +712,19 @@ a {
   }
   .user-menu-card {
     width: min(92vw, 420px);
+    padding: 16px;
+    border-radius: 18px;
+  }
+  .user-menu-header {
+    padding: 10px;
+    border-radius: 14px;
+  }
+  .user-menu-header strong {
+    font-size: 20px;
+  }
+  .user-menu-badges .badge-pill {
+    font-size: 9px;
+    padding: 4px 7px;
   }
   .nav {
     padding: 8px 12px;
