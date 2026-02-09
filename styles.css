@@ -4986,6 +4986,36 @@ textarea {
   animation: ctaEnter 0.5s ease forwards;
 }
 
+.cta-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.cta-card .cta-ill {
+  position: absolute;
+  z-index: 0;
+  right: -28px;
+  top: -18px;
+  width: 150px;
+  height: 150px;
+  border-radius: 44px;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.2;
+  filter: saturate(1.15) contrast(1.05);
+  transform: rotate(10deg);
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+.cta-card.teal .cta-ill {
+  background-image: url("assets/hero_cat_1.jpg");
+}
+
+.cta-card.sun .cta-ill {
+  background-image: url("assets/hero_dog_1.jpg");
+}
+
 .cta-cards .cta-card:nth-child(2) {
   animation-delay: 0.12s;
 }
