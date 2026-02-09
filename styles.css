@@ -2523,7 +2523,21 @@ h4 {
 }
 
 .login-card.signup-active.code-sent .otp-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.resend-link {
+  justify-self: center;
+  font-weight: 800;
+  color: var(--primary-deep);
+  opacity: 0.9;
+}
+
+.resend-link:hover {
+  opacity: 1;
+  text-decoration: underline;
 }
 
 .signup-only {
@@ -2622,7 +2636,7 @@ h4 {
 }
 
 .login-card.signup-active.code-sent .terms-row {
-  display: none;
+  display: flex;
 }
 
 .login-card.signup-active.code-sent #signupBtn {
@@ -2637,13 +2651,12 @@ h4 {
 .login-card.signup-active.code-sent .login-fields #loginPassword,
 .login-card.signup-active.code-sent .login-fields #loginPasswordConfirm,
 .login-card.signup-active.code-sent .signup-fields,
-.login-card.signup-active.code-sent .remember-row,
-.login-card.signup-active.code-sent .terms-row {
+.login-card.signup-active.code-sent .remember-row {
   display: none;
 }
 
 .login-card.signup-active.code-sent .signup-only {
-  display: flex;
+  display: block;
 }
 
 .signup-gender {

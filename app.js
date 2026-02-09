@@ -1719,7 +1719,7 @@ function setCodeStage(active) {
     confirmCodeBtn.disabled = !active;
   }
   if (signupBtn) {
-    signupBtn.textContent = active ? "Uyeligini Tamamla" : "Kodu Gonder";
+    signupBtn.textContent = "Uyeligini Tamamla";
   }
 }
 
@@ -1734,7 +1734,10 @@ function switchLoginTab(tab) {
   setCodeStage(false);
   if (tab.dataset.tab === "signup") {
     pendingAction = "signup";
-    setLoginStatus("Uye olmak icin e-posta/sifre girin, kodu gonderin.", false);
+    setLoginStatus(
+      "Uye olmak icin bilgileri doldurun ve Uyeligini Tamamla'ya basin.",
+      false
+    );
   } else {
     pendingAction = "login";
     setLoginStatus("", false);
