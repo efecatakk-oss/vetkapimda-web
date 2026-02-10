@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="icon" href="assets/favicon.png" type="image/png" />
-    <link rel="stylesheet" href="styles.css?v=20260209" />
+    <link rel="stylesheet" href="styles.css?v=20260210" />
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -66,6 +66,16 @@
           <a class="btn nav-cta" href="#randevu">Randevu Al</a>
           <div class="nav-utils">
             <div class="nav-icons">
+              <button
+                class="icon-btn nav-hamburger"
+                id="navHamburger"
+                type="button"
+                aria-label="Menu"
+                aria-controls="mobileNav"
+                aria-expanded="false"
+              >
+                <span class="icon-glyph" aria-hidden="true">☰</span>
+              </button>
               <a class="icon-btn cart-icon" href="#randevu" aria-label="Sepet">
                 <span class="icon-glyph" aria-hidden="true">🛒</span>
                 <span class="icon-text">Sepet</span>
@@ -90,6 +100,29 @@
           </div>
         </div>
       </nav>
+      <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+        <div class="mobile-nav-card">
+          <button class="drawer-close mobile-nav-close" type="button" aria-label="Kapat">✕</button>
+          <div class="mobile-nav-head">
+            <strong>Menü</strong>
+            <span>Hızlı erişim</span>
+          </div>
+          <div class="mobile-nav-list">
+            <a class="mobile-nav-link" href="#hizmetler">Hizmetler</a>
+            <a class="mobile-nav-link" href="#randevu">Randevu Oluştur</a>
+            <a class="mobile-nav-link" href="#shop">Shop</a>
+            <a class="mobile-nav-link" href="https://wa.me/905360340920">WhatsApp</a>
+            <a class="mobile-nav-link" href="tel:05360340920">Ara: 0536 034 09 20</a>
+            <a class="mobile-nav-link" href="#kvkk">Yetki Belgeleri</a>
+            <button class="mobile-nav-action" type="button" data-mobile-action="userMenu">Hesabım</button>
+            <button class="mobile-nav-action" type="button" data-mobile-action="login">Giriş Yap</button>
+            <button class="mobile-nav-action" type="button" data-mobile-action="signup">Üye Ol</button>
+          </div>
+          <div class="mobile-nav-foot">
+            <a class="mobile-nav-link subtle" href="/admin">Admin Panel</a>
+          </div>
+        </div>
+      </div>
 
       <div class="hero-grid">
         <div class="hero-copy">
@@ -1200,7 +1233,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=20260209"></script>
+    <script src="app.js?v=20260210"></script>
   </body>
 </html>
 

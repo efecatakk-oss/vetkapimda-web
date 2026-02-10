@@ -49,6 +49,8 @@ const signupName = document.getElementById("signupName");
 const signupSurname = document.getElementById("signupSurname");
 const signupPhone = document.getElementById("signupPhone");
 const signupBirthdate = document.getElementById("signupBirthdate");
+const navHamburger = document.getElementById("navHamburger");
+const mobileNav = document.getElementById("mobileNav");
 const authInlineErrors = Array.from(
   document.querySelectorAll(".field-inline-error[data-error-for]")
 );
@@ -609,6 +611,7 @@ bindTestimonialsToggle();
 startHeroPlaceholder();
 bindTestimonialsToggle();
 bindUserMenu();
+bindMobileNav();
 bindServiceRefresh();
 bindBookingSectionView();
 
@@ -961,6 +964,59 @@ function bindBookingSectionView() {
 }
 
 let lastUserMenuTarget = "menuAccount";
+
+function bindMobileNav() {
+  if (!mobileNav || !navHamburger) return;
+  const closeBtn = mobileNav.querySelector(".mobile-nav-close");
+
+  const show = () => {
+    mobileNav.classList.add("show");
+    mobileNav.setAttribute("aria-hidden", "false");
+    navHamburger.setAttribute("aria-expanded", "true");
+    document.body.classList.add("modal-open");
+  };
+
+  const hide = () => {
+    mobileNav.classList.remove("show");
+    mobileNav.setAttribute("aria-hidden", "true");
+    navHamburger.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("modal-open");
+  };
+
+  navHamburger.addEventListener("click", show);
+  closeBtn?.addEventListener("click", hide);
+  mobileNav.addEventListener("click", (event) => {
+    if (event.target === mobileNav) {
+      hide();
+      return;
+    }
+    const actionBtn = event.target.closest("[data-mobile-action]");
+    if (!actionBtn) return;
+    const action = actionBtn.dataset.mobileAction || "";
+    hide();
+    if (action === "userMenu") {
+      userMenuTrigger?.click();
+      return;
+    }
+    if (action === "login") {
+      showLoginGate("login");
+      return;
+    }
+    if (action === "signup") {
+      showLoginGate("signup");
+    }
+  });
+  mobileNav.querySelectorAll("a.mobile-nav-link").forEach((link) => {
+    link.addEventListener("click", () => hide());
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    if (mobileNav.classList.contains("show")) {
+      hide();
+    }
+  });
+}
 
 function bindUserMenu() {
   if (!userMenu || !userMenuTrigger) return;
