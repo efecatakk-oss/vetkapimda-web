@@ -810,10 +810,6 @@ a {
 }
 
 @media (max-width: 720px) {
-  .topbar,
-  .mobile-quicklinks {
-    display: none !important;
-  }
   .nav-center {
     justify-content: space-between;
     gap: 10px;
@@ -851,7 +847,7 @@ a {
     justify-content: flex-end;
   }
   .nav-hamburger {
-    display: inline-flex;
+    display: none;
   }
 }
 
@@ -5010,7 +5006,7 @@ textarea {
   .nav-icons {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
     order: 1;
   }
@@ -5059,6 +5055,35 @@ textarea {
     font-weight: 800;
     border-color: rgba(27, 111, 106, 0.28);
     background: linear-gradient(135deg, #ffffff 0%, #f8fcff 100%);
+  }
+  .auth-pill::before {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 10px;
+    margin-right: 8px;
+    font-size: 12px;
+    background: rgba(255, 122, 26, 0.12);
+    content: "🔑";
+  }
+  .auth-pill[data-tab="signup"]::before {
+    content: "✨";
+    background: rgba(255, 122, 26, 0.16);
+  }
+  .auth-pill[data-tab="login"] {
+    background: linear-gradient(135deg, #0f6f51 0%, #1ea58f 100%);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 12px 22px rgba(15, 111, 81, 0.22);
+  }
+  .auth-pill[data-tab="login"]::before {
+    background: rgba(255, 255, 255, 0.18);
+  }
+  .auth-pill[data-tab="signup"] {
+    border-color: rgba(255, 122, 26, 0.26);
+    background: linear-gradient(135deg, #ffffff 0%, #fff3e8 100%);
   }
   .nav-pill.nav-cart span {
     padding: 2px 6px;
