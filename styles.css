@@ -2,9 +2,11 @@
 
 :root {
   color-scheme: light;
-  --font-body: "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif;
-  --font-head: "Sora", "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif;
-  --font-brand: "Baloo 2", "Trebuchet MS", "Segoe UI", sans-serif;
+  /* Ensure emojis render consistently across platforms (Windows/Android/iOS). */
+  --font-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-body: "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif, var(--font-emoji);
+  --font-head: "Sora", "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif, var(--font-emoji);
+  --font-brand: "Baloo 2", "Trebuchet MS", "Segoe UI", sans-serif, var(--font-emoji);
   --ink: #1f1b2d;
   --muted: #5f5a72;
   --lavender: #f3f6ff;
@@ -295,6 +297,7 @@ a {
 .icon-btn .icon-glyph {
   font-size: 18px;
   line-height: 1;
+  font-family: var(--font-emoji);
 }
 
 .icon-btn .icon-text {
@@ -3506,6 +3509,8 @@ textarea {
   gap: 10px;
   min-height: 220px;
   color: #fff;
+  /* Fallback so cards never render as "white on white" if a variant background is missed. */
+  background: linear-gradient(135deg, #0f6f6a 0%, #0c4d49 100%);
   box-shadow: var(--shadow);
   position: relative;
   overflow: hidden;
@@ -3961,8 +3966,9 @@ textarea {
 }
 
 .catalog-header h3::before {
-  content: "??";
+  content: "🎯";
   font-size: 18px;
+  font-family: var(--font-emoji);
 }
 
 .catalog-header p {
@@ -4938,26 +4944,27 @@ textarea {
     justify-content: center;
     font-size: 13px;
     background: rgba(255, 122, 26, 0.12);
+    font-family: var(--font-emoji);
   }
   .mobile-quicklinks a:nth-child(1)::before {
-    content: "??";
+    content: "💬";
     background: rgba(37, 211, 102, 0.18);
   }
   .mobile-quicklinks a:nth-child(2)::before {
-    content: "??";
+    content: "📞";
     background: rgba(255, 122, 26, 0.18);
   }
   .mobile-quicklinks a:nth-child(3)::before {
-    content: "??";
+    content: "❤️";
   }
   .mobile-quicklinks a:nth-child(4)::before {
-    content: "??";
+    content: "📦";
   }
   .mobile-quicklinks a:nth-child(5)::before {
-    content: "?";
+    content: "✅";
   }
   .mobile-quicklinks a:nth-child(6)::before {
-    content: "???";
+    content: "🛠️";
   }
 
   .nav {
@@ -5069,10 +5076,11 @@ textarea {
     margin-right: 8px;
     font-size: 12px;
     background: rgba(255, 122, 26, 0.12);
-    content: "??";
+    content: "🔑";
+    font-family: var(--font-emoji);
   }
   .auth-pill[data-tab="signup"]::before {
-    content: "?";
+    content: "✨";
     background: rgba(255, 122, 26, 0.16);
   }
   .auth-pill[data-tab="login"] {
@@ -5441,11 +5449,12 @@ textarea {
 }
 
 .cta-card .cta-icon::before {
-  content: "??";
+  content: "🐾";
   position: absolute;
   bottom: -8px;
   right: -6px;
   font-size: 14px;
+  font-family: var(--font-emoji);
   filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.18));
 }
 
@@ -6355,18 +6364,19 @@ textarea {
 .booking-stepper .step-dot::after {
   content: "";
   font-size: 14px;
+  font-family: var(--font-emoji);
 }
 
 .booking-stepper .step-dot[data-step="1"]::after {
-  content: "??";
+  content: "👤";
 }
 
 .booking-stepper .step-dot[data-step="2"]::after {
-  content: "??";
+  content: "📍";
 }
 
 .booking-stepper .step-dot[data-step="3"]::after {
-  content: "?";
+  content: "✅";
 }
 
 .booking-stepper .step-dot {
