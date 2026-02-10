@@ -1969,12 +1969,21 @@ function startUserProfileListener(user) {
         userProfileLoadTimer = null;
       }
       console.warn("user profile load failed", error);
+      // Even if reads are blocked by rules, try creating/updating the doc so admin can see it later.
+      try {
+        ensureUserProfile(user);
+      } catch (_) {}
       if (userMenuSubtitle) {
         userMenuSubtitle.textContent = user.email;
       }
       if (userMenuAccountStatus) {
-        userMenuAccountStatus.textContent =
-          "Bilgiler yüklenemedi. (Izin / baglanti problemi)";
+        if (error?.code === "permission-denied") {
+          userMenuAccountStatus.textContent =
+            "Bilgiler su an okunamiyor. (Izin) Bilgileri Kaydet'e basarak profil olusturabilirsiniz.";
+        } else {
+          userMenuAccountStatus.textContent =
+            "Bilgiler su an yuklenemedi. Baglanti problemi olabilir. Bilgileri Kaydet ile devam edebilirsiniz.";
+        }
       }
       applyCachedUserProfile(user.uid, user.email || "");
     }
