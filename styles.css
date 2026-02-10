@@ -1,7 +1,10 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Sora:wght@600;700;800&display=swap");
 
 :root {
   color-scheme: light;
+  --font-body: "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-head: "Sora", "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-brand: "Baloo 2", "Trebuchet MS", "Segoe UI", sans-serif;
   --ink: #1f1b2d;
   --muted: #5f5a72;
   --lavender: #f3f6ff;
@@ -24,7 +27,7 @@ html {
 
 body {
   margin: 0;
-  font-family: "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif;
+  font-family: var(--font-body);
   color: var(--ink);
   background: radial-gradient(circle at top left, #ffffff 0%, #f7fbff 45%, #eef6f4 100%);
   overflow-x: hidden;
@@ -194,7 +197,7 @@ a {
 }
 
 .brand-mark {
-  font-family: "Baloo 2", "Trebuchet MS", "Segoe UI", sans-serif;
+  font-family: var(--font-brand);
   font-size: 54px;
   font-weight: 800;
   letter-spacing: 2.2px;
@@ -954,7 +957,7 @@ a {
 }
 
 h1 {
-  font-family: "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif;
+  font-family: var(--font-head);
   font-size: clamp(32px, 4vw, 44px);
   margin: 0 0 12px;
 }
@@ -976,7 +979,7 @@ h1 {
 h2,
 h3,
 h4 {
-  font-family: "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif;
+  font-family: var(--font-head);
   letter-spacing: -0.2px;
 }
 
@@ -985,7 +988,7 @@ h4 {
 }
 
 .brand-inline {
-  font-family: "Baloo 2", "Trebuchet MS", "Segoe UI", sans-serif;
+  font-family: var(--font-brand);
   color: #ff7a1a;
   position: relative;
   display: inline-block;
@@ -1633,7 +1636,7 @@ h4 {
 }
 
 .faq details[open] summary::after {
-  content: "â€“";
+  content: "–";
 }
 
 .faq p {
@@ -3958,7 +3961,7 @@ textarea {
 }
 
 .catalog-header h3::before {
-  content: "🎯";
+  content: "??";
   font-size: 18px;
 }
 
@@ -4831,7 +4834,7 @@ textarea {
     min-height: 90px;
   }
 
-  /* Shop grid: 480-720px iki sütun */
+  /* Shop grid: 480-720px iki s�tun */
   @media (min-width: 481px) and (max-width: 720px) {
     .shop-grid-large {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4842,7 +4845,7 @@ textarea {
     }
   }
 
-  /* 480px ve altı: tek sütun, daha kısa kart */
+  /* 480px ve alt�: tek s�tun, daha k�sa kart */
   @media (max-width: 480px) {
     .shop-grid-large {
       grid-template-columns: 1fr;
@@ -4901,7 +4904,7 @@ textarea {
     border-radius: 999px;
     box-shadow: 0 8px 16px rgba(255, 122, 26, 0.18);
   }
-  /* Sadece WhatsApp, Ara ve Admin kalsın */
+  /* Sadece WhatsApp, Ara ve Admin kals�n */
   .topbar-right a:nth-child(n + 4) {
     display: none;
   }
@@ -4937,24 +4940,24 @@ textarea {
     background: rgba(255, 122, 26, 0.12);
   }
   .mobile-quicklinks a:nth-child(1)::before {
-    content: "💬";
+    content: "??";
     background: rgba(37, 211, 102, 0.18);
   }
   .mobile-quicklinks a:nth-child(2)::before {
-    content: "📞";
+    content: "??";
     background: rgba(255, 122, 26, 0.18);
   }
   .mobile-quicklinks a:nth-child(3)::before {
-    content: "❤️";
+    content: "??";
   }
   .mobile-quicklinks a:nth-child(4)::before {
-    content: "📦";
+    content: "??";
   }
   .mobile-quicklinks a:nth-child(5)::before {
-    content: "✅";
+    content: "?";
   }
   .mobile-quicklinks a:nth-child(6)::before {
-    content: "🛠️";
+    content: "???";
   }
 
   .nav {
@@ -5066,10 +5069,10 @@ textarea {
     margin-right: 8px;
     font-size: 12px;
     background: rgba(255, 122, 26, 0.12);
-    content: "🔑";
+    content: "??";
   }
   .auth-pill[data-tab="signup"]::before {
-    content: "✨";
+    content: "?";
     background: rgba(255, 122, 26, 0.16);
   }
   .auth-pill[data-tab="login"] {
@@ -5330,7 +5333,7 @@ textarea {
 }
 
 .cta-card .cta-points li::before {
-  content: "•";
+  content: "�";
   font-size: 16px;
   line-height: 1;
   color: rgba(255, 255, 255, 0.85);
@@ -5423,7 +5426,7 @@ textarea {
 }
 
 .cta-card .cta-icon::before {
-  content: "🐾";
+  content: "??";
   position: absolute;
   bottom: -8px;
   right: -6px;
@@ -6340,15 +6343,15 @@ textarea {
 }
 
 .booking-stepper .step-dot[data-step="1"]::after {
-  content: "👤";
+  content: "??";
 }
 
 .booking-stepper .step-dot[data-step="2"]::after {
-  content: "📍";
+  content: "??";
 }
 
 .booking-stepper .step-dot[data-step="3"]::after {
-  content: "✅";
+  content: "?";
 }
 
 .booking-stepper .step-dot {
