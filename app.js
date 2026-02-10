@@ -159,6 +159,15 @@ function getDefaultAddressEntry(list = []) {
   return list.find((entry) => entry.isDefault) || list[0];
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function toMillisSafe(value) {
   if (!value) return 0;
   if (typeof value.toMillis === "function") return value.toMillis();
@@ -2016,6 +2025,7 @@ function renderCatalog() {
 
       const card = document.createElement("div");
       card.className = "service-card";
+      card.dataset.itemId = item.id;
 
       const badge = document.createElement("span");
       badge.className = `service-badge ${badgeClass}`;
@@ -2500,6 +2510,287 @@ function bindHeroSearch() {
   const heroSearch = document.querySelector(".hero-search input");
   if (!heroSearch) return;
   heroSearch.setAttribute("autocomplete", "off");
+  const heroWrap = heroSearch.closest(".hero-search");
+  const heroButton = heroWrap ? heroWrap.querySelector("button") : null;
+  const resultsEl =
+    document.getElementById("heroSearchResults") ||
+    (heroWrap ? heroWrap.querySelector(".hero-search-results") : null);
+
+  const normalizeTR = (value) => {
+    return String(value || "")
+      .toLowerCase()
+      .replace(/ı/g, "i")
+      .replace(/İ/g, "i")
+      .replace(/ş/g, "s")
+      .replace(/ğ/g, "g")
+      .replace(/ü/g, "u")
+      .replace(/ö/g, "o")
+      .replace(/ç/g, "c")
+      .replace(/\s+/g, " ")
+      .trim();
+  };
+
+  const sectionResults = () => {
+    return [
+      { kind: "section", title: "Randevu Olustur", subtitle: "Hizmet secimi ve sepet", action: { type: "hash", value: "#randevu" }, pill: "Randevu", icon: "📅" },
+      { kind: "section", title: "Hizmetler", subtitle: "Tum hizmetleri gor", action: { type: "hash", value: "#hizmetler" }, pill: "Sayfa", icon: "🩺" },
+      { kind: "section", title: "Canli Video", subtitle: "Gorusme ile hizli yonlendirme", action: { type: "hash", value: "#canli-video" }, pill: "Sayfa", icon: "🎥" },
+      { kind: "section", title: "Shop", subtitle: "Urunleri kesfet", action: { type: "hash", value: "#shop" }, pill: "Shop", icon: "🛍️" },
+      { kind: "section", title: "Sepet", subtitle: "Secilen hizmetler", action: { type: "hash", value: "#randevu" }, pill: "Sepet", icon: "🛒" },
+      { kind: "action", title: "Hesabim", subtitle: "Kullanici menusunu ac", action: { type: "userMenu" }, pill: "Hesap", icon: "👤" },
+      { kind: "action", title: "Giris Yap", subtitle: "Hesabiniza girin", action: { type: "loginGate", value: "login" }, pill: "Hesap", icon: "🔐" },
+      { kind: "action", title: "Uye Ol", subtitle: "Yeni hesap olusturun", action: { type: "loginGate", value: "signup" }, pill: "Hesap", icon: "✨" },
+    ];
+  };
+
+  const collectServiceResults = () => {
+    const flattened = [];
+    services.forEach((category) => {
+      (category.items || []).forEach((item) => {
+        flattened.push({
+          kind: "service",
+          id: item.id,
+          title: item.title || "",
+          subtitle: `${category.title || "Hizmet"} • ${Number(item.price || 0)} TL`,
+          pill: "Hizmet",
+          icon: "🩺",
+        });
+      });
+    });
+    if (!flattened.length) {
+      fallbackServices.forEach((category) => {
+        (category.items || []).forEach((item) => {
+          flattened.push({
+            kind: "service",
+            id: item.id,
+            title: item.title || "",
+            subtitle: `${category.title || "Hizmet"} • ${Number(item.price || 0)} TL`,
+            pill: "Hizmet",
+            icon: "🩺",
+          });
+        });
+      });
+    }
+    return flattened;
+  };
+
+  const collectShopResults = () => {
+    const source = shopItemsCache && shopItemsCache.length ? shopItemsCache : fallbackProducts;
+    return (source || []).map((item) => {
+      const title = item.title || "";
+      return {
+        kind: "product",
+        id: item.id || title,
+        title,
+        subtitle: `${Number(item.price || 0)} TL`,
+        pill: "Shop",
+        icon: "🛍️",
+      };
+    });
+  };
+
+  const scoreMatch = (query, text) => {
+    if (!query || !text) return 0;
+    if (text.startsWith(query)) return 3;
+    if (text.includes(query)) return 2;
+    return 0;
+  };
+
+  const buildResults = (rawQuery) => {
+    const query = normalizeTR(rawQuery);
+    if (!query || query.length < 2) return [];
+
+    const candidates = [
+      ...sectionResults(),
+      ...collectServiceResults(),
+      ...collectShopResults(),
+    ];
+
+    const scored = candidates
+      .map((item) => {
+        const hay = normalizeTR(`${item.title} ${item.subtitle || ""}`);
+        const score = scoreMatch(query, hay);
+        return { item, score };
+      })
+      .filter((row) => row.score > 0)
+      .sort((a, b) => b.score - a.score);
+
+    // Keep output small and useful.
+    const out = [];
+    const seen = new Set();
+    scored.forEach((row) => {
+      const key = `${row.item.kind}:${row.item.id || row.item.title}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      out.push(row.item);
+    });
+    return out.slice(0, 7);
+  };
+
+  const hideResults = () => {
+    if (!resultsEl) return;
+    resultsEl.classList.remove("show");
+    resultsEl.setAttribute("aria-hidden", "true");
+    resultsEl.innerHTML = "";
+  };
+
+  const renderResults = (items, query) => {
+    if (!resultsEl) return;
+    if (!items.length) {
+      resultsEl.innerHTML = `
+        <div class="result-head">
+          <span class="result-title">Arama</span>
+          <span class="result-hint">Enter: ilk sonuca git</span>
+        </div>
+        <div class="result-empty">Sonuc bulunamadi.</div>
+      `;
+      resultsEl.classList.add("show");
+      resultsEl.setAttribute("aria-hidden", "false");
+      return;
+    }
+
+    const list = items
+      .map((item, idx) => {
+        const safeTitle = escapeHtml(item.title);
+        const safeSubtitle = escapeHtml(item.subtitle || "");
+        const pill = escapeHtml(item.pill || "");
+        const icon = escapeHtml(item.icon || "🔎");
+        return `
+          <button class="result-item" type="button" data-idx="${idx}">
+            <span class="result-icon" aria-hidden="true">${icon}</span>
+            <span class="result-main">
+              <strong>${safeTitle}</strong>
+              <span>${safeSubtitle}</span>
+            </span>
+            <span class="result-pill">${pill}</span>
+          </button>
+        `;
+      })
+      .join("");
+
+    resultsEl.innerHTML = `
+      <div class="result-head">
+        <span class="result-title">Sonuclar</span>
+        <span class="result-hint">${escapeHtml(query || "")}</span>
+      </div>
+      <div class="result-list" role="listbox">${list}</div>
+    `;
+    resultsEl.classList.add("show");
+    resultsEl.setAttribute("aria-hidden", "false");
+  };
+
+  const scrollToServiceItem = (itemId) => {
+    const bookingSection = document.getElementById("randevu");
+    bookingSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Wait for layout + possible async render.
+    setTimeout(() => {
+      const esc = window.CSS && typeof window.CSS.escape === "function"
+        ? window.CSS.escape(itemId)
+        : String(itemId).replace(/["\\]/g, "");
+      const card = document.querySelector(`.service-card[data-item-id="${esc}"]`);
+      if (!card) return;
+      card.classList.add("is-highlight");
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => card.classList.remove("is-highlight"), 1800);
+    }, 220);
+  };
+
+  const openSearchResult = (item) => {
+    if (!item) return;
+    hideResults();
+    stopHeroPlaceholder();
+    trackEvent("hero_search_select", { kind: item.kind || "", title: item.title || "" });
+
+    if (item.kind === "service") {
+      scrollToServiceItem(item.id);
+      return;
+    }
+
+    if (item.kind === "product") {
+      const shopSection = document.getElementById("shop");
+      shopSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Also apply query to shop search so user sees matching items.
+      const shopSearch = document.querySelector(".shop-search input");
+      if (shopSearch) {
+        shopSearch.value = item.title || heroSearch.value || "";
+        shopSearch.dataset.userModified = "true";
+        refreshShopView();
+      }
+      return;
+    }
+
+    if (item.action?.type === "hash") {
+      const target = document.querySelector(item.action.value);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        window.location.hash = item.action.value;
+      }
+      return;
+    }
+
+    if (item.action?.type === "userMenu") {
+      userMenuTrigger?.click();
+      return;
+    }
+
+    if (item.action?.type === "loginGate") {
+      showLoginGate(item.action.value);
+      return;
+    }
+  };
+
+  const runSearch = () => {
+    const query = heroSearch.value.trim();
+    const items = buildResults(query);
+    renderResults(items, query);
+    if (!items.length) {
+      showToast("Sonuc bulunamadi.", true);
+      return;
+    }
+    openSearchResult(items[0]);
+  };
+
+  // Click outside should close result list.
+  document.addEventListener("click", (evt) => {
+    if (!resultsEl || !resultsEl.classList.contains("show")) return;
+    const within = heroWrap && (heroWrap === evt.target || heroWrap.contains(evt.target));
+    if (!within) hideResults();
+  });
+
+  resultsEl?.addEventListener("click", (evt) => {
+    const btn = evt.target.closest(".result-item");
+    if (!btn) return;
+    const idx = Number(btn.dataset.idx || "0");
+    const query = heroSearch.value.trim();
+    const items = buildResults(query);
+    openSearchResult(items[idx]);
+  });
+
+  heroSearch.addEventListener("keydown", (evt) => {
+    if (evt.key === "Escape") {
+      hideResults();
+      return;
+    }
+    if (evt.key === "Enter") {
+      evt.preventDefault();
+      runSearch();
+    }
+  });
+
+  heroButton?.addEventListener("click", () => runSearch());
+
+  heroSearch.addEventListener("input", () => {
+    heroSearch.dataset.userModified = "true";
+    const query = heroSearch.value.trim();
+    if (!query) {
+      hideResults();
+      return;
+    }
+    const items = buildResults(query);
+    renderResults(items, query);
+  });
+
   const clearEmail = () => {
     if (heroSearch.value.includes("@")) {
       heroSearch.value = "";
@@ -2514,9 +2805,6 @@ function bindHeroSearch() {
     }
     stopHeroPlaceholder();
     heroSearch.dataset.userActive = "true";
-  });
-  heroSearch.addEventListener("input", () => {
-    heroSearch.dataset.userModified = "true";
   });
   heroSearch.addEventListener("blur", () => {
     heroSearch.dataset.userActive = "";
