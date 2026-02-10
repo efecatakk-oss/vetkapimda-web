@@ -850,10 +850,6 @@ a {
     width: auto;
     justify-content: flex-end;
   }
-  .nav-cta,
-  .nav-pill.auth-pill {
-    display: none;
-  }
   .nav-hamburger {
     display: inline-flex;
   }
@@ -5014,7 +5010,7 @@ textarea {
   .nav-icons {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
     order: 1;
   }
