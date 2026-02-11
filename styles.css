@@ -127,6 +127,23 @@ a {
   border-radius: 999px;
   font-size: 12px;
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-quicklinks a .mq-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 122, 26, 0.14);
+  color: #8a3f00;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
 .topbar-icon {
@@ -295,9 +312,17 @@ a {
 }
 
 .icon-btn .icon-glyph {
-  font-size: 18px;
-  line-height: 1;
-  font-family: var(--font-emoji);
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn .icon-glyph svg {
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
 .icon-btn .icon-text {
@@ -5001,24 +5026,19 @@ textarea {
     background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
     box-shadow: 0 10px 18px rgba(20, 30, 60, 0.08);
   }
-  .mobile-quicklinks a::before {
-    content: attr(data-symbol);
+  .mobile-quicklinks a .mq-icon {
     width: 26px;
     height: 26px;
     border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    background: rgba(255, 122, 26, 0.12);
-    font-family: var(--font-body);
-    font-weight: 800;
+    font-size: 11px;
   }
-  .mobile-quicklinks a[href*="wa.me"]::before {
-    background: rgba(37, 211, 102, 0.18);
+  .mobile-quicklinks a[href*="wa.me"] .mq-icon {
+    background: rgba(37, 211, 102, 0.2);
+    color: #0f6f51;
   }
-  .mobile-quicklinks a[href^="tel:"]::before {
-    background: rgba(255, 122, 26, 0.18);
+  .mobile-quicklinks a[href^="tel:"] .mq-icon {
+    background: rgba(255, 122, 26, 0.2);
+    color: #8a3f00;
   }
 
   .nav {
@@ -6604,20 +6624,30 @@ body.keyboard-open {
 
 .support-hub .cta-card {
   display: grid !important;
-  align-content: space-between;
+  align-content: start;
   min-height: 220px !important;
   height: auto !important;
   border-radius: 20px !important;
   padding: 18px !important;
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border: 1px solid rgba(27, 111, 106, 0.15) !important;
+  background-color: #f5f9ff !important;
+  background-image:
+    radial-gradient(120px 120px at 18% 16%, rgba(255, 255, 255, 0.55) 0%, transparent 60%),
+    radial-gradient(180px 180px at 92% 70%, rgba(255, 255, 255, 0.3) 0%, transparent 70%),
+    linear-gradient(135deg, #f5f9ff 0%, #ebf5ff 100%) !important;
+  color: #17314c !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.support-hub .cta-card.teal {
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
   background-color: #0f6f6a !important;
   background-image:
     radial-gradient(120px 120px at 18% 16%, rgba(255, 255, 255, 0.22) 0%, transparent 60%),
     radial-gradient(180px 180px at 92% 70%, rgba(255, 255, 255, 0.12) 0%, transparent 70%),
     linear-gradient(135deg, #0f6f6a 0%, #0c4d49 100%) !important;
   color: #ffffff !important;
-  visibility: visible !important;
-  opacity: 1 !important;
 }
 
 .support-hub .cta-card.sun {
@@ -6626,6 +6656,8 @@ body.keyboard-open {
     radial-gradient(120px 120px at 18% 16%, rgba(255, 255, 255, 0.25) 0%, transparent 60%),
     radial-gradient(180px 180px at 92% 72%, rgba(255, 255, 255, 0.16) 0%, transparent 70%),
     linear-gradient(135deg, #ff9f1c 0%, #ff7a1a 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
 }
 
 .support-hub .cta-card h3,
@@ -6634,9 +6666,20 @@ body.keyboard-open {
 .support-hub .cta-card .cta-points li,
 .support-hub .cta-card .meta-pill,
 .support-hub .cta-card .btn {
-  color: #ffffff !important;
+  color: inherit !important;
   visibility: visible !important;
   opacity: 1 !important;
+}
+
+.support-hub .cta-card .meta-pill {
+  background: rgba(255, 255, 255, 0.78) !important;
+  border-color: rgba(23, 49, 76, 0.2) !important;
+}
+
+.support-hub .cta-card.teal .meta-pill,
+.support-hub .cta-card.sun .meta-pill {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.38) !important;
 }
 
 @media (max-width: 900px) {

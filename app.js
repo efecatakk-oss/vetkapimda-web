@@ -702,9 +702,8 @@ bindBookingSectionView();
 bindCheckoutActions();
 
 let firestoreBootstrapped = false;
-function bootstrapFirestoreData(user) {
+function bootstrapFirestoreData() {
   if (firestoreBootstrapped) return;
-  if (!user) return;
   firestoreBootstrapped = true;
 
   // Avoid empty/blank state while Firestore warms up.
@@ -715,6 +714,7 @@ function bootstrapFirestoreData(user) {
   loadShopProducts();
 }
 
+bootstrapFirestoreData();
 watchAuth();
 
 (() => {
@@ -1527,6 +1527,9 @@ function stopHeroPlaceholder() {
 
 function watchAuth() {
   auth.onAuthStateChanged((user) => {
+    // Keep public catalog streams alive regardless of auth state.
+    bootstrapFirestoreData();
+
     const isRealUser = Boolean(user && !user.isAnonymous);
     isLoggedIn = isRealUser;
     if (user && isRealUser && !isEmailVerified(user.email)) {
@@ -1543,10 +1546,6 @@ function watchAuth() {
       ensureAnonymousAuth();
     }
     updateLoginUI(isRealUser ? user : null);
-    // Load Firestore-backed content only after auth is ready (real or anonymous).
-    if (user) {
-      bootstrapFirestoreData(user);
-    }
   });
 }
 
