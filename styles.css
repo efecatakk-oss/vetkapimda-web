@@ -898,6 +898,31 @@ a {
   min-height: 38px;
 }
 
+.auth-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.auth-pill .auth-pill-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 122, 26, 0.14);
+  color: currentColor;
+  flex: 0 0 auto;
+}
+
+.auth-pill .auth-pill-icon svg {
+  width: 12px;
+  height: 12px;
+  display: block;
+}
+
 .nav-cart {
   display: inline-flex;
   align-items: center;
@@ -3271,6 +3296,26 @@ label {
   color: var(--muted);
 }
 
+.step-hint {
+  grid-column: 1 / -1;
+  display: none;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 122, 26, 0.28);
+  background: linear-gradient(135deg, #fff8f1 0%, #fff3e7 100%);
+  color: #9a4f1f;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.step-hint.show {
+  display: block;
+}
+
+.step-hint strong {
+  font-size: 12.5px;
+}
+
 input,
 select,
 textarea {
@@ -5075,28 +5120,32 @@ textarea {
     border-color: rgba(27, 111, 106, 0.28);
     background: linear-gradient(135deg, #ffffff 0%, #f8fcff 100%);
   }
-  .auth-pill::before {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  .auth-pill .auth-pill-icon {
     width: 22px;
     height: 22px;
     border-radius: 10px;
     margin-right: 8px;
-    font-size: 12px;
-    background: rgba(255, 122, 26, 0.12);
-    content: attr(data-symbol);
-    font-family: var(--font-body);
-    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 122, 26, 0.14);
+    color: currentColor;
   }
-  .auth-pill[data-tab="signup"]::before { background: rgba(255, 122, 26, 0.16); }
+  .auth-pill .auth-pill-icon svg {
+    width: 13px;
+    height: 13px;
+    display: block;
+  }
+  .auth-pill[data-tab="signup"] .auth-pill-icon {
+    background: rgba(255, 122, 26, 0.2);
+  }
   .auth-pill[data-tab="login"] {
     background: linear-gradient(135deg, #0f6f51 0%, #1ea58f 100%);
     color: #fff;
     border-color: transparent;
     box-shadow: 0 12px 22px rgba(15, 111, 81, 0.22);
   }
-  .auth-pill[data-tab="login"]::before {
+  .auth-pill[data-tab="login"] .auth-pill-icon {
     background: rgba(255, 255, 255, 0.18);
   }
   .auth-pill[data-tab="signup"] {

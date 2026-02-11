@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="icon" href="assets/favicon.png" type="image/png" />
-    <link rel="stylesheet" href="styles.css?v=20260211-4" />
+    <link rel="stylesheet" href="styles.css?v=20260211-5" />
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -91,10 +91,22 @@
             <a class="nav-pill nav-cart hide-mobile" href="#randevu">
               Sepet <span id="navCartCount">0</span>
             </a>
-            <button class="nav-pill auth-pill login-trigger" data-tab="login" data-symbol="GY" type="button">
+            <button class="nav-pill auth-pill login-trigger" data-tab="login" type="button">
+              <span class="auth-pill-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img" focusable="false">
+                  <circle cx="8.5" cy="12" r="2.2" fill="none" stroke="currentColor" stroke-width="2" />
+                  <path d="M10.5 12h8M15.5 12v-2M18.5 12v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  <path d="M4.5 14.5v3h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+              </span>
               Giris Yap
             </button>
-            <button class="nav-pill auth-pill login-trigger" data-tab="signup" data-symbol="UO" type="button">
+            <button class="nav-pill auth-pill login-trigger" data-tab="signup" type="button">
+              <span class="auth-pill-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img" focusable="false">
+                  <path d="M12 3l1.7 3.8L18 8.5l-3.3 2.9.8 4.3L12 13.8 8.5 15.7l.8-4.3L6 8.5l4.3-1.7L12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                </svg>
+              </span>
               Uye Ol
             </button>
           </div>
@@ -682,6 +694,7 @@
               </div>
               <small class="field-help">Telefonla hızlıca dönüş yapıyoruz.</small>
             </div>
+            <div id="bookingStepHint" class="step-hint" role="status" aria-live="polite"></div>
             <div class="step-actions">
               <button type="button" class="btn primary next-step">Devam Et</button>
             </div>
@@ -1237,7 +1250,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=20260211-4"></script>
+    <script src="app.js?v=20260211-5"></script>
   </body>
 </html>
 

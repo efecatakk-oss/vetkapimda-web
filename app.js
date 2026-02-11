@@ -103,6 +103,7 @@ let editingAddressIndex = null;
 const bookingNameInput = document.getElementById("name");
 const bookingPhoneInput = document.getElementById("phone");
 const bookingAddressInput = document.getElementById("address");
+const bookingStepHintEl = document.getElementById("bookingStepHint");
 const defaultAddressCard = document.getElementById("defaultAddressCard");
 const defaultAddressText = document.getElementById("defaultAddressText");
 const addressSelect = document.getElementById("addressSelect");
@@ -1364,6 +1365,9 @@ function initBookingStepper() {
       const activeStep = steps[current - 1];
       const inputs = Array.from(activeStep.querySelectorAll("input, textarea, select"));
       const invalid = inputs.find((el) => el.required && !el.checkValidity());
+      if (current === 1) {
+        renderStepOneHint(getMissingStepOneFields());
+      }
       if (invalid) {
         trackEvent("booking_step_validation_error", {
           step: current,
@@ -1375,6 +1379,9 @@ function initBookingStepper() {
       const nextStep = Math.min(current + 1, steps.length);
       trackEvent("booking_step_next", { from: current, to: nextStep });
       current = Math.min(current + 1, steps.length);
+      if (current > 1) {
+        renderStepOneHint([]);
+      }
       update();
     }
     if (prev) {
@@ -1403,15 +1410,43 @@ function goToBookingFlow(step = 1) {
   section?.scrollIntoView({ behavior: "smooth", block: "start" });
   window.dispatchEvent(new CustomEvent("vk:booking-go", { detail: { step } }));
   if (step === 1) {
+    const missing = getMissingStepOneFields();
+    renderStepOneHint(missing);
     setTimeout(() => {
-      if (!bookingNameInput) return;
+      const target = missing[0]?.el || bookingNameInput;
+      if (!target) return;
       try {
-        bookingNameInput.focus({ preventScroll: true });
+        target.focus({ preventScroll: true });
       } catch (_) {
-        bookingNameInput.focus();
+        target.focus();
       }
     }, 260);
   }
+}
+
+function getMissingStepOneFields() {
+  const required = [
+    { el: bookingNameInput, label: "Ad Soyad" },
+    { el: bookingPhoneInput, label: "Telefon" },
+  ];
+  return required.filter((item) => {
+    const el = item.el;
+    if (!el) return false;
+    const value = (el.value || "").trim();
+    return !value || !el.checkValidity();
+  });
+}
+
+function renderStepOneHint(missing) {
+  if (!bookingStepHintEl) return;
+  if (!missing || missing.length === 0) {
+    bookingStepHintEl.classList.remove("show");
+    bookingStepHintEl.textContent = "";
+    return;
+  }
+  const labels = missing.map((item) => item.label).join(", ");
+  bookingStepHintEl.classList.add("show");
+  bookingStepHintEl.innerHTML = `<strong>Devam etmeden once:</strong> ${labels} alanini doldurun.`;
 }
 
 function bindCheckoutActions() {
@@ -1433,6 +1468,13 @@ function bindCheckoutActions() {
       return;
     }
     goToBookingFlow(1);
+  });
+
+  [bookingNameInput, bookingPhoneInput].forEach((inputEl) => {
+    if (!inputEl) return;
+    const refresh = () => renderStepOneHint(getMissingStepOneFields());
+    inputEl.addEventListener("input", refresh);
+    inputEl.addEventListener("blur", refresh);
   });
 }
 
