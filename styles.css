@@ -4935,7 +4935,7 @@ textarea {
     box-shadow: 0 10px 18px rgba(20, 30, 60, 0.08);
   }
   .mobile-quicklinks a::before {
-    content: "";
+    content: attr(data-symbol);
     width: 26px;
     height: 26px;
     border-radius: 10px;
@@ -4947,25 +4947,11 @@ textarea {
     font-family: var(--font-body);
     font-weight: 800;
   }
-  .mobile-quicklinks a:nth-child(1)::before {
-    content: "WA";
+  .mobile-quicklinks a[href*="wa.me"]::before {
     background: rgba(37, 211, 102, 0.18);
   }
-  .mobile-quicklinks a:nth-child(2)::before {
-    content: "AR";
+  .mobile-quicklinks a[href^="tel:"]::before {
     background: rgba(255, 122, 26, 0.18);
-  }
-  .mobile-quicklinks a:nth-child(3)::before {
-    content: "FV";
-  }
-  .mobile-quicklinks a:nth-child(4)::before {
-    content: "SP";
-  }
-  .mobile-quicklinks a:nth-child(5)::before {
-    content: "YK";
-  }
-  .mobile-quicklinks a:nth-child(6)::before {
-    content: "AD";
   }
 
   .nav {
@@ -5077,14 +5063,11 @@ textarea {
     margin-right: 8px;
     font-size: 12px;
     background: rgba(255, 122, 26, 0.12);
-    content: "G";
+    content: attr(data-symbol);
     font-family: var(--font-body);
     font-weight: 800;
   }
-  .auth-pill[data-tab="signup"]::before {
-    content: "U";
-    background: rgba(255, 122, 26, 0.16);
-  }
+  .auth-pill[data-tab="signup"]::before { background: rgba(255, 122, 26, 0.16); }
   .auth-pill[data-tab="login"] {
     background: linear-gradient(135deg, #0f6f51 0%, #1ea58f 100%);
     color: #fff;
@@ -5479,13 +5462,15 @@ textarea {
 }
 
 .cta-card .cta-icon::before {
-  content: "\1F43E";
+  content: "";
   position: absolute;
   bottom: -8px;
   right: -6px;
-  font-size: 14px;
-  font-family: var(--font-emoji);
-  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.18));
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 640px) {
@@ -6538,5 +6523,54 @@ body.keyboard-open {
 .keyboard-open .whatsapp-float {
   opacity: 0 !important;
   pointer-events: none !important;
+}
+
+/* Final safety net for support cards on desktop Chrome / in-app webviews */
+.support-hub .cta-cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.support-hub .cta-card {
+  display: grid !important;
+  align-content: space-between;
+  min-height: 220px !important;
+  height: auto !important;
+  border-radius: 20px !important;
+  padding: 18px !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  background-color: #0f6f6a !important;
+  background-image:
+    radial-gradient(120px 120px at 18% 16%, rgba(255, 255, 255, 0.22) 0%, transparent 60%),
+    radial-gradient(180px 180px at 92% 70%, rgba(255, 255, 255, 0.12) 0%, transparent 70%),
+    linear-gradient(135deg, #0f6f6a 0%, #0c4d49 100%) !important;
+  color: #ffffff !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.support-hub .cta-card.sun {
+  background-color: #ff8f1f !important;
+  background-image:
+    radial-gradient(120px 120px at 18% 16%, rgba(255, 255, 255, 0.25) 0%, transparent 60%),
+    radial-gradient(180px 180px at 92% 72%, rgba(255, 255, 255, 0.16) 0%, transparent 70%),
+    linear-gradient(135deg, #ff9f1c 0%, #ff7a1a 100%) !important;
+}
+
+.support-hub .cta-card h3,
+.support-hub .cta-card .eyebrow,
+.support-hub .cta-card .lede,
+.support-hub .cta-card .cta-points li,
+.support-hub .cta-card .meta-pill,
+.support-hub .cta-card .btn {
+  color: #ffffff !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 900px) {
+  .support-hub .cta-cards {
+    grid-template-columns: 1fr !important;
+  }
 }
 

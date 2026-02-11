@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="icon" href="assets/favicon.png" type="image/png" />
-    <link rel="stylesheet" href="styles.css?v=20260211-2" />
+    <link rel="stylesheet" href="styles.css?v=20260211-3" />
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -38,8 +38,8 @@
           <span>7/24 Destek • Hızlı Randevu Onayı</span>
         </div>
         <div class="topbar-right">
-          <a href="https://www.facebook.com/" class="topbar-icon" aria-label="Facebook" target="_blank" rel="noopener noreferrer">ⓕ</a>
-          <a href="https://www.instagram.com/vetkapiimda/" class="topbar-icon" aria-label="Instagram" target="_blank" rel="noopener noreferrer">◎</a>
+          <a href="https://www.facebook.com/" class="topbar-icon" aria-label="Facebook" target="_blank" rel="noopener noreferrer">FB</a>
+          <a href="https://www.instagram.com/vetkapiimda/" class="topbar-icon" aria-label="Instagram" target="_blank" rel="noopener noreferrer">IG</a>
           <a href="https://wa.me/905360340920" class="topbar-link">🟢 WhatsApp</a>
           <a href="tel:05360340920" class="topbar-link">📞 0536 034 09 20</a>
           <a href="#kvkk" class="topbar-link">Yetki Belgeleri</a>
@@ -47,12 +47,12 @@
         </div>
       </div>
       <div class="mobile-quicklinks">
-        <a href="https://wa.me/905360340920">WhatsApp</a>
-        <a href="tel:05360340920">Ara</a>
-        <a href="#shop">Favoriler</a>
-        <a href="#shop">Siparis Takip</a>
-        <a href="#kvkk">Yetki Belgeleri</a>
-        <a href="/admin">Admin Panel</a>
+        <a href="https://wa.me/905360340920" data-symbol="WA">WhatsApp</a>
+        <a href="tel:05360340920" data-symbol="AR">Ara</a>
+        <a href="#shop" data-symbol="FV">Favoriler</a>
+        <a href="#shop" data-symbol="SP">Siparis Takip</a>
+        <a href="#kvkk" data-symbol="YK">Yetki Belgeleri</a>
+        <a href="/admin" data-symbol="AD">Admin Panel</a>
       </div>
       <div class="hero-blob blob-left"></div>
       <div class="hero-blob blob-right"></div>
@@ -91,10 +91,10 @@
             <a class="nav-pill nav-cart hide-mobile" href="#randevu">
               Sepet <span id="navCartCount">0</span>
             </a>
-            <button class="nav-pill auth-pill login-trigger" data-tab="login" type="button">
+            <button class="nav-pill auth-pill login-trigger" data-tab="login" data-symbol="GY" type="button">
               Giris Yap
             </button>
-            <button class="nav-pill auth-pill login-trigger" data-tab="signup" type="button">
+            <button class="nav-pill auth-pill login-trigger" data-tab="signup" data-symbol="UO" type="button">
               Uye Ol
             </button>
           </div>
@@ -1233,7 +1233,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=20260211-2"></script>
+    <script src="app.js?v=20260211-3"></script>
   </body>
 </html>
 
