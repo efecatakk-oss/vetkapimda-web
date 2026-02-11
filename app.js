@@ -18,6 +18,7 @@ const catalogEl = document.getElementById("serviceCatalog");
 const cartEl = document.getElementById("cartSummary");
 const cartTotalEl = document.getElementById("cartTotal");
 const cartTotalStickyEl = document.getElementById("cartTotalSticky");
+const cartCheckoutBtn = document.getElementById("cartCheckoutBtn");
 const navCartCount = document.getElementById("navCartCount");
 const navCartCountIcon = document.getElementById("navCartCountIcon");
 const slides = document.querySelectorAll(".slider-track .slide");
@@ -697,6 +698,7 @@ bindUserMenu();
 bindMobileNav();
 bindServiceRefresh();
 bindBookingSectionView();
+bindCheckoutActions();
 
 let firestoreBootstrapped = false;
 function bootstrapFirestoreData(user) {
@@ -1348,6 +1350,13 @@ function initBookingStepper() {
     }
   };
 
+  const goToStep = (step) => {
+    const parsed = Number(step);
+    if (!Number.isFinite(parsed)) return;
+    current = Math.min(Math.max(1, parsed), steps.length);
+    update();
+  };
+
   formEl.addEventListener("click", (event) => {
     const next = event.target.closest(".next-step");
     const prev = event.target.closest(".prev-step");
@@ -1381,7 +1390,50 @@ function initBookingStepper() {
     update();
   });
 
+  window.addEventListener("vk:booking-go", (event) => {
+    const target = Number(event?.detail?.step || 1);
+    goToStep(target);
+  });
+
   update();
+}
+
+function goToBookingFlow(step = 1) {
+  const section = document.getElementById("randevu");
+  section?.scrollIntoView({ behavior: "smooth", block: "start" });
+  window.dispatchEvent(new CustomEvent("vk:booking-go", { detail: { step } }));
+  if (step === 1) {
+    setTimeout(() => {
+      if (!bookingNameInput) return;
+      try {
+        bookingNameInput.focus({ preventScroll: true });
+      } catch (_) {
+        bookingNameInput.focus();
+      }
+    }, 260);
+  }
+}
+
+function bindCheckoutActions() {
+  cartCheckoutBtn?.addEventListener("click", () => {
+    if (selectedItems.size === 0) {
+      showToast("Once hizmet secin.", true);
+      return;
+    }
+    goToBookingFlow(1);
+  });
+
+  const summaryEl = document.getElementById("bookingSummary");
+  summaryEl?.addEventListener("click", (event) => {
+    const btn = event.target.closest('[data-booking-action="checkout"]');
+    if (!btn) return;
+    event.preventDefault();
+    if (selectedItems.size === 0) {
+      showToast("Once hizmet secin.", true);
+      return;
+    }
+    goToBookingFlow(1);
+  });
 }
 
 function startHeroPlaceholder() {
@@ -3155,6 +3207,10 @@ function renderCart() {
     if (navCartCountIcon) {
       navCartCountIcon.textContent = "0";
     }
+    if (cartCheckoutBtn) {
+      cartCheckoutBtn.disabled = true;
+      cartCheckoutBtn.textContent = "Siparisi Tamamla";
+    }
     updateShopButtons();
     updateBookingReview(0);
     return;
@@ -3192,6 +3248,10 @@ function renderCart() {
   }
   if (navCartCountIcon) {
     navCartCountIcon.textContent = String(selectedItems.size);
+  }
+  if (cartCheckoutBtn) {
+    cartCheckoutBtn.disabled = false;
+    cartCheckoutBtn.textContent = `Siparisi Tamamla (${selectedItems.size})`;
   }
   updateShopButtons();
 }
@@ -3258,6 +3318,7 @@ function updateBookingSummary(total, count) {
   el.innerHTML = `
     <span class="summary-text">${count} kalem</span>
     <span class="summary-pill">${total} TL</span>
+    <button class="btn primary summary-action summary-checkout" data-booking-action="checkout" type="button">Siparisi Tamamla</button>
     <a class="btn ghost summary-action" href="#serviceCatalog">Hizmet Ekle</a>
   `;
 }
