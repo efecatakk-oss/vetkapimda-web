@@ -162,6 +162,76 @@ function bindMobileKeyboardGuard() {
 
 bindMobileKeyboardGuard();
 
+function normalizeQuickLinkIcons() {
+  const iconByHref = [
+    { match: "wa.me", icon: "WA" },
+    { match: "tel:", icon: "AR" },
+    { match: "/admin", icon: "AD" },
+    { match: "#kvkk", icon: "YB" },
+    { match: "favori", icon: "FV" },
+    { match: "shop", icon: "SP" },
+  ];
+  document.querySelectorAll(".mobile-quicklinks a").forEach((link) => {
+    const href = String(link.getAttribute("href") || "").toLowerCase();
+    const match = iconByHref.find((item) => href.includes(item.match));
+    const iconText = match ? match.icon : "VK";
+    let iconEl = link.querySelector(".mq-icon");
+    if (!iconEl) {
+      iconEl = document.createElement("span");
+      iconEl.className = "mq-icon";
+      iconEl.setAttribute("aria-hidden", "true");
+      link.prepend(iconEl);
+    }
+    iconEl.textContent = iconText;
+    link.classList.add("runtime-icon-ready");
+    link.setAttribute("data-symbol", iconText);
+  });
+}
+
+function normalizeAuthPillIcons() {
+  document.querySelectorAll(".auth-pill").forEach((pill) => {
+    const fallbackGlyph = pill.dataset.tab === "signup" ? "U" : "G";
+    let iconEl = pill.querySelector(".auth-pill-icon");
+    if (!iconEl) {
+      iconEl = document.createElement("span");
+      iconEl.className = "auth-pill-icon";
+      iconEl.setAttribute("aria-hidden", "true");
+      pill.prepend(iconEl);
+    }
+    if (!iconEl.querySelector("svg")) {
+      iconEl.textContent = fallbackGlyph;
+    }
+  });
+}
+
+function hardenSupportCards() {
+  const cards = Array.from(document.querySelectorAll(".support-hub .cta-card"));
+  if (!cards.length) return;
+  cards.forEach((card) => {
+    const isTeal = card.classList.contains("teal");
+    const isSun = card.classList.contains("sun");
+    card.style.display = "grid";
+    card.style.visibility = "visible";
+    card.style.opacity = "1";
+    card.style.minHeight = "220px";
+    if (isTeal) {
+      card.style.background =
+        "radial-gradient(120px 120px at 18% 16%, rgba(255,255,255,.22) 0%, transparent 60%), radial-gradient(180px 180px at 92% 70%, rgba(255,255,255,.12) 0%, transparent 70%), linear-gradient(135deg,#0f6f6a 0%,#0c4d49 100%)";
+      card.style.color = "#fff";
+    } else if (isSun) {
+      card.style.background =
+        "radial-gradient(120px 120px at 18% 16%, rgba(255,255,255,.25) 0%, transparent 60%), radial-gradient(180px 180px at 92% 72%, rgba(255,255,255,.16) 0%, transparent 70%), linear-gradient(135deg,#ff9f1c 0%,#ff7a1a 100%)";
+      card.style.color = "#fff";
+    }
+    card
+      .querySelectorAll("h3, .eyebrow, .lede, .cta-points li, .meta-pill, .btn")
+      .forEach((el) => {
+        el.style.opacity = "1";
+        el.style.visibility = "visible";
+      });
+  });
+}
+
 function getProfileCacheMap() {
   try {
     return JSON.parse(localStorage.getItem(PROFILE_CACHE_KEY) || "{}");
@@ -700,6 +770,10 @@ bindMobileNav();
 bindServiceRefresh();
 bindBookingSectionView();
 bindCheckoutActions();
+normalizeQuickLinkIcons();
+normalizeAuthPillIcons();
+hardenSupportCards();
+window.addEventListener("resize", hardenSupportCards);
 
 let firestoreBootstrapped = false;
 function bootstrapFirestoreData() {
@@ -2239,8 +2313,16 @@ function serviceMessage(items) {
 }
 
 function renderCatalog() {
+  if (!catalogEl) return;
+  if (!services.length) {
+    const cached = getServiceCache();
+    const seed = cached.length ? cached : fallbackServices;
+    services.splice(0, services.length, ...seed);
+  }
   catalogEl.innerHTML = "";
+  let renderedCount = 0;
   services.forEach((category) => {
+    if (!category || !Array.isArray(category.items) || !category.items.length) return;
     const wrapper = document.createElement("div");
     wrapper.className = "category";
     wrapper.dataset.category = category.slug;
@@ -2293,11 +2375,15 @@ function renderCatalog() {
       card.appendChild(price);
       card.appendChild(button);
       grid.appendChild(card);
+      renderedCount += 1;
     });
 
     wrapper.appendChild(grid);
     catalogEl.appendChild(wrapper);
   });
+  if (!renderedCount) {
+    catalogEl.innerHTML = '<div class="cart-item">Hizmetler guncelleniyor...</div>';
+  }
 }
 
 function loadServiceItems() {
@@ -2493,8 +2579,9 @@ function loadShopProducts() {
 }
 
 function renderShopProducts(items) {
+  const list = Array.isArray(items) && items.length ? items : fallbackProducts;
   shopGrid.innerHTML = "";
-  items.forEach((item) => {
+  list.forEach((item) => {
     const card = document.createElement("article");
     card.className = "product-card";
     const hasId = Boolean(item.id);
@@ -2569,7 +2656,7 @@ function renderProductSlider(items) {
   slider.innerHTML = "";
   dots.innerHTML = "";
 
-  const list = items.slice(0, 10);
+  const list = (Array.isArray(items) && items.length ? items : fallbackProducts).slice(0, 10);
   const pages = [];
   for (let i = 0; i < list.length; i += 2) {
     pages.push(list.slice(i, i + 2));
@@ -2713,7 +2800,7 @@ function matchesShopFilter(item, filter) {
 
 function refreshShopView() {
   if (!shopGrid) return;
-  const filtered = applyShopFilter(shopItemsCache);
+  let filtered = applyShopFilter(shopItemsCache);
   if (!filtered.length && shopItemsCache.length && activeShopFilter !== "all") {
     const fallbackTab =
       Array.from(shopTabs).find((tab) => tab.dataset.filter === "kedi") ||
@@ -2722,6 +2809,12 @@ function refreshShopView() {
       setActiveShopTab(fallbackTab);
       return;
     }
+  }
+  if (!filtered.length && shopItemsCache.length) {
+    filtered = [...shopItemsCache];
+  }
+  if (!filtered.length) {
+    filtered = [...fallbackProducts];
   }
   renderShopProducts(filtered);
   renderProductSlider(filtered);

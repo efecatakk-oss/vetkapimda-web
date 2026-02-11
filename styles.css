@@ -146,6 +146,11 @@ a {
   letter-spacing: 0.02em;
 }
 
+.mobile-quicklinks a.runtime-icon-ready::before {
+  content: none !important;
+  display: none !important;
+}
+
 .topbar-icon {
   width: 24px;
   height: 24px;
@@ -940,6 +945,8 @@ a {
   background: rgba(255, 122, 26, 0.14);
   color: currentColor;
   flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 800;
 }
 
 .auth-pill .auth-pill-icon svg {
