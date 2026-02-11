@@ -1639,7 +1639,7 @@ h4 {
 }
 
 .faq details[open] summary::after {
-  content: "–";
+  content: "-";
 }
 
 .faq p {
@@ -3966,7 +3966,7 @@ textarea {
 }
 
 .catalog-header h3::before {
-  content: "🎯";
+  content: "\1F3AF";
   font-size: 18px;
   font-family: var(--font-emoji);
 }
@@ -4840,7 +4840,7 @@ textarea {
     min-height: 90px;
   }
 
-  /* Shop grid: 480-720px iki s�tun */
+  /* Shop grid: 480-720px iki sutun */
   @media (min-width: 481px) and (max-width: 720px) {
     .shop-grid-large {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4851,7 +4851,7 @@ textarea {
     }
   }
 
-  /* 480px ve alt�: tek s�tun, daha k�sa kart */
+  /* 480px ve alti: tek sutun, daha kisa kart */
   @media (max-width: 480px) {
     .shop-grid-large {
       grid-template-columns: 1fr;
@@ -4910,7 +4910,7 @@ textarea {
     border-radius: 999px;
     box-shadow: 0 8px 16px rgba(255, 122, 26, 0.18);
   }
-  /* Sadece WhatsApp, Ara ve Admin kals�n */
+  /* Sadece WhatsApp, Ara ve Admin kalsin */
   .topbar-right a:nth-child(n + 4) {
     display: none;
   }
@@ -4947,24 +4947,24 @@ textarea {
     font-family: var(--font-emoji);
   }
   .mobile-quicklinks a:nth-child(1)::before {
-    content: "💬";
+    content: "\1F4AC";
     background: rgba(37, 211, 102, 0.18);
   }
   .mobile-quicklinks a:nth-child(2)::before {
-    content: "📞";
+    content: "\1F4DE";
     background: rgba(255, 122, 26, 0.18);
   }
   .mobile-quicklinks a:nth-child(3)::before {
-    content: "❤️";
+    content: "\2764\FE0F";
   }
   .mobile-quicklinks a:nth-child(4)::before {
-    content: "📦";
+    content: "\1F4E6";
   }
   .mobile-quicklinks a:nth-child(5)::before {
-    content: "✅";
+    content: "\2705";
   }
   .mobile-quicklinks a:nth-child(6)::before {
-    content: "🛠️";
+    content: "\1F6E0\FE0F";
   }
 
   .nav {
@@ -5076,11 +5076,11 @@ textarea {
     margin-right: 8px;
     font-size: 12px;
     background: rgba(255, 122, 26, 0.12);
-    content: "🔑";
+    content: "\1F511";
     font-family: var(--font-emoji);
   }
   .auth-pill[data-tab="signup"]::before {
-    content: "✨";
+    content: "\2728";
     background: rgba(255, 122, 26, 0.16);
   }
   .auth-pill[data-tab="login"] {
@@ -5383,7 +5383,7 @@ textarea {
 }
 
 .cta-card .cta-points li::before {
-  content: "�";
+  content: "\2022";
   font-size: 16px;
   line-height: 1;
   color: rgba(255, 255, 255, 0.85);
@@ -5476,7 +5476,7 @@ textarea {
 }
 
 .cta-card .cta-icon::before {
-  content: "🐾";
+  content: "\1F43E";
   position: absolute;
   bottom: -8px;
   right: -6px;
@@ -6395,15 +6395,15 @@ textarea {
 }
 
 .booking-stepper .step-dot[data-step="1"]::after {
-  content: "👤";
+  content: "\1F464";
 }
 
 .booking-stepper .step-dot[data-step="2"]::after {
-  content: "📍";
+  content: "\1F4CD";
 }
 
 .booking-stepper .step-dot[data-step="3"]::after {
-  content: "✅";
+  content: "\2705";
 }
 
 .booking-stepper .step-dot {
@@ -6439,3 +6439,65 @@ textarea {
   margin-left: auto;
   z-index: 2;
 }
+
+/* Support hub rendering hardening (desktop + mobile) */
+.support-hub .cta-cards {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  align-items: stretch;
+}
+
+.support-hub .cta-card {
+  min-height: 0 !important;
+  height: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background-color: #0f6f6a;
+  background-image:
+    radial-gradient(120px 120px at 18% 16%, rgba(255, 255, 255, 0.22) 0%, transparent 60%),
+    radial-gradient(180px 180px at 92% 70%, rgba(255, 255, 255, 0.12) 0%, transparent 70%),
+    linear-gradient(135deg, #0f6f6a 0%, #0c4d49 100%);
+}
+
+.support-hub .cta-card.sun {
+  background-color: #ff8f1f;
+  background-image:
+    radial-gradient(120px 120px at 18% 16%, rgba(255, 255, 255, 0.25) 0%, transparent 60%),
+    radial-gradient(180px 180px at 92% 72%, rgba(255, 255, 255, 0.16) 0%, transparent 70%),
+    linear-gradient(135deg, #ff9f1c 0%, #ff7a1a 100%);
+}
+
+.support-hub .cta-card > * {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+@media (max-width: 900px) {
+  .support-hub .cta-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* In-app browser / iOS webview horizontal shift guard */
+html,
+body {
+  max-width: 100%;
+}
+
+html.in-app-browser,
+body.in-app-browser {
+  overflow-x: hidden !important;
+}
+
+.in-app-browser .hero,
+.in-app-browser main,
+.in-app-browser .section,
+.in-app-browser .nav,
+.in-app-browser .login-card,
+.in-app-browser .user-menu-card,
+.in-app-browser .mobile-nav-card {
+  max-width: 100%;
+  overflow-x: clip;
+}
+

@@ -115,10 +115,21 @@ const reviewTotalEl = document.getElementById("reviewTotal");
 const reviewPaymentEl = document.getElementById("reviewPayment");
 let serviceVersion = localStorage.getItem("serviceItemsVersion") || "";
 let serviceSnapshotInitialized = false;
+const SERVICE_CACHE_KEY = "vk_service_items_cache_v1";
 const PROFILE_CACHE_KEY = "vk_profile_cache_v1";
 let userProfileUnsub = null;
 let userProfileUid = "";
 let userProfileLoadTimer = null;
+
+function markInAppBrowser() {
+  const ua = navigator.userAgent || "";
+  const isInApp = /(Instagram|FBAN|FBAV|FB_IAB|Line\/|; wv\)|WebView)/i.test(ua);
+  if (!isInApp) return;
+  document.documentElement.classList.add("in-app-browser");
+  document.body.classList.add("in-app-browser");
+}
+
+markInAppBrowser();
 
 function getProfileCacheMap() {
   try {
@@ -195,6 +206,49 @@ function formatUpdateTime(ms) {
 function updateServiceLastUpdated(ms) {
   if (!serviceLastUpdatedEl) return;
   serviceLastUpdatedEl.textContent = `Son guncelleme: ${formatUpdateTime(ms)}`;
+}
+
+function getServiceCache() {
+  try {
+    const raw = localStorage.getItem(SERVICE_CACHE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (category) =>
+        category &&
+        typeof category.title === "string" &&
+        Array.isArray(category.items)
+    );
+  } catch (_) {
+    return [];
+  }
+}
+
+function setServiceCache(categories = []) {
+  if (!Array.isArray(categories) || categories.length === 0) return;
+  try {
+    localStorage.setItem(SERVICE_CACHE_KEY, JSON.stringify(categories));
+  } catch (_) {
+    // Ignore quota errors.
+  }
+}
+
+function applyServiceCategories(categories = []) {
+  services.splice(0, services.length, ...categories);
+  renderCatalog();
+}
+
+function applyServiceFallback() {
+  const cached = getServiceCache();
+  if (cached.length) {
+    applyServiceCategories(cached);
+    const cachedVersion = Number(serviceVersion || "0") || 0;
+    updateServiceLastUpdated(cachedVersion);
+    return;
+  }
+  applyServiceCategories(fallbackServices);
+  updateServiceLastUpdated(0);
 }
 
 function renderAddressList(data = {}) {
@@ -458,7 +512,7 @@ function setDefaultAddress(index) {
     });
 }
 
-// Mobile-first UX: show booking section above shop on small screens, keep desktop sÄ±rayÄ± koru.
+// Mobile-first UX: show booking section above shop on small screens, keep desktop order.
 (() => {
   const mainEl = document.querySelector("main");
   const booking = document.getElementById("randevu");
@@ -472,7 +526,7 @@ function setDefaultAddress(index) {
     if (isMobile && !bookingBeforeShop) {
       mainEl.insertBefore(booking, shop);
     } else if (!isMobile && bookingBeforeShop) {
-      // MasaÃ¼stÃ¼nde eski sÄ±rayÄ± geri getir (shop, sonra booking)
+      // Restore desktop order (shop, then booking).
       mainEl.insertBefore(shop, booking);
     }
   };
@@ -2130,12 +2184,15 @@ function loadServiceItems() {
     serviceItemsUnsub();
   }
 
+  // Paint immediately from local cache/fallback so catalog never appears empty.
+  if (services.length === 0) {
+    applyServiceFallback();
+  }
+
   const applySnapshot = (snapshot, metaSource = "snapshot") => {
     let newestUpdatedMs = 0;
     if (!snapshot || snapshot.empty) {
-      services.splice(0, services.length, ...fallbackServices);
-      renderCatalog();
-      updateServiceLastUpdated(0);
+      applyServiceFallback();
       return;
     }
 
@@ -2160,19 +2217,16 @@ function loadServiceItems() {
       });
     });
 
-    // If we already have a newer server version, avoid regressing UI with stale cache.
     const fromCache = Boolean(snapshot.metadata && snapshot.metadata.fromCache);
-    const cachedMs = newestUpdatedMs || 0;
     const knownMs = Number(serviceVersion || "0") || 0;
-    if (fromCache && knownMs && cachedMs && cachedMs < knownMs) {
-      updateServiceLastUpdated(knownMs);
-      return;
-    }
+    const resolvedMs = Math.max(newestUpdatedMs || 0, knownMs);
+    const nextVersion = resolvedMs ? String(resolvedMs) : "";
+    const nextCategories = Array.from(categories.values());
 
-    services.splice(0, services.length, ...Array.from(categories.values()));
-    renderCatalog();
-    updateServiceLastUpdated(newestUpdatedMs);
-    const nextVersion = newestUpdatedMs ? String(newestUpdatedMs) : "";
+    applyServiceCategories(nextCategories);
+    updateServiceLastUpdated(resolvedMs);
+    setServiceCache(nextCategories);
+
     if (
       serviceSnapshotInitialized &&
       serviceVersion &&
@@ -2204,6 +2258,9 @@ function loadServiceItems() {
         }
         // If server fetch fails, we still keep listener to recover later.
         console.warn("serviceItems server fetch failed", error);
+        if (services.length === 0) {
+          applyServiceFallback();
+        }
       });
   };
 
@@ -2223,15 +2280,11 @@ function loadServiceItems() {
               loadServiceItems();
               return;
             }
-            services.splice(0, services.length, ...fallbackServices);
-            renderCatalog();
-            updateServiceLastUpdated(0);
+            applyServiceFallback();
           });
           return;
         }
-        services.splice(0, services.length, ...fallbackServices);
-        renderCatalog();
-        updateServiceLastUpdated(0);
+        applyServiceFallback();
       }
     );
 }
