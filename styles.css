@@ -4944,27 +4944,28 @@ textarea {
     justify-content: center;
     font-size: 13px;
     background: rgba(255, 122, 26, 0.12);
-    font-family: var(--font-emoji);
+    font-family: var(--font-body);
+    font-weight: 800;
   }
   .mobile-quicklinks a:nth-child(1)::before {
-    content: "\1F4AC";
+    content: "WA";
     background: rgba(37, 211, 102, 0.18);
   }
   .mobile-quicklinks a:nth-child(2)::before {
-    content: "\1F4DE";
+    content: "AR";
     background: rgba(255, 122, 26, 0.18);
   }
   .mobile-quicklinks a:nth-child(3)::before {
-    content: "\2764\FE0F";
+    content: "FV";
   }
   .mobile-quicklinks a:nth-child(4)::before {
-    content: "\1F4E6";
+    content: "SP";
   }
   .mobile-quicklinks a:nth-child(5)::before {
-    content: "\2705";
+    content: "YK";
   }
   .mobile-quicklinks a:nth-child(6)::before {
-    content: "\1F6E0\FE0F";
+    content: "AD";
   }
 
   .nav {
@@ -5076,11 +5077,12 @@ textarea {
     margin-right: 8px;
     font-size: 12px;
     background: rgba(255, 122, 26, 0.12);
-    content: "\1F511";
-    font-family: var(--font-emoji);
+    content: "G";
+    font-family: var(--font-body);
+    font-weight: 800;
   }
   .auth-pill[data-tab="signup"]::before {
-    content: "\2728";
+    content: "U";
     background: rgba(255, 122, 26, 0.16);
   }
   .auth-pill[data-tab="login"] {
@@ -5180,6 +5182,7 @@ textarea {
   }
 
   .sticky-cta { position: fixed; left: 12px; right: 12px; bottom: 16px; display: none; z-index: 70; pointer-events: none; gap: 0; flex-direction: row; justify-content: space-between; align-items: center; }
+}
 
 .whatsapp-float { display: none !important; }
 @media (max-width: 720px) {
@@ -5623,6 +5626,7 @@ textarea {
   }
 }
 
+@media (max-width: 720px) {
   .shop-tabs {
     margin: 8px 0 16px;
     padding: 8px 8px;
@@ -6168,7 +6172,7 @@ textarea {
     padding: 6px;
   }
   .shop-search input {
-    font-size: 14px;
+    font-size: 16px;
   }
   .shop-search button {
     padding: 6px 12px;
@@ -6499,5 +6503,40 @@ body.in-app-browser {
 .in-app-browser .mobile-nav-card {
   max-width: 100%;
   overflow-x: clip;
+}
+
+/* Mobile keyboard and in-app focus guards */
+@media (max-width: 900px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  input,
+  textarea,
+  select,
+  .hero-search input,
+  .shop-search input,
+  .login-fields input,
+  .signup-fields input,
+  .input-wrap input,
+  .input-wrap textarea,
+  .menu-form input,
+  .menu-form textarea,
+  .address-picker select {
+    font-size: 16px !important;
+  }
+}
+
+html.keyboard-open,
+body.keyboard-open {
+  overflow-x: hidden !important;
+}
+
+.keyboard-open .sticky-cta,
+.keyboard-open .sticky-icon-wrap,
+.keyboard-open .whatsapp-float {
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 

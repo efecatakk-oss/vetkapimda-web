@@ -126,10 +126,39 @@ function markInAppBrowser() {
   const isInApp = /(Instagram|FBAN|FBAV|FB_IAB|Line\/|; wv\)|WebView)/i.test(ua);
   if (!isInApp) return;
   document.documentElement.classList.add("in-app-browser");
-  document.body.classList.add("in-app-browser");
+  if (document.body) {
+    document.body.classList.add("in-app-browser");
+  } else {
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => document.body && document.body.classList.add("in-app-browser"),
+      { once: true }
+    );
+  }
 }
 
 markInAppBrowser();
+
+function bindMobileKeyboardGuard() {
+  if (!window.visualViewport) return;
+  const root = document.documentElement;
+  const update = () => {
+    const active = document.activeElement;
+    const isFormTarget =
+      active &&
+      ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName) &&
+      !active.readOnly;
+    const keyboardHeight = window.innerHeight - window.visualViewport.height;
+    root.classList.toggle("keyboard-open", Boolean(isFormTarget && keyboardHeight > 110));
+  };
+  window.visualViewport.addEventListener("resize", update);
+  window.visualViewport.addEventListener("scroll", update);
+  document.addEventListener("focusin", update);
+  document.addEventListener("focusout", () => setTimeout(update, 120));
+  update();
+}
+
+bindMobileKeyboardGuard();
 
 function getProfileCacheMap() {
   try {
@@ -2210,10 +2239,12 @@ function loadServiceItems() {
         const title = slug === "vaccines" ? "Evde Kopek Asilari" : "Evde Islemler";
         categories.set(slug, { title, slug, items: [] });
       }
+      const orderValue = Number(item.order);
       categories.get(slug).items.push({
         id: doc.id,
         title: item.title,
         price: Number(item.price || 0),
+        order: Number.isFinite(orderValue) ? orderValue : 9999,
       });
     });
 
@@ -2221,7 +2252,27 @@ function loadServiceItems() {
     const knownMs = Number(serviceVersion || "0") || 0;
     const resolvedMs = Math.max(newestUpdatedMs || 0, knownMs);
     const nextVersion = resolvedMs ? String(resolvedMs) : "";
-    const nextCategories = Array.from(categories.values());
+    const categoryRank = { procedures: 0, vaccines: 1 };
+    const nextCategories = Array.from(categories.values())
+      .map((category) => ({
+        ...category,
+        items: [...(category.items || [])].sort((a, b) => {
+          const orderDiff = Number(a.order || 9999) - Number(b.order || 9999);
+          if (orderDiff !== 0) return orderDiff;
+          return String(a.title || "").localeCompare(String(b.title || ""), "tr");
+        }),
+      }))
+      .sort((a, b) => {
+        const aRank = categoryRank[a.slug] ?? 99;
+        const bRank = categoryRank[b.slug] ?? 99;
+        if (aRank !== bRank) return aRank - bRank;
+        return String(a.title || "").localeCompare(String(b.title || ""), "tr");
+      });
+    const hasVisibleItems = nextCategories.some((category) => (category.items || []).length > 0);
+    if (!hasVisibleItems) {
+      applyServiceFallback();
+      return;
+    }
 
     applyServiceCategories(nextCategories);
     updateServiceLastUpdated(resolvedMs);
@@ -2247,7 +2298,6 @@ function loadServiceItems() {
   const fetchServerOnce = (retried = false) => {
     return db
       .collection("serviceItems")
-      .orderBy("order")
       .get({ source: "server" })
       .then((snapshot) => {
         applySnapshot(snapshot, "server_get");
@@ -2269,7 +2319,6 @@ function loadServiceItems() {
 
   serviceItemsUnsub = db
     .collection("serviceItems")
-    .orderBy("order")
     .onSnapshot(
       (snapshot) => applySnapshot(snapshot, "snapshot"),
       (error) => {
@@ -2650,14 +2699,14 @@ function bindHeroSearch() {
 
   const sectionResults = () => {
     return [
-      { kind: "section", title: "Randevu Olustur", subtitle: "Hizmet secimi ve sepet", action: { type: "hash", value: "#randevu" }, pill: "Randevu", icon: "📅" },
-      { kind: "section", title: "Hizmetler", subtitle: "Tum hizmetleri gor", action: { type: "hash", value: "#hizmetler" }, pill: "Sayfa", icon: "🩺" },
-      { kind: "section", title: "Canli Video", subtitle: "Gorusme ile hizli yonlendirme", action: { type: "hash", value: "#canli-video" }, pill: "Sayfa", icon: "🎥" },
-      { kind: "section", title: "Shop", subtitle: "Urunleri kesfet", action: { type: "hash", value: "#shop" }, pill: "Shop", icon: "🛍️" },
-      { kind: "section", title: "Sepet", subtitle: "Secilen hizmetler", action: { type: "hash", value: "#randevu" }, pill: "Sepet", icon: "🛒" },
-      { kind: "action", title: "Hesabim", subtitle: "Kullanici menusunu ac", action: { type: "userMenu" }, pill: "Hesap", icon: "👤" },
-      { kind: "action", title: "Giris Yap", subtitle: "Hesabiniza girin", action: { type: "loginGate", value: "login" }, pill: "Hesap", icon: "🔐" },
-      { kind: "action", title: "Uye Ol", subtitle: "Yeni hesap olusturun", action: { type: "loginGate", value: "signup" }, pill: "Hesap", icon: "✨" },
+      { kind: "section", title: "Randevu Olustur", subtitle: "Hizmet secimi ve sepet", action: { type: "hash", value: "#randevu" }, pill: "Randevu", icon: "R" },
+      { kind: "section", title: "Hizmetler", subtitle: "Tum hizmetleri gor", action: { type: "hash", value: "#hizmetler" }, pill: "Sayfa", icon: "H" },
+      { kind: "section", title: "Canli Video", subtitle: "Gorusme ile hizli yonlendirme", action: { type: "hash", value: "#canli-video" }, pill: "Sayfa", icon: "V" },
+      { kind: "section", title: "Shop", subtitle: "Urunleri kesfet", action: { type: "hash", value: "#shop" }, pill: "Shop", icon: "S" },
+      { kind: "section", title: "Sepet", subtitle: "Secilen hizmetler", action: { type: "hash", value: "#randevu" }, pill: "Sepet", icon: "K" },
+      { kind: "action", title: "Hesabim", subtitle: "Kullanici menusunu ac", action: { type: "userMenu" }, pill: "Hesap", icon: "U" },
+      { kind: "action", title: "Giris Yap", subtitle: "Hesabiniza girin", action: { type: "loginGate", value: "login" }, pill: "Hesap", icon: "G" },
+      { kind: "action", title: "Uye Ol", subtitle: "Yeni hesap olusturun", action: { type: "loginGate", value: "signup" }, pill: "Hesap", icon: "+" },
     ];
   };
 
@@ -2671,7 +2720,7 @@ function bindHeroSearch() {
           title: item.title || "",
           subtitle: `${category.title || "Hizmet"} • ${Number(item.price || 0)} TL`,
           pill: "Hizmet",
-          icon: "🩺",
+          icon: "H",
         });
       });
     });
@@ -2684,7 +2733,7 @@ function bindHeroSearch() {
             title: item.title || "",
             subtitle: `${category.title || "Hizmet"} • ${Number(item.price || 0)} TL`,
             pill: "Hizmet",
-            icon: "🩺",
+            icon: "H",
           });
         });
       });
@@ -2702,7 +2751,7 @@ function bindHeroSearch() {
         title,
         subtitle: `${Number(item.price || 0)} TL`,
         pill: "Shop",
-        icon: "🛍️",
+        icon: "S",
       };
     });
   };
@@ -2772,7 +2821,7 @@ function bindHeroSearch() {
         const safeTitle = escapeHtml(item.title);
         const safeSubtitle = escapeHtml(item.subtitle || "");
         const pill = escapeHtml(item.pill || "");
-        const icon = escapeHtml(item.icon || "🔎");
+        const icon = escapeHtml(item.icon || "A");
         return `
           <button class="result-item" type="button" data-idx="${idx}">
             <span class="result-icon" aria-hidden="true">${icon}</span>
