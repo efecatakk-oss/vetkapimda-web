@@ -5248,6 +5248,9 @@ textarea {
     radial-gradient(120px 120px at 18% 16%, rgba(255, 255, 255, 0.22) 0%, transparent 60%),
     radial-gradient(180px 180px at 92% 70%, rgba(255, 255, 255, 0.12) 0%, transparent 70%),
     linear-gradient(135deg, #0f6f6a 0%, #0c4d49 100%);
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .support-hub .cta-card:nth-child(2) {
@@ -5255,6 +5258,30 @@ textarea {
     radial-gradient(120px 120px at 18% 16%, rgba(255, 255, 255, 0.25) 0%, transparent 60%),
     radial-gradient(180px 180px at 92% 72%, rgba(255, 255, 255, 0.16) 0%, transparent 70%),
     linear-gradient(135deg, #ff9f1c 0%, #ff7a1a 100%);
+}
+
+/* Force variant backgrounds so desktop Chrome never falls back to blank cards. */
+.support-hub .cta-card.teal {
+  background:
+    radial-gradient(120px 120px at 18% 16%, rgba(255, 255, 255, 0.22) 0%, transparent 60%),
+    radial-gradient(180px 180px at 92% 70%, rgba(255, 255, 255, 0.12) 0%, transparent 70%),
+    linear-gradient(135deg, #0f6f6a 0%, #0c4d49 100%) !important;
+}
+
+.support-hub .cta-card.sun {
+  background:
+    radial-gradient(120px 120px at 18% 16%, rgba(255, 255, 255, 0.25) 0%, transparent 60%),
+    radial-gradient(180px 180px at 92% 72%, rgba(255, 255, 255, 0.16) 0%, transparent 70%),
+    linear-gradient(135deg, #ff9f1c 0%, #ff7a1a 100%) !important;
+}
+
+.support-hub .cta-card h3,
+.support-hub .cta-card .lede,
+.support-hub .cta-card .eyebrow,
+.support-hub .cta-card .cta-points li,
+.support-hub .cta-card .meta-pill,
+.support-hub .cta-card .btn.ghost.light {
+  color: #fff !important;
 }
 
 .cta-card {
