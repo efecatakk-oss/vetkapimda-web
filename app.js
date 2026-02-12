@@ -163,18 +163,21 @@ function bindMobileKeyboardGuard() {
 bindMobileKeyboardGuard();
 
 function normalizeQuickLinkIcons() {
-  const iconByHref = [
-    { match: "wa.me", emoji: "&#x1F4AC;" },
-    { match: "tel:", emoji: "&#x1F4DE;" },
-    { match: "/admin", emoji: "&#x1F6E0;&#xFE0F;" },
-    { match: "#kvkk", emoji: "&#x2705;" },
-    { match: "favori", emoji: "&#x1F496;" },
-    { match: "shop", emoji: "&#x1F4E6;" },
-  ];
+  const pickEmoji = (href, label) => {
+    const safeHref = String(href || "").toLowerCase();
+    const safeLabel = String(label || "").toLowerCase();
+    if (safeLabel.includes("whatsapp") || safeHref.includes("wa.me")) return "&#x1F4AC;";
+    if (safeLabel.includes("ara") || safeHref.indexOf("tel:") === 0) return "&#x1F4DE;";
+    if (safeLabel.includes("favor")) return "&#x1F497;";
+    if (safeLabel.includes("siparis")) return "&#x1F4E6;";
+    if (safeLabel.includes("yetki")) return "&#x2705;";
+    if (safeLabel.includes("admin") || safeHref.includes("/admin")) return "&#x2699;&#xFE0F;";
+    return "&#x2728;";
+  };
   document.querySelectorAll(".mobile-quicklinks a").forEach((link) => {
     const href = String(link.getAttribute("href") || "").toLowerCase();
-    const match = iconByHref.find((item) => href.includes(item.match));
-    const iconEmoji = match?.emoji || "&#x2728;";
+    const label = String(link.textContent || "");
+    const iconEmoji = pickEmoji(href, label);
     let iconEl = link.querySelector(".mq-icon");
     if (!iconEl) {
       iconEl = document.createElement("span");
@@ -201,6 +204,14 @@ function normalizeAuthPillIcons() {
       ? '<span class="auth-emoji" aria-hidden="true">&#x2728;</span>'
       : '<span class="auth-emoji" aria-hidden="true">&#x1F511;</span>';
   });
+}
+
+function safeInit(label, handler) {
+  try {
+    handler();
+  } catch (error) {
+    console.error(`[init] ${label} failed`, error);
+  }
 }
 
 function ensureSupportCards() {
@@ -780,30 +791,32 @@ if (serviceVersion) {
   updateServiceLastUpdated(Number(serviceVersion));
 }
 
-renderCart();
-bindServiceCards();
-initSlider();
-bindLoginGate();
-startCooldownTicker();
-bindShopTabs();
-bindShopSearch();
-bindHeroSearch();
-compactBookingForm();
-initBookingStepper();
-bindPhoneMask();
-bindPaymentSummary();
-bindTestimonialsToggle();
-startHeroPlaceholder();
-bindTestimonialsToggle();
-bindUserMenu();
-bindMobileNav();
-bindServiceRefresh();
-bindBookingSectionView();
-bindCheckoutActions();
-normalizeQuickLinkIcons();
-normalizeAuthPillIcons();
-hardenSupportCards();
-window.addEventListener("resize", hardenSupportCards);
+safeInit("renderCart", renderCart);
+safeInit("bindServiceCards", bindServiceCards);
+safeInit("initSlider", initSlider);
+safeInit("bindLoginGate", bindLoginGate);
+safeInit("startCooldownTicker", startCooldownTicker);
+safeInit("bindShopTabs", bindShopTabs);
+safeInit("bindShopSearch", bindShopSearch);
+safeInit("bindHeroSearch", bindHeroSearch);
+safeInit("compactBookingForm", compactBookingForm);
+safeInit("initBookingStepper", initBookingStepper);
+safeInit("bindPhoneMask", bindPhoneMask);
+safeInit("bindPaymentSummary", bindPaymentSummary);
+safeInit("bindTestimonialsToggle", bindTestimonialsToggle);
+safeInit("startHeroPlaceholder", startHeroPlaceholder);
+safeInit("bindTestimonialsToggle(second)", bindTestimonialsToggle);
+safeInit("bindUserMenu", bindUserMenu);
+safeInit("bindMobileNav", bindMobileNav);
+safeInit("bindServiceRefresh", bindServiceRefresh);
+safeInit("bindBookingSectionView", bindBookingSectionView);
+safeInit("bindCheckoutActions", bindCheckoutActions);
+safeInit("normalizeQuickLinkIcons", normalizeQuickLinkIcons);
+safeInit("normalizeAuthPillIcons", normalizeAuthPillIcons);
+safeInit("hardenSupportCards", hardenSupportCards);
+window.addEventListener("resize", () => safeInit("hardenSupportCards(resize)", hardenSupportCards));
+setTimeout(() => safeInit("hardenSupportCards(t+500)", hardenSupportCards), 500);
+setTimeout(() => safeInit("hardenSupportCards(t+2000)", hardenSupportCards), 2000);
 
 let firestoreBootstrapped = false;
 function bootstrapFirestoreData() {
@@ -820,6 +833,23 @@ function bootstrapFirestoreData() {
 
 bootstrapFirestoreData();
 watchAuth();
+
+function recoverDynamicSections() {
+  if (services.length === 0) {
+    safeInit("recover:loadServiceItems", loadServiceItems);
+  }
+  if (!shopItemsCache.length) {
+    safeInit("recover:loadShopProducts", loadShopProducts);
+  }
+}
+
+setTimeout(recoverDynamicSections, 1500);
+setTimeout(recoverDynamicSections, 4500);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    recoverDynamicSections();
+  }
+});
 
 (() => {
   const params = new URLSearchParams(window.location.search);
@@ -1511,27 +1541,37 @@ function initBookingStepper() {
 
 function goToBookingFlow(step = 1) {
   const section = document.getElementById("randevu");
-  section?.scrollIntoView({ behavior: "smooth", block: "start" });
-  window.dispatchEvent(new CustomEvent("vk:booking-go", { detail: { step } }));
-  if (step === 1) {
-    const missing = getMissingStepOneFields();
-    renderStepOneHint(missing);
-    setTimeout(() => {
-      const target = missing[0]?.el || bookingNameInput;
-      if (!target) return;
-      const stepPanel = document.querySelector('.booking-step[data-step="1"]');
-      if (stepPanel) {
-        stepPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        stepPanel.classList.add("step-focus");
-        setTimeout(() => stepPanel.classList.remove("step-focus"), 1200);
-      }
-      try {
-        target.focus({ preventScroll: true });
-      } catch (_) {
-        target.focus();
-      }
-    }, 260);
+  const formEl = document.getElementById("bookingForm");
+
+  if (window.location.hash === "#serviceCatalog") {
+    history.replaceState(null, "", "#randevu");
   }
+
+  window.dispatchEvent(new CustomEvent("vk:booking-go", { detail: { step } }));
+  setTimeout(() => {
+    const stepPanel = document.querySelector(`.booking-step[data-step="${step}"]`);
+    const scrollTarget = stepPanel || formEl || section;
+    scrollTarget?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 80);
+
+  if (step !== 1) return;
+
+  const missing = getMissingStepOneFields();
+  renderStepOneHint(missing);
+  setTimeout(() => {
+    const target = missing[0]?.el || bookingNameInput;
+    if (!target) return;
+    const stepPanel = document.querySelector('.booking-step[data-step="1"]');
+    if (stepPanel) {
+      stepPanel.classList.add("step-focus");
+      setTimeout(() => stepPanel.classList.remove("step-focus"), 1200);
+    }
+    try {
+      target.focus({ preventScroll: true });
+    } catch (_) {
+      target.focus();
+    }
+  }, 260);
 }
 
 function getMissingStepOneFields() {
