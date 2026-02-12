@@ -1709,12 +1709,6 @@ function composeVideoBookingNote() {
 }
 
 function startVideoBookingFlow() {
-  if (!isLoggedIn || !isVerified) {
-    showLoginGate();
-    trackEvent("video_booking_requires_login");
-    return;
-  }
-
   setBookingMode("video");
   const item = getVideoServiceItem();
   selectedItems.set(item.id, item);
@@ -1754,7 +1748,7 @@ function bindBookingModeTabs() {
   videoBookingOpenButtons.forEach((button) => {
     button.addEventListener("click", (event) => {
       event.preventDefault();
-      setBookingMode("video", { scroll: true });
+      startVideoBookingFlow();
     });
   });
 
