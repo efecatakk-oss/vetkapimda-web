@@ -782,7 +782,7 @@ const fallbackProducts = [
 const services = [];
 const shopProducts = [];
 let shopItemsCache = [];
-let activeShopFilter = "all";
+let activeShopFilter = "kedi";
 const BOOKING_RATE_LIMIT_MS = 45000;
 
 const selectedItems = new Map();
@@ -2924,6 +2924,7 @@ function bindShopTabs() {
   if (!shopTabs.length) return;
   const defaultTab =
     Array.from(shopTabs).find((tab) => tab.dataset.default === "true") ||
+    Array.from(shopTabs).find((tab) => tab.dataset.filter === "kedi") ||
     shopTabs[0];
   setActiveShopTab(defaultTab, true);
   shopTabs.forEach((tab) => {
