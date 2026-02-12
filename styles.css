@@ -6824,3 +6824,71 @@ body.keyboard-open {
   }
 }
 
+/* Runtime emoji icon fallback */
+.mobile-quicklinks a .mq-icon {
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+
+.mobile-quicklinks a .mq-icon .mq-emoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.auth-pill .auth-pill-icon {
+  font-size: 16px !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.auth-pill .auth-pill-icon .auth-emoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* Desktop/Chrome guard: support cards should never collapse into a blank block */
+.support-hub .cta-cards {
+  min-height: 0 !important;
+}
+
+.support-hub .cta-card {
+  min-height: 180px !important;
+}
+
+.support-hub .cta-card.teal {
+  background:
+    radial-gradient(120px 120px at 18% 16%, rgba(255, 255, 255, 0.22) 0%, transparent 60%),
+    radial-gradient(180px 180px at 92% 70%, rgba(255, 255, 255, 0.12) 0%, transparent 70%),
+    linear-gradient(135deg, #0f6f6a 0%, #0c4d49 100%) !important;
+  color: #fff !important;
+}
+
+.support-hub .cta-card.sun {
+  background:
+    radial-gradient(120px 120px at 18% 16%, rgba(255, 255, 255, 0.25) 0%, transparent 60%),
+    radial-gradient(180px 180px at 92% 72%, rgba(255, 255, 255, 0.16) 0%, transparent 70%),
+    linear-gradient(135deg, #ff9f1c 0%, #ff7a1a 100%) !important;
+  color: #fff !important;
+}
+
+.support-hub .cta-card h3,
+.support-hub .cta-card .eyebrow,
+.support-hub .cta-card .lede,
+.support-hub .cta-card .cta-points li,
+.support-hub .cta-card .meta-pill,
+.support-hub .cta-card .btn {
+  color: inherit !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
