@@ -92,6 +92,7 @@ let heroPlaceholderTimer = null;
 let heroPlaceholderIndex = 0;
 let productSliderTimer = null;
 let toastTimer = null;
+let activeBookingMode = "home";
 const heroPlaceholderPhrases = [
   "Evde aşı randevusu",
   "Kedi tırnak kesimi",
@@ -104,6 +105,13 @@ const bookingNameInput = document.getElementById("name");
 const bookingPhoneInput = document.getElementById("phone");
 const bookingAddressInput = document.getElementById("address");
 const bookingStepHintEl = document.getElementById("bookingStepHint");
+const bookingModeButtons = Array.from(document.querySelectorAll("[data-booking-mode-trigger]"));
+const bookingModePanels = Array.from(document.querySelectorAll("[data-booking-mode-panel]"));
+const videoBookingOpenButtons = Array.from(document.querySelectorAll("[data-video-booking-open]"));
+const videoBookingStartBtn = document.getElementById("videoBookingStartBtn");
+const videoTopicSelect = document.getElementById("videoTopicSelect");
+const videoPetTypeSelect = document.getElementById("videoPetTypeSelect");
+const videoChannelSelect = document.getElementById("videoChannelSelect");
 const defaultAddressCard = document.getElementById("defaultAddressCard");
 const defaultAddressText = document.getElementById("defaultAddressText");
 const addressSelect = document.getElementById("addressSelect");
@@ -811,6 +819,7 @@ safeInit("bindMobileNav", bindMobileNav);
 safeInit("bindServiceRefresh", bindServiceRefresh);
 safeInit("bindBookingSectionView", bindBookingSectionView);
 safeInit("bindCheckoutActions", bindCheckoutActions);
+safeInit("bindBookingModeTabs", bindBookingModeTabs);
 safeInit("normalizeQuickLinkIcons", normalizeQuickLinkIcons);
 safeInit("normalizeAuthPillIcons", normalizeAuthPillIcons);
 safeInit("hardenSupportCards", hardenSupportCards);
@@ -1647,6 +1656,120 @@ function bindCheckoutActions() {
     inputEl.addEventListener("input", refresh);
     inputEl.addEventListener("blur", refresh);
   });
+}
+
+function setBookingMode(mode, options = {}) {
+  const nextMode = mode === "video" ? "video" : "home";
+  activeBookingMode = nextMode;
+
+  bookingModeButtons.forEach((button) => {
+    const isActive = button.dataset.bookingModeTrigger === nextMode;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+
+  bookingModePanels.forEach((panel) => {
+    panel.classList.toggle("is-active", panel.dataset.bookingModePanel === nextMode);
+  });
+
+  const bookingSection = document.getElementById("randevu");
+  bookingSection?.classList.toggle("is-video-mode", nextMode === "video");
+
+  if (!options.scroll) return;
+  if (!bookingSection) return;
+  const top = window.scrollY + bookingSection.getBoundingClientRect().top - 82;
+  window.scrollTo({ top: Math.max(0, Math.round(top)), behavior: "smooth" });
+}
+
+function getVideoServiceItem() {
+  for (const category of services) {
+    const match = (category?.items || []).find((item) =>
+      String(item?.title || "").toLowerCase().includes("video")
+    );
+    if (match) {
+      return {
+        id: match.id,
+        title: match.title,
+        price: Number(match.price || 0),
+      };
+    }
+  }
+  return {
+    id: "video_virtual_consult",
+    title: "Canli Video Danismanlik",
+    price: 0,
+  };
+}
+
+function composeVideoBookingNote() {
+  const topic = videoTopicSelect?.value || "Genel danisma";
+  const petType = videoPetTypeSelect?.value || "Kedi";
+  const channel = videoChannelSelect?.value || "WhatsApp Video";
+  return `[Video Randevu] Konu: ${topic} | Dost: ${petType} | Kanal: ${channel}`;
+}
+
+function startVideoBookingFlow() {
+  if (!isLoggedIn || !isVerified) {
+    showLoginGate();
+    trackEvent("video_booking_requires_login");
+    return;
+  }
+
+  setBookingMode("video");
+  const item = getVideoServiceItem();
+  selectedItems.set(item.id, item);
+  renderCatalog();
+  renderCart();
+
+  const notesInput = document.getElementById("notes");
+  const videoNote = composeVideoBookingNote();
+  if (notesInput) {
+    const base = String(notesInput.value || "")
+      .split("\n")
+      .filter((line) => !line.trim().startsWith("[Video Randevu]"))
+      .join("\n")
+      .trim();
+    notesInput.value = base ? `${videoNote}\n${base}` : videoNote;
+  }
+
+  if (bookingAddressInput && !bookingAddressInput.value.trim()) {
+    bookingAddressInput.value = "Canli video gorusme - fiziksel adres gerekmiyor.";
+  }
+
+  goToBookingFlow(1);
+  showToast("Video randevu adimi acildi. Iletisim bilgilerinizi doldurun.");
+  trackEvent("video_booking_start");
+}
+
+function bindBookingModeTabs() {
+  if (!bookingModeButtons.length && !videoBookingOpenButtons.length && !videoBookingStartBtn) return;
+
+  bookingModeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const mode = button.dataset.bookingModeTrigger || "home";
+      setBookingMode(mode, { scroll: true });
+    });
+  });
+
+  videoBookingOpenButtons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      setBookingMode("video", { scroll: true });
+    });
+  });
+
+  videoBookingStartBtn?.addEventListener("click", () => {
+    startVideoBookingFlow();
+  });
+
+  document.addEventListener("click", (event) => {
+    const serviceLink = event.target.closest('a[href="#serviceCatalog"]');
+    if (serviceLink) {
+      setBookingMode("home");
+    }
+  });
+
+  setBookingMode("home");
 }
 
 function startHeroPlaceholder() {

@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="icon" href="assets/favicon.png" type="image/png" />
-    <link rel="stylesheet" href="styles.css?v=20260212-12" />
+    <link rel="stylesheet" href="styles.css?v=20260212-13" />
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -488,7 +488,7 @@
             </div>
           </div>
         </div>
-        <a class="btn primary" href="#randevu">Video Randevu Al</a>
+        <a class="btn primary" href="#randevu" data-video-booking-open="true">Video Randevu Al</a>
       </section>
 
       <section id="shop" class="section shop-showcase">
@@ -572,6 +572,29 @@
           <h2>Randevu Oluştur</h2>
           <p>Hizmetleri seçin, sepete ekleyin ve talebinizi gönderin.</p>
         </div>
+
+        <div class="booking-mode-tabs" id="bookingModeTabs" role="tablist" aria-label="Randevu modu">
+          <button
+            class="booking-mode-tab active"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            data-booking-mode-trigger="home"
+          >
+            Evde Hizmet
+          </button>
+          <button
+            class="booking-mode-tab"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-booking-mode-trigger="video"
+          >
+            Canlı Video
+          </button>
+        </div>
+
+        <div class="booking-mode-panel is-active" data-booking-mode-panel="home">
 
         <div class="steps">
           <a class="step-card step-link" href="#serviceCatalog" aria-label="Hizmet seçimine git">
@@ -662,6 +685,72 @@
             </button>
             <p class="cart-hint">Hizmet ekledikten sonra bilgileri girip talebi tamamlayin.</p>
           </aside>
+        </div>
+
+        </div>
+
+        <div class="booking-mode-panel" data-booking-mode-panel="video">
+          <div class="video-booking-flow">
+            <div class="video-step-grid">
+              <div class="video-step-card">
+                <span class="video-step-count">1</span>
+                <div>
+                  <h4>Konu seç</h4>
+                  <p>Sorunun türünü ve dostunun bilgilerini belirle.</p>
+                </div>
+              </div>
+              <div class="video-step-card">
+                <span class="video-step-count">2</span>
+                <div>
+                  <h4>Zamanı planla</h4>
+                  <p>İletişim bilgilerini girip uygun saati paylaş.</p>
+                </div>
+              </div>
+              <div class="video-step-card">
+                <span class="video-step-count">3</span>
+                <div>
+                  <h4>Görüşmeye bağlan</h4>
+                  <p>WhatsApp veya Meet linkiyle video görüşmeyi başlat.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="video-plan-card">
+              <h3>Canlı Video Ön Bilgi</h3>
+              <p>Bu alanı doldurunca video hizmeti sepete eklenir ve iletişim adımına geçilir.</p>
+              <div class="video-plan-grid">
+                <label class="video-plan-field" for="videoTopicSelect">
+                  <span>Görüşme konusu</span>
+                  <select id="videoTopicSelect">
+                    <option value="Genel danışma">Genel danışma</option>
+                    <option value="Beslenme planı">Beslenme planı</option>
+                    <option value="İlk semptom değerlendirme">İlk semptom değerlendirme</option>
+                    <option value="Tedavi sonrası takip">Tedavi sonrası takip</option>
+                  </select>
+                </label>
+                <label class="video-plan-field" for="videoPetTypeSelect">
+                  <span>Dost türü</span>
+                  <select id="videoPetTypeSelect">
+                    <option value="Kedi">Kedi</option>
+                    <option value="Köpek">Köpek</option>
+                    <option value="Kuş">Kuş</option>
+                    <option value="Diğer">Diğer</option>
+                  </select>
+                </label>
+                <label class="video-plan-field" for="videoChannelSelect">
+                  <span>Görüşme kanalı</span>
+                  <select id="videoChannelSelect">
+                    <option value="WhatsApp Video">WhatsApp Video</option>
+                    <option value="Google Meet">Google Meet</option>
+                    <option value="Telefon + Video Link">Telefon + Video Link</option>
+                  </select>
+                </label>
+              </div>
+              <button id="videoBookingStartBtn" class="btn primary" type="button">
+                Video Randevuyu Başlat
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="booking-summary" id="bookingSummary">Sepetiniz boş.</div>
@@ -1202,7 +1291,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js?v=20260212-12"></script>
+    <script src="app.js?v=20260212-13"></script>
   </body>
 </html>
 
