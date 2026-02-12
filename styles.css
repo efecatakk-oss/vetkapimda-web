@@ -6784,3 +6784,43 @@ body.keyboard-open {
   box-shadow: 0 0 0 3px rgba(255, 122, 26, 0.16);
 }
 
+/* Final support-hub layout tuning */
+.support-hub .cta-cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+.support-hub .cta-card:nth-child(n + 3) {
+  display: none !important;
+}
+
+.support-hub .cta-card {
+  min-height: 168px !important;
+  padding: 14px !important;
+  border-radius: 18px !important;
+  align-content: space-between !important;
+  gap: 8px !important;
+}
+
+.support-hub .cta-card h3 {
+  font-size: 19px !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+}
+
+.support-hub .cta-card .lede {
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+  margin: 0 !important;
+}
+
+.support-hub .cta-card .btn {
+  min-height: 44px !important;
+}
+
+@media (max-width: 380px) {
+  .support-hub .cta-cards {
+    grid-template-columns: 1fr !important;
+  }
+}
+

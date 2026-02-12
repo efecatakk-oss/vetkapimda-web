@@ -164,43 +164,17 @@ bindMobileKeyboardGuard();
 
 function normalizeQuickLinkIcons() {
   const iconByHref = [
-    {
-      match: "wa.me",
-      svg:
-        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-8 8h-3.6l-3.2 1.8 1.2-3.4A8 8 0 1 1 20 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9.5 10.2c.6 1.2 1.6 2.3 2.8 3 .6.4 1.2.6 1.8.7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-    },
-    {
-      match: "tel:",
-      svg:
-        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h3l1 4-2 2c1 2.2 2.8 4 5 5l2-2 4 1v3c0 1.1-.9 2-2 2C10.3 19 5 13.7 5 7c0-1.1.9-2 2-2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
-    },
-    {
-      match: "/admin",
-      svg:
-        '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 9h8M8 12h8M8 15h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-    },
-    {
-      match: "#kvkk",
-      svg:
-        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.1-2.7 6.9-7 9-4.3-2.1-7-4.9-7-9V6l7-3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-    },
-    {
-      match: "favori",
-      svg:
-        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5 5.8 14.6a4.5 4.5 0 1 1 6.2-6.5 4.5 4.5 0 1 1 6.2 6.5L12 20.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
-    },
-    {
-      match: "shop",
-      svg:
-        '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="19" r="1.6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="19" r="1.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 5h2l2 8h10l2-6H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    },
+    { match: "wa.me", emoji: "&#x1F4AC;" },
+    { match: "tel:", emoji: "&#x1F4DE;" },
+    { match: "/admin", emoji: "&#x1F6E0;&#xFE0F;" },
+    { match: "#kvkk", emoji: "&#x2705;" },
+    { match: "favori", emoji: "&#x1F496;" },
+    { match: "shop", emoji: "&#x1F4E6;" },
   ];
   document.querySelectorAll(".mobile-quicklinks a").forEach((link) => {
     const href = String(link.getAttribute("href") || "").toLowerCase();
     const match = iconByHref.find((item) => href.includes(item.match));
-    const iconSvg =
-      match?.svg ||
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 12h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+    const iconEmoji = match?.emoji || "&#x2728;";
     let iconEl = link.querySelector(".mq-icon");
     if (!iconEl) {
       iconEl = document.createElement("span");
@@ -208,7 +182,7 @@ function normalizeQuickLinkIcons() {
       iconEl.setAttribute("aria-hidden", "true");
       link.prepend(iconEl);
     }
-    iconEl.innerHTML = iconSvg;
+    iconEl.innerHTML = `<span class="mq-emoji" aria-hidden="true">${iconEmoji}</span>`;
     link.classList.add("runtime-icon-ready");
   });
 }
@@ -224,8 +198,8 @@ function normalizeAuthPillIcons() {
       pill.prepend(iconEl);
     }
     iconEl.innerHTML = isSignup
-      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.7 3.8L18 8.5l-3.3 2.9.8 4.3L12 13.8 8.5 15.7l.8-4.3L6 8.5l4.3-1.7L12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>'
-      : '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8.5" cy="12" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10.5 12h8M15.5 12v-2M18.5 12v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4.5 14.5v3h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+      ? '<span class="auth-emoji" aria-hidden="true">&#x2728;</span>'
+      : '<span class="auth-emoji" aria-hidden="true">&#x1F511;</span>';
   });
 }
 
@@ -286,31 +260,6 @@ function ensureSupportCards() {
 
 function hardenSupportCards() {
   ensureSupportCards();
-  const cards = Array.from(document.querySelectorAll(".support-hub .cta-card"));
-  if (!cards.length) return;
-  cards.forEach((card) => {
-    const isTeal = card.classList.contains("teal");
-    const isSun = card.classList.contains("sun");
-    card.style.display = "grid";
-    card.style.visibility = "visible";
-    card.style.opacity = "1";
-    card.style.minHeight = "220px";
-    if (isTeal) {
-      card.style.background =
-        "radial-gradient(120px 120px at 18% 16%, rgba(255,255,255,.22) 0%, transparent 60%), radial-gradient(180px 180px at 92% 70%, rgba(255,255,255,.12) 0%, transparent 70%), linear-gradient(135deg,#0f6f6a 0%,#0c4d49 100%)";
-      card.style.color = "#fff";
-    } else if (isSun) {
-      card.style.background =
-        "radial-gradient(120px 120px at 18% 16%, rgba(255,255,255,.25) 0%, transparent 60%), radial-gradient(180px 180px at 92% 72%, rgba(255,255,255,.16) 0%, transparent 70%), linear-gradient(135deg,#ff9f1c 0%,#ff7a1a 100%)";
-      card.style.color = "#fff";
-    }
-    card
-      .querySelectorAll("h3, .eyebrow, .lede, .cta-points li, .meta-pill, .btn")
-      .forEach((el) => {
-        el.style.opacity = "1";
-        el.style.visibility = "visible";
-      });
-  });
 }
 
 function getProfileCacheMap() {
