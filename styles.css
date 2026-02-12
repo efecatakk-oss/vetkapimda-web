@@ -6695,3 +6695,92 @@ body.keyboard-open {
   }
 }
 
+/* Runtime icon + support card stability layer */
+.mobile-quicklinks a .mq-icon {
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif !important;
+  font-size: 0 !important;
+}
+
+.mobile-quicklinks a .mq-icon svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.auth-pill .auth-pill-icon {
+  font-size: 0 !important;
+}
+
+.auth-pill .auth-pill-icon svg {
+  width: 13px !important;
+  height: 13px !important;
+  display: block;
+}
+
+.support-hub .cta-cards {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  min-height: 0 !important;
+}
+
+.support-hub .cta-card {
+  min-height: 210px !important;
+  height: auto !important;
+  display: grid !important;
+  align-content: start !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.support-hub .cta-card.teal,
+.support-hub .cta-card.sun {
+  color: #fff !important;
+}
+
+.support-hub .cta-card:not(.teal):not(.sun) {
+  color: #17314c !important;
+  background: linear-gradient(135deg, #f5f9ff 0%, #ebf5ff 100%) !important;
+}
+
+.support-hub .cta-card h3,
+.support-hub .cta-card .eyebrow,
+.support-hub .cta-card .lede,
+.support-hub .cta-card .cta-points li,
+.support-hub .cta-card .meta-pill,
+.support-hub .cta-card .btn {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+@media (max-width: 900px) {
+  .support-hub .cta-cards {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.booking-summary .summary-checkout,
+#cartCheckoutBtn {
+  background: linear-gradient(135deg, #0f6f6a 0%, #1a9488 100%);
+  color: #fff;
+  border: 1px solid rgba(15, 111, 106, 0.2);
+  box-shadow: 0 14px 26px rgba(15, 111, 106, 0.28);
+}
+
+.booking-summary .summary-checkout:hover,
+#cartCheckoutBtn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+.booking-summary .summary-checkout:disabled,
+#cartCheckoutBtn:disabled {
+  opacity: 0.66;
+  box-shadow: none;
+}
+
+.booking-step.step-focus .step-title {
+  border-color: rgba(255, 122, 26, 0.6);
+  box-shadow: 0 0 0 3px rgba(255, 122, 26, 0.16);
+}
+

@@ -164,17 +164,43 @@ bindMobileKeyboardGuard();
 
 function normalizeQuickLinkIcons() {
   const iconByHref = [
-    { match: "wa.me", icon: "WA" },
-    { match: "tel:", icon: "AR" },
-    { match: "/admin", icon: "AD" },
-    { match: "#kvkk", icon: "YB" },
-    { match: "favori", icon: "FV" },
-    { match: "shop", icon: "SP" },
+    {
+      match: "wa.me",
+      svg:
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-8 8h-3.6l-3.2 1.8 1.2-3.4A8 8 0 1 1 20 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9.5 10.2c.6 1.2 1.6 2.3 2.8 3 .6.4 1.2.6 1.8.7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    },
+    {
+      match: "tel:",
+      svg:
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h3l1 4-2 2c1 2.2 2.8 4 5 5l2-2 4 1v3c0 1.1-.9 2-2 2C10.3 19 5 13.7 5 7c0-1.1.9-2 2-2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+    },
+    {
+      match: "/admin",
+      svg:
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 9h8M8 12h8M8 15h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    },
+    {
+      match: "#kvkk",
+      svg:
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.1-2.7 6.9-7 9-4.3-2.1-7-4.9-7-9V6l7-3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    },
+    {
+      match: "favori",
+      svg:
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5 5.8 14.6a4.5 4.5 0 1 1 6.2-6.5 4.5 4.5 0 1 1 6.2 6.5L12 20.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+    },
+    {
+      match: "shop",
+      svg:
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="19" r="1.6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="19" r="1.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 5h2l2 8h10l2-6H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    },
   ];
   document.querySelectorAll(".mobile-quicklinks a").forEach((link) => {
     const href = String(link.getAttribute("href") || "").toLowerCase();
     const match = iconByHref.find((item) => href.includes(item.match));
-    const iconText = match ? match.icon : "VK";
+    const iconSvg =
+      match?.svg ||
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 12h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     let iconEl = link.querySelector(".mq-icon");
     if (!iconEl) {
       iconEl = document.createElement("span");
@@ -182,15 +208,14 @@ function normalizeQuickLinkIcons() {
       iconEl.setAttribute("aria-hidden", "true");
       link.prepend(iconEl);
     }
-    iconEl.textContent = iconText;
+    iconEl.innerHTML = iconSvg;
     link.classList.add("runtime-icon-ready");
-    link.setAttribute("data-symbol", iconText);
   });
 }
 
 function normalizeAuthPillIcons() {
   document.querySelectorAll(".auth-pill").forEach((pill) => {
-    const fallbackGlyph = pill.dataset.tab === "signup" ? "U" : "G";
+    const isSignup = pill.dataset.tab === "signup";
     let iconEl = pill.querySelector(".auth-pill-icon");
     if (!iconEl) {
       iconEl = document.createElement("span");
@@ -198,13 +223,69 @@ function normalizeAuthPillIcons() {
       iconEl.setAttribute("aria-hidden", "true");
       pill.prepend(iconEl);
     }
-    if (!iconEl.querySelector("svg")) {
-      iconEl.textContent = fallbackGlyph;
-    }
+    iconEl.innerHTML = isSignup
+      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.7 3.8L18 8.5l-3.3 2.9.8 4.3L12 13.8 8.5 15.7l.8-4.3L6 8.5l4.3-1.7L12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>'
+      : '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8.5" cy="12" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10.5 12h8M15.5 12v-2M18.5 12v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4.5 14.5v3h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
   });
 }
 
+function ensureSupportCards() {
+  const cardsWrap = document.querySelector(".support-hub .cta-cards");
+  if (!cardsWrap) return;
+  const cards = Array.from(cardsWrap.querySelectorAll(".cta-card"));
+  const hasContent = cards.some((card) => (card.textContent || "").trim().length > 30);
+  if (cards.length >= 2 && hasContent) return;
+
+  cardsWrap.innerHTML = `
+    <div class="cta-card teal">
+      <div class="cta-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" role="img" focusable="false">
+          <path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.8-5.4A8 8 0 1 1 21 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+          <path d="M8 12h.01M12 12h.01M16 12h.01" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+        </svg>
+      </div>
+      <div>
+        <p class="eyebrow light">Hızlı Mesaj</p>
+        <h3>Veteriner hekime soru sor.</h3>
+        <p class="lede light">Kısa sorular ve ilk yönlendirme.</p>
+      </div>
+      <ul class="cta-points">
+        <li>Beslenme ve bakım soruları</li>
+        <li>İlk semptom yönlendirmesi</li>
+      </ul>
+      <div class="cta-meta">
+        <span class="meta-pill">Ortalama yanıt: 5-10 dk</span>
+        <span class="meta-pill">Online ekip</span>
+      </div>
+      <a class="btn ghost light" href="https://wa.me/905360340920">İletişime Geç</a>
+    </div>
+    <div class="cta-card sun">
+      <div class="cta-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" role="img" focusable="false">
+          <path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.8-5.4A8 8 0 1 1 21 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+          <path d="M13.5 7.8c-.7 0-1.3.6-1.3 1.3v1.2c0 .3-.1.6-.3.8l-.7.7c-.4.4-.4 1 0 1.4l2.1 2.1c.4.4 1 .4 1.4 0l.7-.7c.2-.2.5-.3.8-.3h1.2c.7 0 1.3-.6 1.3-1.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+      </div>
+      <div>
+        <p class="eyebrow light">7/24 Destek</p>
+        <h3>WhatsApp ile iletişim.</h3>
+        <p class="lede light">Randevu, fiyat, konum ve süreç desteği.</p>
+      </div>
+      <ul class="cta-points">
+        <li>Anlık saat ve müsaitlik bilgisi</li>
+        <li>Kapıda ödeme seçenekleri</li>
+      </ul>
+      <div class="cta-meta">
+        <span class="meta-pill">Kapıda kredi kartı / nakit</span>
+        <span class="meta-pill">Anlık bilgi</span>
+      </div>
+      <a class="btn primary" href="https://wa.me/905360340920">WhatsApp</a>
+    </div>
+  `;
+}
+
 function hardenSupportCards() {
+  ensureSupportCards();
   const cards = Array.from(document.querySelectorAll(".support-hub .cta-card"));
   if (!cards.length) return;
   cards.forEach((card) => {
@@ -1489,6 +1570,12 @@ function goToBookingFlow(step = 1) {
     setTimeout(() => {
       const target = missing[0]?.el || bookingNameInput;
       if (!target) return;
+      const stepPanel = document.querySelector('.booking-step[data-step="1"]');
+      if (stepPanel) {
+        stepPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        stepPanel.classList.add("step-focus");
+        setTimeout(() => stepPanel.classList.remove("step-focus"), 1200);
+      }
       try {
         target.focus({ preventScroll: true });
       } catch (_) {
