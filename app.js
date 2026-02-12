@@ -1553,11 +1553,17 @@ function goToBookingFlow(step = 1) {
   window.dispatchEvent(new CustomEvent("vk:booking-go", { detail: { step } }));
   setTimeout(() => {
     const stepPanel = document.querySelector(`.booking-step[data-step="${step}"]`);
-    const scrollTarget = stepPanel || formEl || section;
+    const stepTitle = stepPanel?.querySelector(".step-title");
+    const stepFirstField = stepPanel?.querySelector(
+      ".field, .address-summary, .booking-review, .step-actions"
+    );
+    const panelRect = stepPanel?.getBoundingClientRect();
+    const panelHasBox = Boolean(panelRect && panelRect.width > 0 && panelRect.height > 0);
+    const scrollTarget = stepTitle || stepFirstField || (panelHasBox ? stepPanel : null) || formEl || section;
     if (!scrollTarget) return;
     const top = window.scrollY + scrollTarget.getBoundingClientRect().top - 92;
-    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
-  }, 80);
+    window.scrollTo({ top: Math.max(0, Math.round(top)), behavior: "smooth" });
+  }, 120);
 
   if (step !== 1) return;
 
