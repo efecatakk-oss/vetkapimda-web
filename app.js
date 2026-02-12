@@ -1546,12 +1546,17 @@ function goToBookingFlow(step = 1) {
   if (window.location.hash === "#serviceCatalog") {
     history.replaceState(null, "", "#randevu");
   }
+  if (window.location.hash !== "#randevu") {
+    history.replaceState(null, "", "#randevu");
+  }
 
   window.dispatchEvent(new CustomEvent("vk:booking-go", { detail: { step } }));
   setTimeout(() => {
     const stepPanel = document.querySelector(`.booking-step[data-step="${step}"]`);
     const scrollTarget = stepPanel || formEl || section;
-    scrollTarget?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (!scrollTarget) return;
+    const top = window.scrollY + scrollTarget.getBoundingClientRect().top - 92;
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
   }, 80);
 
   if (step !== 1) return;
@@ -1600,12 +1605,18 @@ function renderStepOneHint(missing) {
 }
 
 function bindCheckoutActions() {
-  cartCheckoutBtn?.addEventListener("click", () => {
+  const triggerCheckout = () => {
     if (selectedItems.size === 0) {
       showToast("Once hizmet secin.", true);
       return;
     }
     goToBookingFlow(1);
+  };
+
+  cartCheckoutBtn?.setAttribute("data-booking-action", "checkout");
+  cartCheckoutBtn?.addEventListener("click", (event) => {
+    event.preventDefault();
+    triggerCheckout();
   });
 
   const summaryEl = document.getElementById("bookingSummary");
@@ -1613,11 +1624,15 @@ function bindCheckoutActions() {
     const btn = event.target.closest('[data-booking-action="checkout"]');
     if (!btn) return;
     event.preventDefault();
-    if (selectedItems.size === 0) {
-      showToast("Once hizmet secin.", true);
-      return;
-    }
-    goToBookingFlow(1);
+    triggerCheckout();
+  });
+
+  document.addEventListener("click", (event) => {
+    if (event.defaultPrevented) return;
+    const trigger = event.target.closest("#cartCheckoutBtn, [data-booking-action='checkout']");
+    if (!trigger) return;
+    event.preventDefault();
+    triggerCheckout();
   });
 
   [bookingNameInput, bookingPhoneInput].forEach((inputEl) => {
