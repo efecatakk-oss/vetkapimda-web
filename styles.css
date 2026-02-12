@@ -6827,6 +6827,39 @@ body.keyboard-open {
   opacity: 1 !important;
 }
 
+/* Mobile and Instagram in-app: prevent side-by-side booking/cart clipping */
+@media (max-width: 980px) {
+  .booking-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .booking-grid .catalog,
+  .booking-grid .cart {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .cart-total.sticky {
+    position: static !important;
+    bottom: auto !important;
+    margin-top: 10px !important;
+  }
+}
+
+html.in-app-browser .booking-grid,
+body.in-app-browser .booking-grid,
+.in-app-browser .booking-grid {
+  grid-template-columns: 1fr !important;
+}
+
+html.in-app-browser .cart-total.sticky,
+body.in-app-browser .cart-total.sticky,
+.in-app-browser .cart-total.sticky {
+  position: static !important;
+  bottom: auto !important;
+}
+
 .support-hub .cta-card .meta-pill {
   background: rgba(255, 255, 255, 0.78) !important;
   border-color: rgba(23, 49, 76, 0.2) !important;
