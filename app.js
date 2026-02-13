@@ -747,7 +747,7 @@ const fallbackServices = [
     ],
   },
   {
-    title: "Evde Kedi ve Kopek Asilari",
+    title: "Evde Kedi ve Köpek Aşıları",
     slug: "vaccines",
     items: [
       { id: "vac_1", title: "Karma Asi", price: 2000 },
@@ -2629,7 +2629,7 @@ function loadServiceItems() {
       if (item.active === false) return;
       const slug = item.category || "procedures";
       if (!categories.has(slug)) {
-        const title = slug === "vaccines" ? "Evde Kedi ve Kopek Asilari" : "Evde Islemler";
+        const title = slug === "vaccines" ? "Evde Kedi ve Köpek Aşıları" : "Evde Islemler";
         categories.set(slug, { title, slug, items: [] });
       }
       const orderValue = Number(item.order);

@@ -86,7 +86,7 @@ const formatPrice = (value) =>
   Number.isFinite(value) ? `${value} TL` : "-";
 const serviceCategoryLabels = {
   procedures: "Evde Islemler",
-  vaccines: "Evde Kedi ve Kopek Asilari",
+  vaccines: "Evde Kedi ve Köpek Aşıları",
   cat_vaccines: "Evde Kedi Asilari",
   exotics: "Egzotik Dostlar",
   care: "Bakim Paketleri",
