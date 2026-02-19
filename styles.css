@@ -2542,9 +2542,13 @@ h4 {
 }
 
 @media (min-width: 768px) {
+  .shop-grid-large {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
   .product-card {
-    grid-template-columns: minmax(0, 180px) minmax(0, 1fr);
-    align-items: center;
+    grid-template-columns: 1fr;
+    align-items: stretch;
   }
 }
 
